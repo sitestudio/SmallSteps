@@ -1,0 +1,40 @@
+<div class="report-container">
+  <header class="report-header">
+    <h1>KLPT Report</h1>
+
+    <div class="name-placeholder">
+      <span class="handwritten-label">Teacher Name:</span>
+      <div class="dashed-line"></div>
+    </div>
+  </header>
+
+  @if (selectedAnimal) {
+  <section class="animal-section">
+    <h2>{{ selectedAnimal.name }}</h2>
+    <p class="date-display">Date: {{ currentDate }}</p>
+  </section>
+  }
+
+  <section class="checklist-section">
+    @if (checkedItems.length > 0) {
+    <div class="checklist-content">
+      @for (item of checkedItems; track $index) {
+      <div class="checklist-item">
+        <h3 class="item-title">{{ $index + 1 }}. {{ item.text }}</h3>
+        <p class="item-description">{{ item.description }}</p>
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="no-items-message">No checked checklist items to display.</p>
+    }
+  </section>
+
+  <footer class="action-buttons">
+    <button (click)="generatePDF()" class="btn-download">Download PDF</button>
+  </footer>
+</div>
+
+<nav class="bottom-nav">
+  <button (click)="navigateToHome()" class="nav-btn nav-home">🏠 Home</button>
+</nav>

@@ -66,14 +66,10 @@ export class Home implements AfterViewInit {
   ) {}
 
   selectAnimal(animalId: string): void {
-    // Only one animal can be selected at a time
     this.selectedAnimalId = (this.selectedAnimalId === animalId) ? null : animalId;
-    
-    // Save to localStorage
     try {
       localStorage.setItem('tinyStepsSelectedAnimal', JSON.stringify({ selected: this.selectedAnimalId }));
     } catch (e) {}
-    
     this.cdRef.detectChanges();
   }
 

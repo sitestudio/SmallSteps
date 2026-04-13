@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import jsPDF from 'jspdf';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import jsPDF from "jspdf";
 
 interface Animal {
   id: string;
@@ -15,50 +15,13 @@ interface ChecklistItem {
 }
 
 @Component({
-  selector: 'app-print-pdf',
+  selector: "app-klpt-report",
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="page-container">
-      <header>
-        <h1>Print PDF Report</h1>
-        <p class="subtitle">Generating your report...</p>
-      </header>
-
-      <main *ngIf="selectedAnimal">
-        <section class="animal-section">
-          <h2>{{ selectedAnimal.name }}</h2>
-          <p class="date-display">Date: {{ currentDate }}</p>
-        </section>
-
-        <section class="checklist-section">
-          @if (checkedItems.length > 0) {
-            <div class="checklist-content">
-              @for (item of checkedItems; track $index) {
-                <div class="checklist-item">
-                  <h3>{{ $index + 1 }}. {{ item.text }}</h3>
-                  <p class="description">{{ item.description }}</p>
-                </div>
-              }
-            </div>
-          } @else {
-            <p class="no-items-message">No checklist items checked.</p>
-          }
-        </section>
-
-        <div class="action-buttons">
-          <button (click)="generatePDF()" class="btn-download">Download PDF</button>
-        </div>
-      </main>
-
-      <nav class="bottom-nav">
-        <button (click)="goHome()" class="nav-btn nav-home">🏠 Home</button>
-      </nav>
-    </div>
-  `,
-  styleUrls: ['./print-pdf.scss']
+  templateUrl: "./klpt-report.html",
+  styleUrls: ["./klpt-report.scss"],
 })
-export class PrintPdf implements OnInit {
+export class KLPTReport implements OnInit {
   currentDate: string = new Date().toLocaleDateString();
 
   checklistItems: ChecklistItem[] = [
@@ -107,6 +70,7 @@ export class PrintPdf implements OnInit {
   ];
 
   selectedAnimal: Animal | null = null;
+  checkedItemsText: string[] = [];
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -123,11 +87,15 @@ export class PrintPdf implements OnInit {
     { id: "rhino", name: "Rhino", svgName: "animal-rhino" },
   ];
 
+  constructor() {}
+
   get checkedItems(): { text: string; description: string }[] {
     return this.getCheckedItems();
   }
 
-  constructor() {}
+  navigateToHome(): void {
+    window.location.href = "/";
+  }
 
   ngOnInit(): void {
     this.getSelectedAnimal();
@@ -146,6 +114,16 @@ export class PrintPdf implements OnInit {
     if (animalId) {
       this.selectedAnimal = this.animals.find((a) => a.id === animalId) || null;
     }
+  }
+
+  getSelectedAnimalId(): string | null {
+    const saved = localStorage.getItem("tinyStepsSelectedAnimal");
+    if (saved) {
+      try {
+        return JSON.parse(saved).selected;
+      } catch (e) {}
+    }
+    return null;
   }
 
   getCheckedItems(): { text: string; description: string }[] {
@@ -169,20 +147,6 @@ export class PrintPdf implements OnInit {
     return [];
   }
 
-  getSelectedAnimalId(): string | null {
-    const saved = localStorage.getItem("tinyStepsSelectedAnimal");
-    if (saved) {
-      try {
-        return JSON.parse(saved).selected;
-      } catch (e) {}
-    }
-    return null;
-  }
-
-  goHome(): void {
-    window.location.href = "/";
-  }
-
   generatePDF(): void {
     const doc = new jsPDF();
     doc.setProperties({
@@ -199,7 +163,9 @@ export class PrintPdf implements OnInit {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.setTextColor(100, 116, 139);
-    doc.text(`Date: ${this.currentDate}`, 105, 32, { align: "center" });
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 32, {
+      align: "center",
+    });
 
     const checkedItems = this.getCheckedItems();
 
@@ -248,6 +214,6 @@ export class PrintPdf implements OnInit {
       295,
       { align: "center" },
     );
-    doc.save("klpt-print-report.pdf");
+    doc.save("klpt-report.pdf");
   }
 }

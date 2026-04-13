@@ -1,171 +1,160 @@
-:host {
-  display: block;
-  min-height: 100vh;
-  background-color: #f1f5f9;
-}
-
 .content-wrapper {
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 720px;
+  margin: 80px auto;
+  padding: 24px;
+  min-height: calc(100vh - 200px);
 }
 
 .back-link {
   display: block;
+  color: #5D6C7B;
   text-decoration: none;
-  color: #64748b;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .back-link:hover {
-  color: #4D96FF;
+  color: #0064E0;
+  text-decoration: underline;
 }
 
 header {
   text-align: center;
-  margin-bottom: 30px;
-}
+  margin-bottom: 32px;
 
-h1 {
-  font-family: 'Fredoka', sans-serif;
-  font-size: 2rem;
-  color: #2d3748;
-  margin-bottom: 5px;
-}
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 48px;
+    color: #1C2B33;
+    font-weight: 500;
+  }
 
-h1 + p {
-  color: #64748b;
+  p {
+    color: #5D6C7B;
+    font-size: 16px;
+  }
 }
 
 .checklist-container {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  overflow: hidden;
-}
+  text-align: center;
 
-.checklist-section {
-  padding: 20px;
-}
+  .checklist-section {
+    margin-bottom: 32px;
+  }
 
-.section-title {
-  font-family: 'Fredoka', sans-serif;
-  font-size: 1.2rem;
-  color: #4D96FF;
-  margin-bottom: 20px;
-}
+  .section-title {
+    font-family: 'Montserrat', sans-serif;
+    color: #1C2B33;
+    font-size: 24px;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
 
-.checklist-item {
-  border-top: 1px solid #e2e8f0;
-}
+  .checklist-item {
+    border-top: 1px solid #DEE3E9;
+    background-color: white;
+    border-radius: 20px;
 
-.checklist-item:first-child {
-  border-top: none;
-}
+    .item-header {
+      display: flex;
+      align-items: center;
+      padding: 20px 16px;
 
-.item-header {
-  display: flex;
-  align-items: center;
-  padding: 18px;
-  cursor: pointer;
-}
+      .checkbox-container {
+        position: relative;
+        width: 28px;
+        height: 28px;
+        margin-right: 16px;
+        cursor: pointer;
+        flex-shrink: 0;
 
-.item-header:hover {
-  background-color: #f8fafc;
-}
+        input {
+          opacity: 0;
+          width: 0;
+          height: 0;
 
-.checkbox-container {
-  position: relative;
-  width: 26px;
-  height: 26px;
-  margin-right: 15px;
-}
+          &:checked ~ .checkmark {
+            background-color: #0064E0;
+            border-color: #0064E0;
 
-.checkbox-container input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+            &::after {
+              display: block;
+            }
+          }
+        }
 
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 26px;
-  width: 26px;
-  background-color: #fff;
-  border: 2px solid #e2e8f0;
-  border-radius: 6px;
-}
+        .checkmark {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 28px;
+          width: 28px;
+          background-color: #fff;
+          border: 2px solid #DEE3E9;
+          border-radius: 6px;
+          transition: all 0.2s ease;
 
-.checkbox-container input:checked ~ .checkmark {
-  background-color: #2ECC71;
-  border-color: #2ECC71;
-}
+          &::after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 9px;
+            top: 5px;
+            width: 7px;
+            height: 14px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+          }
+        }
+      }
 
-.checkmark::after {
-  content: "";
-  position: absolute;
-  display: none;
-  left: 8px;
-  top: 4px;
-  width: 6px;
-  height: 12px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
-}
+      .item-text {
+        flex-grow: 1;
+        font-size: 16px;
+        font-weight: 500;
+        color: #1C2B33;
 
-.checkbox-container input:checked ~ .checkmark::after {
-  display: block;
-}
+        &:hover {
+          color: #0064E0;
+        }
+      }
 
-.item-text {
-  flex-grow: 1;
-  font-size: 1rem;
-  color: #2d3748;
-}
+      .description {
+        max-height: 250px;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, padding 0.3s ease;
+        background-color: #F1F4F7;
+      }
+    }
 
-.description {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out, padding 0.3s ease;
-  background-color: #f8fafc;
-}
+    &.expanded {
+      .description {
+        max-height: 250px;
+      }
+    }
+  }
 
-.description-content {
-  padding: 15px 20px 20px 70px;
-  font-size: 0.9rem;
-  color: #64748b;
-  line-height: 1.6;
-}
+  .btn-print {
+    display: block;
+    margin: 32px auto;
+    padding: 14px 32px;
+    border-radius: 100px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background-color: #4D96FF;
+    color: white;
+    transition: all 0.2s ease;
 
-.checklist-item.expanded {
-  background-color: #f8fafc;
-}
-
-.checklist-item.expanded .description {
-  max-height: 200px;
-  padding-bottom: 20px;
-}
-
-.btn-print {
-  display: block;
-  width: 100%;
-  padding: 20px;
-  margin: 20px 0;
-  background-color: #3a7d8e;
-  color: white;
-  font-family: 'Fredoka', sans-serif;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-print:hover {
-  background-color: #4e93a6;
+    &:hover {
+      background-color: #3B7DD8;
+      transform: scale(1.05);
+    }
+  }
 }
 
 .bottom-nav {
@@ -175,7 +164,7 @@ h1 + p {
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
   padding: 15px;
   background: white;
   box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
@@ -185,13 +174,32 @@ h1 + p {
 .nav-btn {
   padding: 10px 25px;
   border-radius: 8px;
-  border: none;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
-  font-family: 'Fredoka', sans-serif;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
-.nav-btn:hover {
-  transform: scale(1.05);
+@media print {
+  .bottom-nav, .btn-print {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .content-wrapper {
+    padding: 16px;
+    margin: 8px auto;
+  }
+
+  header h1 {
+    font-size: 36px;
+  }
+
+  .checklist-item .item-header {
+    padding: 12px;
+  }
 }

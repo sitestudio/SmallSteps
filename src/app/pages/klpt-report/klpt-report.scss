@@ -1,0 +1,185 @@
+.report-container {
+  max-width: 800px;
+  margin: 80px auto;
+  padding: 40px 32px;
+  min-height: calc(100vh - 200px);
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: 48px;
+
+  h1 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 48px;
+    color: #1c2b33;
+    font-weight: 500;
+    margin-bottom: 32px;
+  }
+}
+
+.name-placeholder {
+  text-align: left;
+
+  .handwritten-label {
+    display: block;
+    font-family: "Montserrat", sans-serif;
+    color: #5d6c7b;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+}
+
+.dashed-line {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    #cbd5e1 50%,
+    transparent 95%
+  );
+}
+
+.animal-section {
+  text-align: center;
+  margin-bottom: 48px;
+
+  h2 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 36px;
+    color: #1c2b33;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .date-display {
+    color: #5d6c7b;
+    font-size: 16px;
+  }
+}
+
+.checklist-section {
+  .checklist-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .checklist-item {
+    background-color: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee3e9;
+
+    .item-title {
+      font-family: "Montserrat", sans-serif;
+      font-size: 20px;
+      color: #1c2b33;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .item-description {
+      color: #5d6c7b;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+  }
+
+  .no-items-message {
+    text-align: center;
+    color: #5d6c7b;
+    font-size: 18px;
+    padding: 48px;
+  }
+}
+
+.action-buttons {
+  text-align: center;
+  margin-top: 48px;
+
+  .btn-download {
+    background-color: #0064e0;
+    color: white;
+    padding: 16px 48px;
+    border-radius: 100px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #0143b5;
+      transform: scale(1.05);
+    }
+  }
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+}
+
+.nav-btn {
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &-home {
+    background-color: #0064e0;
+    color: white;
+    border-radius: 100px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 600px) {
+  .report-container {
+    padding: 24px;
+    margin: 8px auto;
+  }
+
+  .report-header h1 {
+    font-size: 36px;
+    margin-bottom: 24px;
+  }
+
+  .checklist-item {
+    padding: 24px;
+  }
+
+  .checklist-content {
+    gap: 24px;
+  }
+}
+
+@media print {
+  .bottom-nav,
+  .action-buttons {
+    display: none !important;
+  }
+
+  .report-container {
+    margin: 0 auto;
+    padding: 0;
+    min-height: auto;
+  }
+}

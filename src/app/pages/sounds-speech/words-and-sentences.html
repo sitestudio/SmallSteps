@@ -1,12 +1,13 @@
 <div class="content-wrapper">
   <a routerLink="/sounds-speech" class="back-link">← Back to Sounds and Speech</a>
 
-  <!-- Animal Icon Display -->
   @if (selectedAnimal) {
     <div class="animal-display">
-      <img [src]="'/icons/' + selectedAnimal.svgName + '.svg'" 
-           [alt]="selectedAnimal.name" 
-           class="selected-animal-icon">
+      <img
+        [src]="'/icons/' + selectedAnimal.svgName + '.svg'"
+        [alt]="selectedAnimal.name"
+        class="selected-animal-icon"
+      />
       <p class="animal-name-display">Playing with {{ selectedAnimal.name }}!</p>
     </div>
   }
@@ -16,14 +17,17 @@
     <p>Teacher Assessment Checklist</p>
   </header>
 
-  <!-- Assessment Checklist - Centered -->
   <section class="checklist-section">
     <ul class="checklist">
       @for (item of checklistItems; track item.id) {
         <li class="checklist-item" [class.expanded]="expandedItem === item.id">
           <div class="item-main">
             <label class="checkbox-container">
-              <input type="checkbox" [checked]="isItemChecked(item.id)" (click)="handleCheck($event, item.id)">
+              <input
+                type="checkbox"
+                [checked]="isItemChecked(item.id)"
+                (click)="handleCheck($event, item.id)"
+              />
               <span class="checkmark"></span>
             </label>
             <div class="item-text" (click)="toggleExpand(item.id)">
@@ -37,29 +41,13 @@
         </li>
       }
     </ul>
+
+    <div class="action-buttons-center">
+      <button (click)="navigateBack()" class="btn btn-primary">← Back</button>
+      <button (click)="generatePDF()" class="btn btn-primary">Generate PDF</button>
+      <button (click)="navigateToHome()" class="btn btn-primary">Home →</button>
+    </div>
   </section>
-
-  <!-- Action Buttons - Centered -->
-  <div class="action-buttons-center">
-    <button (click)="generatePDF()" class="btn btn-primary">Generate PDF</button>
-    <button (click)="printPage()" class="btn btn-secondary">Print</button>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <footer class="bottom-nav">
-    <button (click)="navigateBack()" class="btn btn-back">← Back</button>
-    <button (click)="navigateToHome()" class="btn btn-home">🏠 Home</button>
-  </footer>
-
-  <!-- Dark Mode Toggle -->
-  <div class="dark-mode-float">
-    <button (click)="toggleDarkMode()" class="dark-mode-toggle">/{{ isDarkMode() ? '☀️' : '🌙' }}</button>
-  </div>
 </div>
-
-<nav class="bottom-nav">
-  <button (click)="navigateToHome()" class="nav-btn nav-home">🏠 Home</button>
-  <button (click)="navigateBack()" class="nav-btn nav-back">← Back</button>
-</nav>
 
 <router-outlet></router-outlet>
