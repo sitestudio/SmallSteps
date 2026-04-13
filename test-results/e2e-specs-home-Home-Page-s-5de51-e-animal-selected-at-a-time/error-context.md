@@ -169,112 +169,143 @@ Call log:
   56  |   });
   57  | 
   58  |   test('should allow only one animal selected at a time', async ({ page }) => {
-  59  |     const animals = await page.locator('.animal-item');
-  60  |     
-  61  |     await animals.nth(0).click();
-  62  |     await expect(animals.nth(0)).toHaveClass(/selected/);
-  63  |     
-  64  |     await animals.nth(1).click();
-> 65  |     await expect(animals.nth(0)).not.toHaveClass(/selected/);
-      |                                      ^ Error: expect(locator).not.toHaveClass(expected) failed
-  66  |     await expect(animals.nth(1)).toHaveClass(/selected/);
-  67  |   });
-  68  | 
-  69  |   test('should persist selection after page reload', async ({ page }) => {
-  70  |     const firstAnimal = await page.locator('.animal-item').first();
-  71  |     
-  72  |     await firstAnimal.click();
-  73  |     await expect(firstAnimal).toHaveClass(/selected/);
-  74  |     
-  75  |     await page.reload();
-  76  |     
-  77  |     await expect(firstAnimal).toHaveClass(/selected/);
-  78  |   });
-  79  | 
-  80  |   test('should show delete button once after all checked animals', async ({ page }) => {
-  81  |     const firstAnimal = await page.locator('.animal-item').first();
-  82  |     
-  83  |     await firstAnimal.click();
-  84  |     await expect(firstAnimal).toHaveClass(/selected/);
-  85  |     
-  86  |     const deleteBtn = page.locator('.delete-btn');
-  87  |     await expect(deleteBtn).toBeVisible();
-  88  |   });
-  89  | 
-  90  |   test('should not show delete button when no animal selected', async ({ page }) => {
-  91  |     const deleteBtn = page.locator('.delete-btn');
-  92  |     await expect(deleteBtn).not.toBeVisible();
-  93  |   });
-  94  | 
-  95  |   test('should delete selected animal when delete button clicked', async ({ page }) => {
-  96  |     const firstAnimal = await page.locator('.animal-item').first();
-  97  |     
-  98  |     await firstAnimal.click();
-  99  |     const deleteBtn = page.locator('.delete-btn');
-  100 |     await expect(deleteBtn).toBeVisible();
-  101 |     
-  102 |     await deleteBtn.click();
-  103 |     
-  104 |     const cancelBtn = page.locator('button:has-text("Cancel")');
-  105 |     if (await cancelBtn.count() > 0) {
-  106 |       await cancelBtn.click();
-  107 |     }
-  108 |     
-  109 |     await expect(firstAnimal).not.toHaveClass(/selected/);
-  110 |   });
-  111 | });
-  112 | 
-  113 | test.describe('Subcategory Button Sizing', () => {
-  114 |   test.beforeEach(async ({ page }) => {
-  115 |     await page.goto('http://localhost:4200/');
-  116 |   });
-  117 | 
-  118 |   test('should have at least 3px border from text edge on subcategory buttons', async ({ page }) => {
-  119 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  120 |     await languageLiteracyBtn.click();
-  121 |     
-  122 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
-  123 |     await soundsSpeechBtn.click();
-  124 |     
-  125 |     // Get button dimensions (64x64) and content bounding box
-  126 |     const buttonBox = await soundsSpeechBtn.boundingBox();
-  127 |     
-  128 |     // The span with text should have padding of at least 8px (horizontal) and 10px (vertical)
-  129 |     // This means the text should be at least 8-10px from each edge
-  130 |     const computedStyle = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
-  131 |       return window.getComputedStyle(el);
-  132 |     });
-  133 |     
-  134 |     // Check that the padding exists (box-sizing should be border-box)
-  135 |     expect(computedStyle.boxSizing).toBe('border-box');
-  136 |     
-  137 |     // Button should be square (64x64)
-  138 |     expect(buttonBox?.width).toBe(64);
-  139 |     expect(buttonBox?.height).toBe(64);
-  140 |   });
-  141 | 
-  142 |   test('should have equal width and height for all subcategory buttons', async ({ page }) => {
-  143 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  144 |     await languageLiteracyBtn.click();
-  145 |     
-  146 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
-  147 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
-  148 |     
-  149 |     const soundsSpeechBox = await soundsSpeechBtn.boundingBox();
-  150 |     const comprehensionBox = await comprehensionBtn.boundingBox();
-  151 |     
-  152 |     // Both buttons should have the same dimensions
-  153 |     expect(soundsSpeechBox?.width).toBe(comprehensionBox?.width);
-  154 |     expect(soundsSpeechBox?.height).toBe(comprehensionBox?.height);
+  59  |     // Navigate to home
+  60  |     await page.goto('http://localhost:4200/');
+  61  |     
+  62  |     // Wait for home component
+  63  |     await expect(page.locator('app-home')).toBeVisible();
+  64  |     
+  65  |     // Get initial animals (all 12 in unchecked section)
+  66  |     const animals1 = await page.locator('.animal-item');
+  67  |     // console.log('Animal count:', await animals1.count());
+  68  |     
+  69  |     // Click first animal (animal-0)
+  70  |     await animals1.nth(0).click();
+  71  |     // console.log('Clicked animal 0');
+  72  |     
+  73  |     // Wait for DOM to update
+  74  |     await page.waitForTimeout(500);
+  75  |     
+  76  |     const class1 = await animals1.nth(0).getAttribute('class');
+  77  |     // console.log('After click 0, animal 0 class:', class1);
+  78  |     
+  79  |     await expect(animals1.nth(0)).toHaveClass(/selected/);
+  80  |     
+  81  |     // Re-acquire animals since DOM changed
+  82  |     const animals2 = await page.locator('.animal-item');
+  83  |     
+  84  |     // After first click: 
+  85  |     // - animals2.nth(0) = animal-0 (selected, now in checked section)
+  86  |     // - animals2.nth(1) = animal-1 (in unchecked section, should be selected)
+  87  |     
+  88  |     // Click the second animal (animal-1) 
+  89  |     await animals2.nth(1).click();
+  90  |     // console.log('Clicked animal 1');
+  91  |     
+  92  |     // Wait for DOM to update
+  93  |     await page.waitForTimeout(500);
+  94  |     
+  95  |     // Check that animal 0 is no longer selected
+> 96  |     await expect(animals2.nth(0)).not.toHaveClass(/selected/);  // animal-0 should be deselected
+      |                                       ^ Error: expect(locator).not.toHaveClass(expected) failed
+  97  |     await expect(animals2.nth(1)).toHaveClass(/selected/);  // animal-1 should be selected
+  98  |   });
+  99  | 
+  100 |   test('should persist selection after page reload', async ({ page }) => {
+  101 |     const firstAnimal = await page.locator('.animal-item').first();
+  102 |     
+  103 |     await firstAnimal.click();
+  104 |     await expect(firstAnimal).toHaveClass(/selected/);
+  105 |     
+  106 |     await page.reload();
+  107 |     
+  108 |     await expect(firstAnimal).toHaveClass(/selected/);
+  109 |   });
+  110 | 
+  111 |   test('should show delete button once after all checked animals', async ({ page }) => {
+  112 |     const firstAnimal = await page.locator('.animal-item').first();
+  113 |     
+  114 |     await firstAnimal.click();
+  115 |     await expect(firstAnimal).toHaveClass(/selected/);
+  116 |     
+  117 |     const deleteBtn = page.locator('.delete-btn');
+  118 |     await expect(deleteBtn).toBeVisible();
+  119 |   });
+  120 | 
+  121 |   test('should not show delete button when no animal selected', async ({ page }) => {
+  122 |     const deleteBtn = page.locator('.delete-btn');
+  123 |     await expect(deleteBtn).not.toBeVisible();
+  124 |   });
+  125 | 
+  126 |   test('should delete selected animal when delete button clicked', async ({ page }) => {
+  127 |     const firstAnimal = await page.locator('.animal-item').first();
+  128 |     
+  129 |     await firstAnimal.click();
+  130 |     const deleteBtn = page.locator('.delete-btn');
+  131 |     await expect(deleteBtn).toBeVisible();
+  132 |     
+  133 |     await deleteBtn.click();
+  134 |     
+  135 |     const cancelBtn = page.locator('button:has-text("Cancel")');
+  136 |     if (await cancelBtn.count() > 0) {
+  137 |       await cancelBtn.click();
+  138 |     }
+  139 |     
+  140 |     await expect(firstAnimal).not.toHaveClass(/selected/);
+  141 |   });
+  142 | });
+  143 | 
+  144 | test.describe('Subcategory Button Sizing', () => {
+  145 |   test.beforeEach(async ({ page }) => {
+  146 |     await page.goto('http://localhost:4200/');
+  147 |   });
+  148 | 
+  149 |   test('should have at least 3px border from text edge on subcategory buttons', async ({ page }) => {
+  150 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  151 |     await languageLiteracyBtn.click();
+  152 |     
+  153 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  154 |     await soundsSpeechBtn.click();
   155 |     
-  156 |     // Both should be 64x64
-  157 |     expect(soundsSpeechBox?.width).toBe(64);
-  158 |     expect(soundsSpeechBox?.height).toBe(64);
-  159 |   });
-  160 | 
-  161 |   test('should all have the same border radius (circular)', async ({ page }) => {
-  162 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  163 |     await languageLiteracyBtn.click();
+  156 |     // Get button dimensions (64x64) and content bounding box
+  157 |     const buttonBox = await soundsSpeechBtn.boundingBox();
+  158 |     
+  159 |     // The span with text should have padding of at least 8px (horizontal) and 10px (vertical)
+  160 |     // This means the text should be at least 8-10px from each edge
+  161 |     const computedStyle = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
+  162 |       return window.getComputedStyle(el);
+  163 |     });
   164 |     
-  165 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  165 |     // Check that the padding exists (box-sizing should be border-box)
+  166 |     expect(computedStyle.boxSizing).toBe('border-box');
+  167 |     
+  168 |     // Button should be square (64x64)
+  169 |     expect(buttonBox?.width).toBe(64);
+  170 |     expect(buttonBox?.height).toBe(64);
+  171 |   });
+  172 | 
+  173 |   test('should have equal width and height for all subcategory buttons', async ({ page }) => {
+  174 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  175 |     await languageLiteracyBtn.click();
+  176 |     
+  177 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  178 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
+  179 |     
+  180 |     const soundsSpeechBox = await soundsSpeechBtn.boundingBox();
+  181 |     const comprehensionBox = await comprehensionBtn.boundingBox();
+  182 |     
+  183 |     // Both buttons should have the same dimensions
+  184 |     expect(soundsSpeechBox?.width).toBe(comprehensionBox?.width);
+  185 |     expect(soundsSpeechBox?.height).toBe(comprehensionBox?.height);
+  186 |     
+  187 |     // Both should be 64x64
+  188 |     expect(soundsSpeechBox?.width).toBe(64);
+  189 |     expect(soundsSpeechBox?.height).toBe(64);
+  190 |   });
+  191 | 
+  192 |   test('should all have the same border radius (circular)', async ({ page }) => {
+  193 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  194 |     await languageLiteracyBtn.click();
+  195 |     
+  196 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
 ```

@@ -6,16 +6,16 @@
 
 # Test info
 
-- Name: e2e/specs/home.spec.ts >> Home Page - Grid Layout >> should show grid with max 4 rows
-- Location: e2e/specs/home.spec.ts:278:7
+- Name: e2e/specs/home.spec.ts >> Language & Literacy - Button Repositioning >> should position Language & Literacy button at center
+- Location: e2e/specs/home.spec.ts:394:7
 
 # Error details
 
 ```
-Error: expect(received).toContain(expected) // indexOf
+Error: expect(received).toBeLessThan(expected)
 
-Expected substring: "repeat(4"
-Received string:    "64px 64px 64px"
+Expected: < 330
+Received:   570
 ```
 
 # Page snapshot
@@ -98,129 +98,6 @@ Received string:    "64px 64px 64px"
 # Test source
 
 ```ts
-  184 |     expect(soundsSpeechBox?.width).toBe(comprehensionBox?.width);
-  185 |     expect(soundsSpeechBox?.height).toBe(comprehensionBox?.height);
-  186 |     
-  187 |     // Both should be 64x64
-  188 |     expect(soundsSpeechBox?.width).toBe(64);
-  189 |     expect(soundsSpeechBox?.height).toBe(64);
-  190 |   });
-  191 | 
-  192 |   test('should all have the same border radius (circular)', async ({ page }) => {
-  193 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  194 |     await languageLiteracyBtn.click();
-  195 |     
-  196 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
-  197 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
-  198 |     
-  199 |     const soundsSpeechBorderRadius = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
-  200 |       return window.getComputedStyle(el).borderRadius;
-  201 |     });
-  202 |     
-  203 |     const comprehensionBorderRadius = await comprehensionBtn.evaluate((el: HTMLElement) => {
-  204 |       return window.getComputedStyle(el).borderRadius;
-  205 |     });
-  206 |     
-  207 |     // All buttons should have 50% border-radius (circular)
-  208 |     expect(soundsSpeechBorderRadius).toBe(comprehensionBorderRadius);
-  209 |     expect(soundsSpeechBorderRadius).toContain('50%');
-  210 |   });
-  211 | });
-  212 | 
-  213 | test.describe('Subcategory Button Colors', () => {
-  214 |   test.beforeEach(async ({ page }) => {
-  215 |     await page.goto('http://localhost:4200/');
-  216 |   });
-  217 | 
-  218 |   test('should have Sounds and Speech button with correct color (#FF6B6B)', async ({ page }) => {
-  219 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  220 |     await languageLiteracyBtn.click();
-  221 |     
-  222 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
-  223 |     const computedStyle = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
-  224 |       return window.getComputedStyle(el).backgroundColor;
-  225 |     });
-  226 |     
-  227 |     // The button should have red background (#FF6B6B)
-  228 |     expect(computedStyle).toBe('rgb(255, 107, 107)');
-  229 |   });
-  230 | 
-  231 |   test('should have Comprehension button with correct color (#4D96FF)', async ({ page }) => {
-  232 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  233 |     await languageLiteracyBtn.click();
-  234 |     
-  235 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
-  236 |     const computedStyle = await comprehensionBtn.evaluate((el: HTMLElement) => {
-  237 |       return window.getComputedStyle(el).backgroundColor;
-  238 |     });
-  239 |     
-  240 |     // The button should have blue background (#4D96FF)
-  241 |     expect(computedStyle).toBe('rgb(77, 150, 255)');
-  242 |   });
-  243 | 
-  244 |   test('should have different colors for Sounds and Speech vs Comprehension', async ({ page }) => {
-  245 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  246 |     await languageLiteracyBtn.click();
-  247 |     
-  248 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
-  249 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
-  250 |     
-  251 |     const soundsSpeechColor = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
-  252 |       return window.getComputedStyle(el).backgroundColor;
-  253 |     });
-  254 |     
-  255 |     const comprehensionColor = await comprehensionBtn.evaluate((el: HTMLElement) => {
-  256 |       return window.getComputedStyle(el).backgroundColor;
-  257 |     });
-  258 |     
-  259 |     // Colors should be different
-  260 |     expect(soundsSpeechColor).not.toBe(comprehensionColor);
-  261 |   });
-  262 | });
-  263 | 
-  264 | test.describe('Home Page - Grid Layout', () => {
-  265 |   test.beforeEach(async ({ page }) => {
-  266 |     await page.goto('http://localhost:4200/');
-  267 |   });
-  268 | 
-  269 |   test('should show grid with max 3 columns', async ({ page }) => {
-  270 |     const animalList = await page.locator('.animal-list');
-  271 |     const layout = await animalList.evaluate((el: HTMLElement) => {
-  272 |       return window.getComputedStyle(el).gridTemplateColumns;
-  273 |     });
-  274 |     
-  275 |     expect(layout).toContain('repeat(3');
-  276 |   });
-  277 | 
-  278 |   test('should show grid with max 4 rows', async ({ page }) => {
-  279 |     const animalList = await page.locator('.animal-list');
-  280 |     const layout = await animalList.evaluate((el: HTMLElement) => {
-  281 |       return window.getComputedStyle(el).gridTemplateRows;
-  282 |     });
-  283 |     
-> 284 |     expect(layout).toContain('repeat(4');
-      |                    ^ Error: expect(received).toContain(expected) // indexOf
-  285 |   });
-  286 | 
-  287 |   test('should not have checkbox elements in DOM', async ({ page }) => {
-  288 |     const checkboxes = await page.locator('input[type="checkbox"]');
-  289 |     expect(await checkboxes.count()).toBe(0);
-  290 |   });
-  291 | });
-  292 | 
-  293 | test.describe('Language & Literacy - Subcategory Display', () => {
-  294 |   test.beforeEach(async ({ page }) => {
-  295 |     await page.goto('http://localhost:4200/');
-  296 |   });
-  297 | 
-  298 |   test('should show subcategories when clicking Language & Literacy button', async ({ page }) => {
-  299 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
-  300 |     expect(await languageLiteracyBtn.textContent()).toContain('Language & Literacy');
-  301 |     
-  302 |     await languageLiteracyBtn.click();
-  303 |     
-  304 |     const subcategoryContainer = await page.locator('.subcategory-container');
-  305 |     await expect(subcategoryContainer).toBeVisible();
   306 |   });
   307 | 
   308 |   test('should display subcategories in horizontal linear layout', async ({ page }) => {
@@ -300,4 +177,123 @@ Received string:    "64px 64px 64px"
   382 |     await expect(subcategoryContainer).toBeVisible();
   383 |     
   384 |     await languageLiteracyBtn.click();
+  385 |     await expect(subcategoryContainer).not.toBeVisible();
+  386 |   });
+  387 | });
+  388 | 
+  389 | test.describe('Language & Literacy - Button Repositioning', () => {
+  390 |   test.beforeEach(async ({ page }) => {
+  391 |     await page.goto('http://localhost:4200/');
+  392 |   });
+  393 | 
+  394 |   test('should position Language & Literacy button at center', async ({ page }) => {
+  395 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  396 |     
+  397 |     // Language & Literacy button is always visible at center (0deg)
+  398 |     await expect(languageLiteracyBtn).toBeVisible();
+  399 |     
+  400 |     // Check the button is roughly centered (allow for button size)
+  401 |     const btnPos = await languageLiteracyBtn.boundingBox();
+  402 |     
+  403 |     // With circle size of 500px and button of ~140px,
+  404 |     // center should be around x=250, with tolerance for rounding
+  405 |     expect(btnPos?.x).toBeGreaterThan(170);
+> 406 |     expect(btnPos?.x).toBeLessThan(330);
+      |                       ^ Error: expect(received).toBeLessThan(expected)
+  407 |   });
+  408 | 
+  409 |   test('should have Maths & Numbers button at correct position', async ({ page }) => {
+  410 |     const mathsBtn = await page.locator('.nav-item.item-2 .nav-button');
+  411 |     expect(await mathsBtn.textContent()).toContain('Maths & Numbers');
+  412 |     
+  413 |     // The button should be at 72deg rotation position (upper right quadrant)
+  414 |     const pos = await mathsBtn.boundingBox();
+  415 |     
+  416 |     // At 72deg, button should be in upper-right quadrant (y=140px from center)
+  417 |     // Circle radius is 250px, so y should be around 110-140 range
+  418 |     expect(pos?.x).toBeGreaterThan(250); // Right of center
+  419 |     expect(pos?.y).toBeLessThan(380);     // Allow for 72deg calculation variation
+  420 |     expect(pos?.y).toBeGreaterThan(20);   // Should be near top
+  421 |   });
+  422 |   
+  423 |   test('should have Social/Emotional button at correct position', async ({ page }) => {
+  424 |     const socialBtn = await page.locator('.nav-item.item-3 .nav-button');
+  425 |     expect(await socialBtn.textContent()).toContain('Social/Emotional');
+  426 |   });
+  427 | 
+  428 |   test('should have Physical button at top position', async ({ page }) => {
+  429 |     const physicalBtn = await page.locator('.nav-item.item-4 .nav-button');
+  430 |     expect(await physicalBtn.textContent()).toContain('Physical');
+  431 |   });
+  432 | 
+  433 |   test('should have Executive Function button at correct position', async ({ page }) => {
+  434 |     const execBtn = await page.locator('.nav-item.item-5 .nav-button');
+  435 |     expect(await execBtn.textContent()).toContain('Executive Function');
+  436 |   });
+  437 | });
+  438 | 
+  439 | test.describe('Speech and Sound - Navigation', () => {
+  440 |   test.beforeEach(async ({ page }) => {
+  441 |     await page.goto('http://localhost:4200/');
+  442 |   });
+  443 | 
+  444 |   test('should navigate to sounds-speech page when clicking Sounds and Speech subcategory', async ({ page }) => {
+  445 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  446 |     await languageLiteracyBtn.click();
+  447 |     
+  448 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  449 |     await soundsSpeechBtn.click();
+  450 |     
+  451 |     // Wait for navigation to complete
+  452 |     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
+  453 |     
+  454 |     const url = page.url();
+  455 |     expect(url).toContain('sounds-speech/words-and-sentences');
+  456 |   });
+  457 | 
+  458 |   test('should navigate to comprehension page when clicking Comprehension subcategory', async ({ page }) => {
+  459 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  460 |     await languageLiteracyBtn.click();
+  461 |     
+  462 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
+  463 |     await comprehensionBtn.click();
+  464 |     
+  465 |     // Wait for navigation to complete
+  466 |     await page.waitForSelector('app-comprehension', { timeout: 5000 });
+  467 |     
+  468 |     const url = page.url();
+  469 |     expect(url).toContain('comprehension');
+  470 |   });
+  471 | 
+  472 |   test('should have working back navigation from sounds-speech page', async ({ page }) => {
+  473 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  474 |     await languageLiteracyBtn.click();
+  475 |     
+  476 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  477 |     await soundsSpeechBtn.click();
+  478 |     
+  479 |     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
+  480 |     
+  481 |     const backBtn = await page.locator('.nav-back');
+  482 |     expect(backBtn).toBeVisible();
+  483 |   });
+  484 | 
+  485 |   test('should preserve animal selection through navigation to sounds-speech', async ({ page }) => {
+  486 |     const firstAnimal = await page.locator('.animal-item').first();
+  487 |     await firstAnimal.click();
+  488 |     
+  489 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  490 |     await languageLiteracyBtn.click();
+  491 |     
+  492 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  493 |     await soundsSpeechBtn.click();
+  494 |     
+  495 |     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
+  496 |     
+  497 |     // Verify animal selection persists
+  498 |     const selectedAnimal = await page.locator('.selected-animal-icon');
+  499 |     expect(selectedAnimal).toBeVisible();
+  500 |   });
+  501 | });
+  502 | 
 ```

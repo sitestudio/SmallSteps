@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -60,21 +60,14 @@ export class Home implements AfterViewInit {
 
   selectedAnimalId: string | null = null;
 
-  constructor(
-    private router: Router,
-    private cdRef: ChangeDetectorRef
-  ) {}
+  constructor(private router: Router) {}
 
   selectAnimal(animalId: string): void {
-    // Only one animal can be selected at a time
-    this.selectedAnimalId = (this.selectedAnimalId === animalId) ? null : animalId;
-    
-    // Save to localStorage
-    try {
-      localStorage.setItem('tinyStepsSelectedAnimal', JSON.stringify({ selected: this.selectedAnimalId }));
-    } catch (e) {}
-    
-    this.cdRef.detectChanges();
+    if (this.selectedAnimalId === animalId) {
+      this.selectedAnimalId = null;
+    } else {
+      this.selectedAnimalId = animalId;
+    }
   }
 
   getAnimalSelected(animalId: string): boolean {

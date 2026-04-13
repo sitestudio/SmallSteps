@@ -56,14 +56,45 @@ test.describe('Home Page', () => {
   });
 
   test('should allow only one animal selected at a time', async ({ page }) => {
-    const animals = await page.locator('.animal-item');
+    // Navigate to home
+    await page.goto('http://localhost:4200/');
     
-    await animals.nth(0).click();
-    await expect(animals.nth(0)).toHaveClass(/selected/);
+    // Wait for home component
+    await expect(page.locator('app-home')).toBeVisible();
     
-    await animals.nth(1).click();
-    await expect(animals.nth(0)).not.toHaveClass(/selected/);
-    await expect(animals.nth(1)).toHaveClass(/selected/);
+    // Get initial animals (all 12 in unchecked section)
+    const animals1 = await page.locator('.animal-item');
+    // console.log('Animal count:', await animals1.count());
+    
+    // Click first animal (animal-0)
+    await animals1.nth(0).click();
+    // console.log('Clicked animal 0');
+    
+    // Wait for DOM to update
+    await page.waitForTimeout(500);
+    
+    const class1 = await animals1.nth(0).getAttribute('class');
+    // console.log('After click 0, animal 0 class:', class1);
+    
+    await expect(animals1.nth(0)).toHaveClass(/selected/);
+    
+    // Re-acquire animals since DOM changed
+    const animals2 = await page.locator('.animal-item');
+    
+    // After first click: 
+    // - animals2.nth(0) = animal-0 (selected, now in checked section)
+    // - animals2.nth(1) = animal-1 (in unchecked section, should be selected)
+    
+    // Click the second animal (animal-1) 
+    await animals2.nth(1).click();
+    // console.log('Clicked animal 1');
+    
+    // Wait for DOM to update
+    await page.waitForTimeout(500);
+    
+    // Check that animal 0 is no longer selected
+    await expect(animals2.nth(0)).not.toHaveClass(/selected/);  // animal-0 should be deselected
+    await expect(animals2.nth(1)).toHaveClass(/selected/);  // animal-1 should be selected
   });
 
   test('should persist selection after page reload', async ({ page }) => {
