@@ -1,0 +1,74 @@
+/* Meta Store Design System Inspired by DESIGN.md */
+
+:root {
+  /* Button Colors - Matching archive at /Volumes/Envoy3/projects/QED/KLPT/NEW_ARCHIVE/7/SmallSteps */
+  --color-lang: #FF6B6B;
+  --color-math: #4D96FF;
+  --color-soc: #6BCB77;
+  --color-phys: #FFD93D;
+  --color-exec: #9D72FF;
+
+  /* Meta Store Color System */
+  --meta-blue: #0064E0;
+  --meta-blue-hover: #0143B5;
+  --meta-blue-pressed: #004BB9;
+  --white: #FFFFFF;
+  --soft-gray: #F1F4F7;
+  --near-black: #1C1E21;
+  --dark-charcoal: #1C2B33;
+  --divider: #CED0D4;
+  --radius-pill: 100px;
+  --shadow-ambient: 0 12px 28px 0 rgba(0,0,0,0.2);
+  --shadow-direct: 0 2px 4px 0 rgba(0,0,0,0.1);
+  --shadow-elevated: var(--shadow-ambient), var(--shadow-direct);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--dark-charcoal);
+  background-color: var(--white);
+}
+
+a {
+  text-decoration: none;
+  transition: all 200ms ease;
+}
+
+button {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--meta-blue);
+  color: var(--white);
+  border-radius: var(--radius-pill);
+  padding: 10px 22px;
+  font-size: 14px;
+  transition: background-color 200ms ease, transform 150ms ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--meta-blue-hover);
+  transform: scale(1.05);
+}
+
+.card {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow-elevated);
+  transition: transform 300ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}

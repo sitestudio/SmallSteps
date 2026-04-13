@@ -1,0 +1,56 @@
+<div class="content-wrapper">
+  <header>
+    <h1>Language and Literacy</h1>
+  </header>
+
+  <main>
+    <!-- Summary Section -->
+    <section class="info-section">
+      <h2>Summary</h2>
+      <p>Lorem Ipsum - this section would contain summary information about Language and Literacy learning areas.</p>
+    </section>
+
+    <!-- Home Languages Section -->
+    <section class="info-section">
+      <h2>Home Languages</h2>
+      <p> Spanish, Indonesian, Japanese, French and more other languages can be used to supportlanguage development.</p>
+    </section>
+
+    <!-- Video/Fact Sheet Section -->
+    <section class="info-section">
+      <h2>YouTube Videos</h2>
+      <div class="video-container">
+        <a href="https://www.youtube.com/results?search_query=alphabet+songs" target="_blank" class="video-item">
+          <div class="video-icon">📺</div>
+          <span>Alphabets Learning Song</span>
+        </a>
+        <a href="https://www.youtube.com/results?search_query=phonics+songs" target="_blank" class="video-item">
+          <div class="video-icon">📺</div>
+          <span>ABC Phonics Song</span>
+        </a>
+        <a href="https://www.youtube.com/results?search_query=reading+for+kids" target="_blank" class="video-item">
+          <div class="video-icon">📺</div>
+          <span>Reading for Kids</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Bottom CTA Area -->
+    <div class="cta-area">
+      <p class="cta-instruction">
+        For details on how to support Language and Literacy development, Executive Function skills click here =>
+      </p>
+      
+      <a routerLink="/observation/support/language-literacy" class="observation-button">
+        Observation Support Tool
+      </a>
+    </div>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button (click)="goHome()" class="nav-btn nav-home">🏠 Home</button>
+  <button (click)="goBack()" class="nav-btn nav-back">← Back</button>
+</nav>
+
+<router-outlet></router-outlet>

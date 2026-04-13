@@ -1,0 +1,288 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: e2e/specs/home.spec.ts >> Home Page >> should persist selection after page reload
+- Location: e2e/specs/home.spec.ts:69:7
+
+# Error details
+
+```
+Error: expect(locator).toHaveClass(expected) failed
+
+Locator: locator('.animal-item').first()
+Expected pattern: /selected/
+Received string:  "animal-item"
+Timeout: 5000ms
+
+Call log:
+  - Expect "toHaveClass" with timeout 5000ms
+  - waiting for locator('.animal-item').first()
+    9 × locator resolved to <div class="animal-item" _ngcontent-ng-c1781022207="">…</div>
+      - unexpected value "animal-item"
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - checkbox "Training Mode" [ref=e6] [cursor=pointer]
+    - text: Training Mode
+  - banner [ref=e7]:
+    - heading "TinySteps" [level=1] [ref=e8]
+    - paragraph [ref=e9]: Choose a learning adventure!
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - link "🎨 Let's Play" [ref=e14] [cursor=pointer]:
+        - /url: /math-numbers
+        - generic [ref=e15]: 🎨
+        - generic [ref=e16]: Let's Play
+      - generic [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: 📚
+        - generic [ref=e20]: Language & Literacy
+      - link "🔢 Maths & Numbers" [ref=e22] [cursor=pointer]:
+        - /url: /math-numbers
+        - generic [ref=e23]: 🔢
+        - generic [ref=e24]: Maths & Numbers
+      - link "❤️ Social/Emotional" [ref=e26] [cursor=pointer]:
+        - /url: /social-emotional
+        - generic [ref=e27]: ❤️
+        - generic [ref=e28]: Social/Emotional
+      - link "🏃 Physical" [ref=e30] [cursor=pointer]:
+        - /url: /physical
+        - generic [ref=e31]: 🏃
+        - generic [ref=e32]: Physical
+      - link "🧠 Executive Function" [ref=e34] [cursor=pointer]:
+        - /url: /executive-function
+        - generic [ref=e35]: 🧠
+        - generic [ref=e36]: Executive Function
+    - generic [ref=e37]:
+      - heading "Choose Your Animal" [level=3] [ref=e38]
+      - generic [ref=e39]: Animals to Try
+      - generic [ref=e40]:
+        - generic [ref=e41] [cursor=pointer]:
+          - img "Lion" [ref=e42]
+          - generic [ref=e43]: Lion
+        - generic [ref=e44] [cursor=pointer]:
+          - img "Tiger" [ref=e45]
+          - generic [ref=e46]: Tiger
+        - generic [ref=e47] [cursor=pointer]:
+          - img "Elephant" [ref=e48]
+          - generic [ref=e49]: Elephant
+        - generic [ref=e50] [cursor=pointer]:
+          - img "Bear" [ref=e51]
+          - generic [ref=e52]: Bear
+        - generic [ref=e53] [cursor=pointer]:
+          - img "Zebra" [ref=e54]
+          - generic [ref=e55]: Zebra
+        - generic [ref=e56] [cursor=pointer]:
+          - img "Giraffe" [ref=e57]
+          - generic [ref=e58]: Giraffe
+        - generic [ref=e59] [cursor=pointer]:
+          - img "Monkey" [ref=e60]
+          - generic [ref=e61]: Monkey
+        - generic [ref=e62] [cursor=pointer]:
+          - img "Kangaroo" [ref=e63]
+          - generic [ref=e64]: Kangaroo
+        - generic [ref=e65] [cursor=pointer]:
+          - img "Panda" [ref=e66]
+          - generic [ref=e67]: Panda
+        - generic [ref=e68] [cursor=pointer]:
+          - img "Koala" [ref=e69]
+          - generic [ref=e70]: Koala
+        - generic [ref=e71] [cursor=pointer]:
+          - img "Hippo" [ref=e72]
+          - generic [ref=e73]: Hippo
+        - generic [ref=e74] [cursor=pointer]:
+          - img "Rhino" [ref=e75]
+          - generic [ref=e76]: Rhino
+```
+
+# Test source
+
+```ts
+  1   | import { test, expect } from '@playwright/test';
+  2   | 
+  3   | test.describe('Home Page', () => {
+  4   |   test.beforeEach(async ({ page }) => {
+  5   |     await page.goto('http://localhost:4200/');
+  6   |   });
+  7   | 
+  8   |   test('should display the home page content', async ({ page }) => {
+  9   |     await expect(page.locator('app-home')).toBeVisible();
+  10  |   });
+  11  | 
+  12  |   test('should have navigation buttons', async ({ page }) => {
+  13  |     await expect(page.locator('app-home')).toContainText(/Home|Training/i);
+  14  |   });
+  15  | 
+  16  |   test('should display all 12 animals', async ({ page }) => {
+  17  |     const animalItems = await page.locator('.animal-item');
+  18  |     expect(await animalItems.count()).toBe(12);
+  19  |   });
+  20  | 
+  21  |   test('should display animal names correctly', async ({ page }) => {
+  22  |     const firstAnimal = await page.locator('.animal-item').first();
+  23  |     await expect(firstAnimal.locator('.animal-name')).toContainText('Lion');
+  24  |   });
+  25  | 
+  26  |   test('should display animal icons', async ({ page }) => {
+  27  |     const animalIcons = await page.locator('.animal-icon');
+  28  |     expect(await animalIcons.count()).toBe(12);
+  29  |   });
+  30  | 
+  31  |   test('should show unchecked state by default', async ({ page }) => {
+  32  |     const animalItems = await page.locator('.animal-item');
+  33  |     
+  34  |     for (let i = 0; i < 12; i++) {
+  35  |       await expect(animalItems.nth(i)).not.toHaveClass(/selected/);
+  36  |     }
+  37  |   });
+  38  | 
+  39  |   test('should select animal when clicked', async ({ page }) => {
+  40  |     const firstAnimal = await page.locator('.animal-item').first();
+  41  |     
+  42  |     await expect(firstAnimal).not.toHaveClass(/selected/);
+  43  |     await firstAnimal.click();
+  44  |     
+  45  |     await expect(firstAnimal).toHaveClass(/selected/);
+  46  |   });
+  47  | 
+  48  |   test('should toggle off when clicking already selected animal', async ({ page }) => {
+  49  |     const firstAnimal = await page.locator('.animal-item').first();
+  50  |     
+  51  |     await firstAnimal.click();
+  52  |     await expect(firstAnimal).toHaveClass(/selected/);
+  53  |     
+  54  |     await firstAnimal.click();
+  55  |     await expect(firstAnimal).not.toHaveClass(/selected/);
+  56  |   });
+  57  | 
+  58  |   test('should allow only one animal selected at a time', async ({ page }) => {
+  59  |     const animals = await page.locator('.animal-item');
+  60  |     
+  61  |     await animals.nth(0).click();
+  62  |     await expect(animals.nth(0)).toHaveClass(/selected/);
+  63  |     
+  64  |     await animals.nth(1).click();
+  65  |     await expect(animals.nth(0)).not.toHaveClass(/selected/);
+  66  |     await expect(animals.nth(1)).toHaveClass(/selected/);
+  67  |   });
+  68  | 
+  69  |   test('should persist selection after page reload', async ({ page }) => {
+  70  |     const firstAnimal = await page.locator('.animal-item').first();
+  71  |     
+  72  |     await firstAnimal.click();
+  73  |     await expect(firstAnimal).toHaveClass(/selected/);
+  74  |     
+  75  |     await page.reload();
+  76  |     
+> 77  |     await expect(firstAnimal).toHaveClass(/selected/);
+      |                               ^ Error: expect(locator).toHaveClass(expected) failed
+  78  |   });
+  79  | 
+  80  |   test('should show delete button once after all checked animals', async ({ page }) => {
+  81  |     const firstAnimal = await page.locator('.animal-item').first();
+  82  |     
+  83  |     await firstAnimal.click();
+  84  |     await expect(firstAnimal).toHaveClass(/selected/);
+  85  |     
+  86  |     const deleteBtn = page.locator('.delete-btn');
+  87  |     await expect(deleteBtn).toBeVisible();
+  88  |   });
+  89  | 
+  90  |   test('should not show delete button when no animal selected', async ({ page }) => {
+  91  |     const deleteBtn = page.locator('.delete-btn');
+  92  |     await expect(deleteBtn).not.toBeVisible();
+  93  |   });
+  94  | 
+  95  |   test('should delete selected animal when delete button clicked', async ({ page }) => {
+  96  |     const firstAnimal = await page.locator('.animal-item').first();
+  97  |     
+  98  |     await firstAnimal.click();
+  99  |     const deleteBtn = page.locator('.delete-btn');
+  100 |     await expect(deleteBtn).toBeVisible();
+  101 |     
+  102 |     await deleteBtn.click();
+  103 |     
+  104 |     const cancelBtn = page.locator('button:has-text("Cancel")');
+  105 |     if (await cancelBtn.count() > 0) {
+  106 |       await cancelBtn.click();
+  107 |     }
+  108 |     
+  109 |     await expect(firstAnimal).not.toHaveClass(/selected/);
+  110 |   });
+  111 | });
+  112 | 
+  113 | test.describe('Subcategory Button Sizing', () => {
+  114 |   test.beforeEach(async ({ page }) => {
+  115 |     await page.goto('http://localhost:4200/');
+  116 |   });
+  117 | 
+  118 |   test('should have at least 3px border from text edge on subcategory buttons', async ({ page }) => {
+  119 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  120 |     await languageLiteracyBtn.click();
+  121 |     
+  122 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  123 |     await soundsSpeechBtn.click();
+  124 |     
+  125 |     // Get button dimensions (64x64) and content bounding box
+  126 |     const buttonBox = await soundsSpeechBtn.boundingBox();
+  127 |     
+  128 |     // The span with text should have padding of at least 8px (horizontal) and 10px (vertical)
+  129 |     // This means the text should be at least 8-10px from each edge
+  130 |     const computedStyle = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
+  131 |       return window.getComputedStyle(el);
+  132 |     });
+  133 |     
+  134 |     // Check that the padding exists (box-sizing should be border-box)
+  135 |     expect(computedStyle.boxSizing).toBe('border-box');
+  136 |     
+  137 |     // Button should be square (64x64)
+  138 |     expect(buttonBox?.width).toBe(64);
+  139 |     expect(buttonBox?.height).toBe(64);
+  140 |   });
+  141 | 
+  142 |   test('should have equal width and height for all subcategory buttons', async ({ page }) => {
+  143 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  144 |     await languageLiteracyBtn.click();
+  145 |     
+  146 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  147 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
+  148 |     
+  149 |     const soundsSpeechBox = await soundsSpeechBtn.boundingBox();
+  150 |     const comprehensionBox = await comprehensionBtn.boundingBox();
+  151 |     
+  152 |     // Both buttons should have the same dimensions
+  153 |     expect(soundsSpeechBox?.width).toBe(comprehensionBox?.width);
+  154 |     expect(soundsSpeechBox?.height).toBe(comprehensionBox?.height);
+  155 |     
+  156 |     // Both should be 64x64
+  157 |     expect(soundsSpeechBox?.width).toBe(64);
+  158 |     expect(soundsSpeechBox?.height).toBe(64);
+  159 |   });
+  160 | 
+  161 |   test('should all have the same border radius (circular)', async ({ page }) => {
+  162 |     const languageLiteracyBtn = await page.locator('.nav-item.item-1 .nav-button');
+  163 |     await languageLiteracyBtn.click();
+  164 |     
+  165 |     const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+  166 |     const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
+  167 |     
+  168 |     const soundsSpeechBorderRadius = await soundsSpeechBtn.evaluate((el: HTMLElement) => {
+  169 |       return window.getComputedStyle(el).borderRadius;
+  170 |     });
+  171 |     
+  172 |     const comprehensionBorderRadius = await comprehensionBtn.evaluate((el: HTMLElement) => {
+  173 |       return window.getComputedStyle(el).borderRadius;
+  174 |     });
+  175 |     
+  176 |     // All buttons should have 50% border-radius (circular)
+  177 |     expect(soundsSpeechBorderRadius).toBe(comprehensionBorderRadius);
+```

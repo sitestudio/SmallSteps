@@ -1,0 +1,48 @@
+<div class="settings-panel">
+  <label>
+    <input type="checkbox" [checked]="isDarkMode()" (change)="toggleDarkMode()">
+    <span>Dark Mode</span>
+  </label>
+</div>
+
+<div class="page-container">
+  <header>
+    <button (click)="navigateBack()" class="back-btn">← Back</button>
+    <h1>Comprehension Checklist</h1>
+  </header>
+
+  <div class="animal-selection" *ngIf="selectedAnimal">
+    <h3>Current Animal: {{ selectedAnimal.name }}</h3>
+  </div>
+
+  <div class="checklist-container">
+    @for (item of checklistItems; track $index) {
+      <div class="checklist-item" [class.expanded]="expandedItem === item.id">
+        <div class="checkbox-wrapper" (click)="toggleExpand(item.id)">
+          <input type="checkbox"
+                 [id]="item.id"
+                 [checked]="isItemChecked(item.id)"
+                 (change)="handleCheck($event, item.id)">
+          <label [for]="item.id">
+            <span class="checklist-label">{{ item.text }}</span>
+          </label>
+        </div>
+
+        <div class="description" *ngIf="expandedItem === item.id">
+          <p>{{ item.description }}</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="action-buttons">
+    <button (click)="generatePDF()" class="btn btn-primary">Download PDF</button>
+    <button (click)="printPage()" class="btn btn-secondary">Print Page</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <button (click)="navigateToHome()" class="nav-btn nav-home">🏠 Home</button>
+  </nav>
+</div>
+
+<router-outlet></router-outlet>

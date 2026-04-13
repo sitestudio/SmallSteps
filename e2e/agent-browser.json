@@ -1,0 +1,12 @@
+{
+  "session": "smse2e",
+  "timeout": 30000,
+  "baseURL": "http://localhost:4200",
+  "defaultTimeout": 30000,
+  "allowedDomains": ["localhost"],
+  "maxOutput": 10000,
+  "actionPolicy": {
+    "eval": false,
+    "download": false
+  }
+}

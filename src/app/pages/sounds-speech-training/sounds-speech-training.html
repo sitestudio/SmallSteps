@@ -1,0 +1,46 @@
+<div class="content-wrapper">
+  <a routerLink="/training/literacy-first" class="back-link">← Back to Language & Literacy</a>
+
+  <header>
+    <h1>Sounds and Speech</h1>
+  </header>
+
+  <main class="card-container">
+    <!-- Card 1 -->
+    <section class="card">
+      <a routerLink="/sounds-speech/words-and-sentences" class="card-link">
+        Words and Sentences
+      </a>
+      <p class="card-description">
+        Explore prompts to assist with topics such as sentence structure and syntax.
+      </p>
+    </section>
+
+    <!-- Card 2 -->
+    <section class="card">
+      <a routerLink="/sounds-speech/storytelling" class="card-link">
+        Storytelling and Conversation
+      </a>
+      <p class="card-description">
+        Explore prompts to assist with narrative skills and dialogue.
+      </p>
+    </section>
+
+    <!-- Card 3 -->
+    <section class="card">
+      <a routerLink="/sounds-speech/sounds-in-words" class="card-link">
+        Sounds in Words
+      </a>
+      <p class="card-description">
+        Explore prompts to assist with phonics and pronunciation.
+      </p>
+    </section>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button (click)="goHome()" class="nav-btn nav-home">🏠 Home</button>
+  <button (click)="goBack()" class="nav-btn nav-back">← Back</button>
+</nav>
+
+<router-outlet></router-outlet>

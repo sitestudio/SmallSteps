@@ -1,0 +1,150 @@
+<div class="content-wrapper">
+  <a routerLink="/training/literacy-first" class="back-link">← Back to Language & Literacy</a>
+
+  <header>
+    <h1>Sounds and Speech</h1>
+    <p>Teacher Assessment Checklist</p>
+  </header>
+
+  <main class="checklist-container">
+    <!-- Words and Sentences Section -->
+    <section class="checklist-section">
+      <h2 class="section-title">Words and Sentences</h2>
+      
+      <!-- Item 1 -->
+      <div class="checklist-item" (click)="toggleExpand('item1')" [class.expanded]="isExpanded('item1')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item1.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Single Words and Gestures
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item1')">
+          <div class="description-content">
+            The child uses single words accompanied by physical gestures (pointing, nodding) to communicate needs or observations.
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="checklist-item" (click)="toggleExpand('item2')" [class.expanded]="isExpanded('item2')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item2.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Single Words and Short Phrases
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item2')">
+          <div class="description-content">
+            Moving beyond single words, the child begins to combine two or three words (e.g., "More juice," "Big ball").
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="checklist-item" (click)="toggleExpand('item3')" [class.expanded]="isExpanded('item3')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item3.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Short Sentences
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item3')">
+          <div class="description-content">
+            The child uses simple subject-verb structures (e.g., "I want cookie," "Dog is running").
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="checklist-item" (click)="toggleExpand('item4')" [class.expanded]="isExpanded('item4')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item4.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Short Sentences, joint thoughts, descriptions
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item4')">
+          <div class="description-content">
+            The child begins to link ideas using simple conjunctions like "and" or "because."
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 5 -->
+      <div class="checklist-item" (click)="toggleExpand('item5')" [class.expanded]="isExpanded('item5')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item5.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Connected sentences, extra details, coherent
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item5')">
+          <div class="description-content">
+            Sentences are structured logically with descriptive adjectives and a clear flow of thought.
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 6 -->
+      <div class="checklist-item" (click)="toggleExpand('item6')" [class.expanded]="isExpanded('item6')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item6.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Longer sentences, connecting ideas, pronouns
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item6')">
+          <div class="description-content">
+            The child uses complex sentence structures and correctly applies pronouns (he, she, they) to connect ideas.
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 7 -->
+      <div class="checklist-item" (click)="toggleExpand('item7')" [class.expanded]="isExpanded('item7')">
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" (click)="$event.stopPropagation()" [(ngModel)]="checklistItems.item7.checked">
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text">
+            Many longer sentences, rich language, stories
+          </div>
+        </div>
+        <div class="description" *ngIf="isExpanded('item7')">
+          <div class="description-content">
+            The child can narrate a sequence of events or tell a simple story using varied and sophisticated vocabulary.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <button (click)="printReport()" class="btn-print">📄 Print Report</button>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button (click)="goHome()" class="nav-btn nav-home">🏠 Home</button>
+  <button (click)="goBack()" class="nav-btn nav-back">← Back</button>
+</nav>
+
+<router-outlet></router-outlet>
