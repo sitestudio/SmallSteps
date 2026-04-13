@@ -109,7 +109,6 @@ p {
       font-size: 2rem;
     }
 
-    /* Circular Positioning Logic */
     .item-1 {
       transform: rotate(0deg) translateY(-180px);
     }
@@ -151,7 +150,6 @@ p {
       background-color: var(--color-exec);
     }
 
-    /* Let's Play button - hidden when subcategories, at top (0deg) position */
     .item-center {
       transform: rotate(0deg) translateY(-180px);
     }
@@ -197,7 +195,6 @@ p {
         span {
           display: block;
           line-height: 1.2;
-          // Remove explicit padding - now on button with box-sizing
         }
       }
     }

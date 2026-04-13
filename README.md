@@ -1,6 +1,6 @@
-# SmallSteps
+# TinySteps
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+This project was generated using [Angular CLI](https://github.com/angular/cli) version 21.2.7.
 
 ## Development server
 
@@ -34,11 +34,11 @@ To build the project run:
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+This will compile your project and store the build artifacts in the `dist/` directory.
 
 ## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use:
 
 ```bash
 ng test
@@ -49,11 +49,39 @@ ng test
 For end-to-end (e2e) testing, run:
 
 ```bash
-ng e2e
+npm run test:e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+For headless testing (CI/CD):
+
+```bash
+npm run test:e2e:headless
+```
+
+For UI mode:
+
+```bash
+npm run test:e2e:ui
+```
+
+## Features
+
+- **Multi-language support** for early childhood education assessment
+- **Animal selection system** with localStorage persistence for tracking progress
+- **Dark/light mode toggle** accessible from any page via floating theme button in upper right corner
+- **Print/PDF generation** for assessment checklists using jsPDF
+- **Training mode** toggle for specialized learning activities
+
+## Theme System
+
+The application uses a centralized `ThemeService` for consistent theme management:
+
+- Toggle button appears in upper-right corner of every page
+- Theme preference persists to localStorage (`themePreference`)
+- Automatically detects system theme on first load
+- CSS variables define light/dark color schemes in `src/styles.scss`
 
 ## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+For more information on using the Angular CLI, visit:
+https://angular.dev/tools/cli

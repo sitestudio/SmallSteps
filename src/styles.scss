@@ -2,25 +2,37 @@
 
 :root {
   /* Button Colors - Matching archive at /Volumes/Envoy3/projects/QED/KLPT/NEW_ARCHIVE/7/SmallSteps */
-  --color-lang: #FF6B6B;
-  --color-math: #4D96FF;
-  --color-soc: #6BCB77;
-  --color-phys: #FFD93D;
-  --color-exec: #9D72FF;
+  --color-lang: #ff6b6b;
+  --color-math: #4d96ff;
+  --color-soc: #6bcb77;
+  --color-phys: #ffd93d;
+  --color-exec: #9d72ff;
 
   /* Meta Store Color System */
-  --meta-blue: #0064E0;
-  --meta-blue-hover: #0143B5;
-  --meta-blue-pressed: #004BB9;
-  --white: #FFFFFF;
-  --soft-gray: #F1F4F7;
-  --near-black: #1C1E21;
-  --dark-charcoal: #1C2B33;
-  --divider: #CED0D4;
+  --meta-blue: #0064e0;
+  --meta-blue-hover: #0143b5;
+  --meta-blue-pressed: #004bb9;
+  --white: #ffffff;
+  --soft-gray: #f1f4f7;
+  --near-black: #1c1e21;
+  --dark-charcoal: #1c2b33;
+  --divider: #ced0d4;
   --radius-pill: 100px;
-  --shadow-ambient: 0 12px 28px 0 rgba(0,0,0,0.2);
-  --shadow-direct: 0 2px 4px 0 rgba(0,0,0,0.1);
+  --shadow-ambient: 0 12px 28px 0 rgba(0, 0, 0, 0.2);
+  --shadow-direct: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   --shadow-elevated: var(--shadow-ambient), var(--shadow-direct);
+
+  /* Dark Mode Colors */
+  --dark-bg: #1c1e21;
+  --dark-surface: #2d3038;
+  --dark-text: #f1f4f7;
+}
+
+html.dark {
+  /* Override colors for dark mode */
+  --white: #1c1e21;
+  --dark-charcoal: #f1f4f7;
+  --soft-gray: #2d3038;
 }
 
 * {
@@ -53,7 +65,9 @@ button {
   border-radius: var(--radius-pill);
   padding: 10px 22px;
   font-size: 14px;
-  transition: background-color 200ms ease, transform 150ms ease;
+  transition:
+    background-color 200ms ease,
+    transform 150ms ease;
 }
 
 .btn-primary:hover {
