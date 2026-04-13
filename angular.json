@@ -30,9 +30,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -70,11 +68,18 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "allowedHosts": ["andrews-mac-studio.tailaf4572.ts.net"]
+            "allowedHosts": ["andrews-mac-studio.tailaf4572.ts.net"],
+            "outputPath": {
+              "base": "docs",
+              "browser": ""
+            }
           }
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
