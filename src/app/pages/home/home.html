@@ -96,7 +96,10 @@
         >
           <div class="animal-list">
             @for (animal of getAssignedAnimals(); track animal.id) {
-            <div class="animal-item" (click)="selectAnimal(animal.id)">
+            <div 
+              class="animal-item" 
+              [class.active]="getActiveAnimal(animal.id)"
+              (click)="selectAnimal(animal.id)">
               <img
                 [src]="'./icons/' + animal.svgName + '.svg'"
                 [alt]="animal.name"

@@ -109,13 +109,26 @@ export class WordsAndSentences implements OnInit {
   }
 
   getSelectedAnimal(): void {
-    const saved = localStorage.getItem("tinyStepsSelectedAnimal");
+    // First, try to use the active animal from the assigned educator's state
     let animalId: string | null = null;
-
-    if (saved) {
-      try {
-        animalId = JSON.parse(saved).selected;
-      } catch (e) {}
+    
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (activeEducator) {
+      // Get the active animal from the educator's assignment
+      const activeAnimal = this.educatorService.getActiveAnimal(activeEducator.id);
+      if (activeAnimal) {
+        animalId = activeAnimal;
+      }
+    }
+    
+    // If no active animal from educator, check localStorage for previously selected animal
+    if (!animalId) {
+      const saved = localStorage.getItem("tinyStepsSelectedAnimal");
+      if (saved) {
+        try {
+          animalId = JSON.parse(saved).selected;
+        } catch (e) {}
+      }
     }
 
     if (animalId) {
@@ -199,6 +212,16 @@ export class WordsAndSentences implements OnInit {
   }
 
   getSelectedAnimalId(): string | null {
+    // First, try to use the active animal from the assigned educator's state
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (activeEducator) {
+      const activeAnimal = this.educatorService.getActiveAnimal(activeEducator.id);
+      if (activeAnimal) {
+        return activeAnimal;
+      }
+    }
+
+    // Fallback to localStorage
     const saved = localStorage.getItem("tinyStepsSelectedAnimal");
     if (saved) {
       try {

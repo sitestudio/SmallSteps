@@ -8,6 +8,7 @@ export interface Educator {
 export interface EducatorAssignment {
   educatorId: string;
   animalIds: string[];
+  activeAnimalId: string | null;
 }
 
 const EDUCATORS_STORAGE_KEY = "tinyStepsEducators";
@@ -108,6 +109,37 @@ export class EducatorService {
     );
     return assignment?.animalIds || [];
   }
+  getActiveAnimal(educatorId: string): string | null {
+    const assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+    return assignment?.activeAnimalId || null;
+  }
+
+
+
+  setActiveAnimal(educatorId: string, animalId: string | null): void {
+    let assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+
+    if (!assignment) {
+      assignment = {
+        educatorId: educatorId,
+        animalIds: [],
+        activeAnimalId: animalId,
+      };
+      this.assignments.set([...this.assignments(), assignment]);
+    } else {
+      assignment.activeAnimalId = animalId;
+      this.assignments.set(
+        this.assignments().map((a) =>
+          a.educatorId === educatorId ? assignment! : a,
+        ),
+      );
+    }
+    this.saveToLocalStorage();
+  }
 
   assignAnimal(animalId: string): boolean {
     const activeEducatorId = this.activeEducatorId();
@@ -123,6 +155,7 @@ export class EducatorService {
       assignment = {
         educatorId: activeEducatorId,
         animalIds: [],
+        activeAnimalId: null,
       };
       this.assignments.set([...this.assignments(), assignment]);
     } else if (assignment.animalIds.includes(animalId)) {
@@ -150,16 +183,19 @@ export class EducatorService {
       (id) => id !== animalId,
     );
 
+    let updatedAssignment: EducatorAssignment;
     if (updatedAnimalIds.length === 0) {
       this.assignments.set(
         this.assignments().filter((a) => a.educatorId !== educatorId),
       );
     } else {
+      updatedAssignment = { ...assignment, animalIds: updatedAnimalIds };
+      if (updatedAssignment.activeAnimalId === animalId) {
+        updatedAssignment.activeAnimalId = null;
+      }
       this.assignments.set(
         this.assignments().map((a) =>
-          a.educatorId === educatorId
-            ? { ...a, animalIds: updatedAnimalIds }
-            : a,
+          a.educatorId === educatorId ? updatedAssignment : a,
         ),
       );
     }
