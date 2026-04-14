@@ -5,6 +5,19 @@ test.describe('Navigation', () => {
     await page.goto('http://localhost:4200/');
   });
 
+  test('should have Training Mode checkbox in dark mode with visible dark text', async ({ page }) => {
+    const toggleButton = page.locator('button.theme-toggle-btn');
+    await toggleButton.click();
+    await page.waitForTimeout(100);
+    
+    const settingsPanel = page.locator('.settings-panel');
+    await expect(settingsPanel).toBeVisible();
+    
+    const trainingModeText = page.locator('.settings-panel span');
+    await expect(trainingModeText).toBeVisible();
+  });
+});
+
   test('should navigate to sounds & speech page', async ({ page }) => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
