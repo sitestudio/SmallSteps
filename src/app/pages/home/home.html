@@ -17,59 +17,38 @@
 <div class="main-content">
   <div class="circle-section">
     <div class="circle-container">
-      <div class="nav-item item-center" [class.hidden]="showSubcategories">
+      @if (activeNavIndex === null) {
+      <div class="nav-item item-center" style="z-index: 5">
         <a routerLink="/math-numbers" class="nav-button">
           <div class="icon">🎨</div>
           <span>Let's Play</span>
         </a>
       </div>
-
-      <div class="nav-item item-1">
-        <a (click)="toggleLanguageLiteracy()" class="nav-button">
-          <div class="icon">📚</div>
-          <span>Language & Literacy</span>
+      } @for (button of navButtons; track button.id) {
+      <div
+        class="nav-item item-{{button.id}}"
+        [class.hidden]="activeNavIndex !== null && activeNavIndex !== button.id - 1"
+        [class.centered]="activeNavIndex === button.id - 1"
+        (click)="toggleNavButton(button.id - 1)"
+      >
+        <a class="nav-button">
+          <div class="icon">{{button.icon}}</div>
+          <span>{{button.label}}</span>
         </a>
       </div>
-
-      <div class="nav-item item-2" [class.hidden]="showSubcategories">
-        <a routerLink="/math-numbers" class="nav-button">
-          <div class="icon">🔢</div>
-          <span>Maths & Numbers</span>
-        </a>
-      </div>
-
-      <div class="nav-item item-3" [class.hidden]="showSubcategories">
-        <a routerLink="/social-emotional" class="nav-button">
-          <div class="icon">❤️</div>
-          <span>Social/Emotional</span>
-        </a>
-      </div>
-
-      <div class="nav-item item-4" [class.hidden]="showSubcategories">
-        <a routerLink="/physical" class="nav-button">
-          <div class="icon">🏃</div>
-          <span>Physical</span>
-        </a>
-      </div>
-
-      <div class="nav-item item-5" [class.hidden]="showSubcategories">
-        <a routerLink="/executive-function" class="nav-button">
-          <div class="icon">🧠</div>
-          <span>Executive Function</span>
-        </a>
-      </div>
-
-      <div class="subcategory-container" *ngIf="showSubcategories">
-        @for (item of subcategoryItems; track $index) {
+      } @if (activeNavIndex !== null) {
+      <div class="subcategory-container">
+        @for (item of navButtons[activeNavIndex].items; track item.id) {
         <a
           [routerLink]="item.route"
-          class="sub-nav-button"
+          class="sub-nav-button-rectangular"
           [style.backgroundColor]="item.color"
         >
           <span>{{ item.label }}</span>
         </a>
         }
       </div>
+      }
     </div>
   </div>
 

@@ -9,7 +9,7 @@ test.describe('Navigation', () => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
-    const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+    const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
@@ -22,7 +22,7 @@ test.describe('Navigation', () => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
-    const comprehensionBtn = page.locator('.sub-nav-button:has-text("Comprehension")');
+    const comprehensionBtn = page.locator('.sub-nav-button-rectangular:has-text("Comprehension")');
     await comprehensionBtn.click();
     
     await page.waitForSelector('app-comprehension', { timeout: 5000 });
@@ -36,7 +36,7 @@ test.describe('Navigation', () => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
-    const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+    const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
@@ -60,7 +60,7 @@ test.describe('Navigation', () => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
-    const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+    const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
     // Check selected animal displays
@@ -83,7 +83,7 @@ test.describe('Navigation', () => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
-    const soundsSpeechBtn = page.locator('.sub-nav-button:has-text("Sounds and speech")');
+    const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
