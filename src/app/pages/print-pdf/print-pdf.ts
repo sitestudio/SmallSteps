@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import jsPDF from 'jspdf';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import jsPDF from "jspdf";
 
 interface Animal {
   id: string;
@@ -15,7 +15,7 @@ interface ChecklistItem {
 }
 
 @Component({
-  selector: 'app-print-pdf',
+  selector: "app-print-pdf",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -47,7 +47,9 @@ interface ChecklistItem {
         </section>
 
         <div class="action-buttons">
-          <button (click)="generatePDF()" class="btn-download">Download PDF</button>
+          <button (click)="generatePDF()" class="btn-download">
+            Download PDF
+          </button>
         </div>
       </main>
 
@@ -56,7 +58,7 @@ interface ChecklistItem {
       </nav>
     </div>
   `,
-  styleUrls: ['./print-pdf.scss']
+  styleUrls: ["./print-pdf.scss"],
 })
 export class PrintPdf implements OnInit {
   currentDate: string = new Date().toLocaleDateString();
@@ -200,6 +202,13 @@ export class PrintPdf implements OnInit {
     doc.setFontSize(12);
     doc.setTextColor(100, 116, 139);
     doc.text(`Date: ${this.currentDate}`, 105, 32, { align: "center" });
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Name:", 185, 20, { align: "right" });
+    doc.setLineWidth(2);
+    doc.line(130, 24, 185, 24);
 
     const checkedItems = this.getCheckedItems();
 

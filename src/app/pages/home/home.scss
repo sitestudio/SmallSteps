@@ -6,7 +6,7 @@
 
 header {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 100px;
   z-index: 10;
 }
 
@@ -14,13 +14,12 @@ h1 {
   font-size: 3rem;
   color: #2d3748;
   margin-bottom: 10px;
-  text-shadow: 2px 2px 0px white;
   font-family: "Fredoka", sans-serif;
 }
 
 p {
   font-size: 1.2rem;
-  color: #64748b;
+  color: #5d6c7b;
 }
 
 .main-content {
@@ -28,10 +27,10 @@ p {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 4rem;
+  gap: 3rem;
 
   @media (max-width: 900px) {
-    gap: 2rem;
+    gap: 1.5rem;
   }
 }
 
@@ -43,22 +42,6 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    .center-hub {
-      width: 120px;
-      height: 120px;
-      background: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      z-index: 5;
-      font-weight: 600;
-      text-align: center;
-      font-size: 1.2rem;
-      border: 4px dashed #cbd5e1;
-    }
 
     .nav-item {
       position: absolute;
@@ -161,14 +144,6 @@ p {
       background-color: var(--color-exec);
     }
 
-    .item-center {
-      transform: rotate(0deg) translateY(-180px);
-    }
-    .item-center .nav-button {
-      transform: rotate(0deg);
-      background-color: var(--color-play);
-    }
-
     /* Centered button (when active) - moves to center of circle */
     .nav-item.centered {
       top: 50%;
@@ -185,10 +160,10 @@ p {
       }
     }
 
-    /* Rectangular subcategory buttons container */
+    /* Rectangular subcategory buttons container - nested inside nav-item */
     .subcategory-container {
       position: absolute;
-      top: -120px;
+      top: -5px; /* moved closer to the centered button */
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -198,7 +173,7 @@ p {
       .sub-nav-button-rectangular {
         min-width: 80px;
         padding: 12px 24px;
-        border-radius: 8px;
+        border-radius: 8px; /* Rounded corners */
         box-sizing: border-box;
         display: flex;
         align-items: center;
@@ -257,24 +232,30 @@ p {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px;
-    border-radius: 12px;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 12px 24px;
+    border-radius: 100px;
+    background-color: #e5e7eb;
+    box-shadow:
+      0 8px 15px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: "Fredoka", sans-serif;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: scale(1.05);
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.15),
+        0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     &.selected {
-      background: #4d96ff;
+      background-color: #d4d6da;
+      transform: scale(1.05);
+    }
 
-      .animal-name {
-        color: white;
-      }
+    .animal-name {
+      color: #2d3748;
     }
   }
 
@@ -325,6 +306,15 @@ p {
   width: 18px;
   height: 18px;
   cursor: pointer;
+}
+
+:host-context(html.dark) .settings-panel {
+  background-color: var(--dark-surface);
+  border: 1px solid #3d414a;
+}
+
+:host-context(html.dark) .settings-panel span {
+  color: var(--dark-text);
 }
 
 @media (max-width: 600px) {
@@ -430,6 +420,272 @@ p {
         width: 16px;
         height: 16px;
       }
+    }
+  }
+}
+
+.educator-section {
+  flex: 1;
+  min-width: 280px;
+
+  h3 {
+    font-family: "Fredoka", sans-serif;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .active-educator-label {
+    font-family: "Fredoka", sans-serif;
+    color: #3b82f6;
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .educator-entry {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+
+    input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.95rem;
+
+      &:focus {
+        outline: none;
+        border-color: #60a5fa;
+      }
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #60a5fa;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #3b82f6;
+      }
+    }
+  }
+
+  .educator-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .educator-and-animals {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+
+      .educator-item {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 3px 8px;
+        width: 25%;
+        max-width: 120px;
+        border-radius: 8px;
+        background-color: #60a5fa;
+        box-shadow:
+          0 4px 8px rgba(0, 0, 0, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: "Fredoka", sans-serif;
+
+        &:hover {
+          box-shadow:
+            0 8px 16px rgba(0, 0, 0, 0.15),
+            0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &.selected {
+          background-color: #3b82f6;
+        }
+
+        .delete-educator-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 2px;
+          opacity: 0.5;
+          transition: all 0.2s;
+
+          &:hover {
+            opacity: 1;
+            transform: scale(1.1);
+          }
+        }
+
+        span {
+          flex: 1;
+          color: #2d3748;
+          font-size: 0.95rem;
+        }
+      }
+
+      .assigned-animals-section {
+        flex: 1;
+        min-width: 200px;
+        background-color: #f8fafc;
+        border-radius: 12px;
+
+        h4 {
+          font-family: "Fredoka", sans-serif;
+          color: #2d3748;
+          margin-bottom: 0.75rem;
+          font-size: 1rem;
+        }
+
+        .animal-list {
+          display: flex;
+          gap: 4px;
+
+          @media (max-width: 900px) {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          @media (max-width: 600px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        .animal-item {
+          background-color: #e5e7eb;
+          padding: 2px 4px;
+          border-radius: 6px;
+        }
+        .remove-animal-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px;
+          margin-left: auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0.7;
+          transition: all 0.2s ease;
+
+          &:hover {
+            opacity: 1;
+            transform: scale(1.1);
+          }
+
+          svg {
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        .no-assigned-animals {
+          color: #64748b;
+          font-size: 0.9rem;
+          text-align: center;
+          margin: 1rem 0;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    gap: 1.5rem;
+  }
+
+  .animal-selection-section,
+  .educator-section {
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    gap: 1rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .animal-selection-section,
+  .educator-section {
+    min-width: 100%;
+  }
+
+  .animal-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .educator-section {
+    h3 {
+      font-size: 1.2rem;
+    }
+
+    .educator-entry {
+      input {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+      }
+
+      button {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+      }
+    }
+
+    .educator-list {
+      .educator-and-animals {
+        .educator-item {
+          padding: 10px 16px;
+
+          span {
+            font-size: 0.9rem;
+          }
+
+          .delete-educator-btn svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        .assigned-animals-section {
+          h4 {
+            font-size: 0.95rem;
+          }
+
+          .animal-list {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+      }
+    }
+  }
+
+  .bottom-nav {
+    gap: 10px;
+    padding: 10px;
+
+    .nav-btn {
+      padding: 8px 15px;
+      font-size: 0.9rem;
     }
   }
 }

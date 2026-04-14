@@ -9,8 +9,8 @@ header {
   margin-bottom: 48px;
 
   h1 {
-    font-family: 'Montserrat', sans-serif;
-    color: #1C2B33;
+    font-family: "Montserrat", sans-serif;
+    color: #1c2b33;
     font-size: 48px;
     font-weight: 500;
   }
@@ -27,15 +27,15 @@ main {
   margin-bottom: 32px;
 
   h2 {
-    font-family: 'Montserrat', sans-serif;
-    color: #1C2B33;
+    font-family: "Montserrat", sans-serif;
+    color: #1c2b33;
     font-size: 24px;
     margin-bottom: 16px;
     font-weight: 500;
   }
 
   p {
-    color: #64748B;
+    color: #64748b;
     font-size: 16px;
     line-height: 1.6;
   }
@@ -51,7 +51,7 @@ main {
   gap: 24px;
   padding: 15px;
   background: white;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   z-index: 20;
 }
 
@@ -75,5 +75,31 @@ main {
 
   header h1 {
     font-size: 32px;
+  }
+}
+
+:host-context(html.dark) {
+  header h1,
+  .info-section h2 {
+    color: var(--dark-text);
+  }
+
+  .info-section p {
+    color: var(--dark-text);
+  }
+
+  main {
+    background-color: var(--dark-surface);
+  }
+
+  .bottom-nav {
+    background-color: var(--dark-surface);
+    border-top: 1px solid #3d414a;
+  }
+
+  .nav-btn {
+    background-color: var(--dark-surface);
+    border: 1px solid #3d414a;
+    color: var(--dark-text);
   }
 }

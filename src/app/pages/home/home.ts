@@ -2,8 +2,14 @@ import { Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import { RouterOutlet, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
-interface Animal {
+import {
+  EducatorService,
+  type Educator,
+} from "../../services/educator.service";
+
+export interface Animal {
   id: string;
   name: string;
   svgName: string;
@@ -27,7 +33,7 @@ interface NavButton {
 @Component({
   selector: "app-home",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, RouterOutlet, RouterLink, FormsModule],
   templateUrl: "./home.html",
   styleUrls: ["./home.scss"],
 })
@@ -35,7 +41,6 @@ export class Home implements AfterViewInit {
   trainingMode = false;
   showNavButtons = false;
 
-  // Track which outer button (0-4) is active, null if none
   activeNavIndex: number | null = null;
 
   isAnimating = false;
@@ -55,11 +60,10 @@ export class Home implements AfterViewInit {
     { id: "rhino", name: "Rhino", svgName: "animal-rhino" },
   ];
 
-  // Define categories for each of the 5 outer buttons
   navButtons: NavButton[] = [
     {
       id: 1,
-      label: "Language & Literacy",
+      label: "Language and Literacy",
       icon: "📚",
       items: [
         {
@@ -131,26 +135,121 @@ export class Home implements AfterViewInit {
   ];
 
   selectedAnimalId: string | null = null;
+  educatorInput = "";
+
+  get activeEducator(): Educator | null {
+    return this.educatorService.getActiveEducator();
+  }
+
+  get unassignedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+
+    if (!activeEducator) {
+      return this.animals;
+    }
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => !assignedIds.includes(a.id));
+  }
 
   constructor(
     private router: Router,
     private cdRef: ChangeDetectorRef,
+    public educatorService: EducatorService,
   ) {}
 
   selectAnimal(animalId: string): void {
-    this.selectedAnimalId =
-      this.selectedAnimalId === animalId ? null : animalId;
+    const activeEducator = this.educatorService.getActiveEducator();
+
+    if (!activeEducator) {
+      this.selectedAnimalId =
+        this.selectedAnimalId === animalId ? null : animalId;
+    } else {
+      const isAssigned = this.educatorService
+        .getAssignedAnimals(activeEducator.id)
+        .includes(animalId);
+
+      if (isAssigned) {
+        const currentActive = this.educatorService.getActiveAnimal(
+          activeEducator.id,
+        );
+        if (currentActive === animalId) {
+          this.educatorService.setActiveAnimal(activeEducator.id, null);
+        } else {
+          this.educatorService.setActiveAnimal(activeEducator.id, animalId);
+        }
+      } else {
+        this.educatorService.assignAnimal(animalId);
+        this.educatorService.setActiveAnimal(activeEducator.id, animalId);
+      }
+    }
+
     try {
       localStorage.setItem(
         "tinyStepsSelectedAnimal",
         JSON.stringify({ selected: this.selectedAnimalId }),
       );
     } catch (e) {}
+
+    this.cdRef.detectChanges();
+  }
+
+  confirmRemoveAssignedAnimal(animalId: string, educatorId: string): void {
+    const animal = this.animals.find((a) => a.id === animalId);
+    const educator = this.educatorService
+      .getEducators()
+      .find((e) => e.id === educatorId);
+
+    if (animal && educator) {
+      const confirmed = window.confirm(
+        `Remove ${animal.name} from ${educator.name}?`,
+      );
+
+      if (confirmed) {
+        this.removeAssignedAnimal(animalId, educatorId);
+      }
+    }
+  }
+
+  removeAssignedAnimal(animalId: string, educatorId: string): void {
+    this.educatorService.unassignAnimal(educatorId, animalId);
+
+    try {
+      localStorage.setItem(
+        "tinyStepsSelectedAnimal",
+        JSON.stringify({ selected: this.selectedAnimalId }),
+      );
+    } catch (e) {}
+
     this.cdRef.detectChanges();
   }
 
   getAnimalSelected(animalId: string): boolean {
-    return this.selectedAnimalId === animalId;
+    const activeEducator = this.educatorService.getActiveEducator();
+
+    if (!activeEducator) {
+      return this.selectedAnimalId === animalId;
+    }
+
+    const activeAnimal = this.educatorService.getActiveAnimal(
+      activeEducator.id,
+    );
+    return activeAnimal === animalId || this.selectedAnimalId === animalId;
+  }
+
+  getActiveAnimal(animalId: string): boolean {
+    const activeEducator = this.educatorService.getActiveEducator();
+
+    if (!activeEducator) {
+      return false;
+    }
+
+    const activeAnimal = this.educatorService.getActiveAnimal(
+      activeEducator.id,
+    );
+    return activeAnimal === animalId;
   }
 
   getAnimalName(animalId: string): string {
@@ -158,12 +257,43 @@ export class Home implements AfterViewInit {
     return animal?.name || "Animal";
   }
 
-  get checkedAnimals(): Animal[] {
-    return this.animals.filter((animal) => this.getAnimalSelected(animal.id));
+  addEducator(): void {
+    const result = this.educatorService.addEducator(this.educatorInput);
+    if (result) {
+      this.educatorInput = "";
+    }
+    this.cdRef.detectChanges();
   }
 
-  get uncheckedAnimals(): Animal[] {
-    return this.animals.filter((animal) => !this.getAnimalSelected(animal.id));
+  deleteEducator(id: string): void {
+    this.educatorService.deleteEducator(id);
+  }
+
+  selectEducator(id: string | null): void {
+    const currentActive = this.educatorService.getActiveEducator();
+    if (currentActive?.id === id) {
+      this.educatorService.selectEducator(null);
+    } else {
+      this.educatorService.selectEducator(id);
+    }
+  }
+
+  getActiveEducator(): Educator | null {
+    return this.educatorService.getActiveEducator();
+  }
+
+  isEducatorSelected(id: string): boolean {
+    return this.educatorService.activeEducatorId$() === id;
+  }
+
+  getAssignedAnimals(): Animal[] {
+    const activeEducator = this.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => assignedIds.includes(a.id));
   }
 
   ngOnInit(): void {
@@ -177,12 +307,6 @@ export class Home implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.ngOnInit();
-  }
-
-  shouldShowDeleteButton(): boolean {
-    if (!this.selectedAnimalId) return false;
-    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
-    return !!animal && this.checkedAnimals.includes(animal);
   }
 
   toggleTrainingMode(event: Event) {
@@ -207,20 +331,5 @@ export class Home implements AfterViewInit {
 
   goBack(): void {
     window.history.back();
-  }
-
-  deleteSelectedAnimal(): void {
-    if (!this.selectedAnimalId) return;
-
-    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
-    if (!animal) return;
-
-    const confirmed = confirm(
-      "Are you sure you want to reset " + animal.name + "'s progress?",
-    );
-    if (confirmed) {
-      this.selectedAnimalId = null;
-      localStorage.removeItem("tinyStepsSelectedAnimal");
-    }
   }
 }

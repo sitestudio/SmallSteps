@@ -233,3 +233,49 @@ header {
     transform: scale(1.05);
   }
 }
+
+:host-context(html.dark) {
+  header h1,
+  .back-btn,
+  .settings-panel,
+  .animal-selection h3,
+  .checklist-item .checkbox-wrapper label .checklist-label,
+  .nav-btn {
+    color: var(--dark-text);
+  }
+
+  .checklist-item {
+    background-color: var(--dark-surface);
+    border-bottom-color: #3d414a;
+
+    .checkbox-wrapper input[type="checkbox"] {
+      accent-color: #fbbd41;
+    }
+
+    .checkbox-wrapper label::before {
+      border-color: #6b707c;
+    }
+
+    .checkbox-wrapper input[type="checkbox"]:checked + label::before {
+      background-color: #fbbd41;
+      border-color: #fbbd41;
+    }
+
+    .description p {
+      color: var(--dark-text);
+    }
+  }
+
+  .settings-panel {
+    background-color: var(--dark-surface);
+  }
+
+  .checklist-container,
+  .action-buttons .btn-secondary {
+    background-color: var(--dark-surface);
+  }
+
+  .bottom-nav {
+    background-color: var(--dark-surface);
+  }
+}

@@ -11,7 +11,7 @@
   text-decoration: none;
   margin-bottom: 24px;
   font-size: 14px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .back-link:hover {
@@ -24,7 +24,7 @@ header {
   margin-bottom: 32px;
 
   h1 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 48px;
     color: #fbbd41;
     font-weight: 500;
@@ -50,7 +50,7 @@ header {
   }
 
   .animal-name-display {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     color: #0064e0;
     font-size: 20px;
     margin-top: 12px;
@@ -111,7 +111,7 @@ header {
           transition: all 0.2s ease;
 
           &::after {
-            content: '';
+            content: "";
             position: absolute;
             display: none;
             left: 9px;
@@ -183,7 +183,7 @@ header {
     .btn {
       padding: 14px 32px;
       border-radius: 100px;
-      font-family: 'Montserrat', sans-serif;
+      font-family: "Montserrat", sans-serif;
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -242,7 +242,7 @@ header {
     }
   }
 
-  html.dark & {
+  :host-context(html.dark) {
     .checklist-item {
       background-color: var(--dark-surface);
       border-top-color: #3d414a;
