@@ -32,7 +32,7 @@
             ],
             "styles": ["src/styles.scss"],
             "outputPath": {
-              "base": "docs",
+              "base": "dist/SmallSteps",
               "browser": ""
             }
           },
