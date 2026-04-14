@@ -10,24 +10,63 @@ test.describe('Home Page', () => {
     await expect(page.locator('p').first()).toContainText('Choose a learning adventure');
   });
 
-  test('should display circular navigation menu', async ({ page }) => {
+  test('should display circular navigation menu with 5 outer buttons and center hub', async ({ page }) => {
     const circleContainer = page.locator('.circle-container');
     await expect(circleContainer).toBeVisible();
     
-    // Check that all 6 major nav buttons are visible
-    const navButtons = page.locator('.nav-button');
-    expect(await navButtons.count()).toBe(6);
+    // Check that all 5 outer nav buttons are visible (item-1 through item-5)
+    const outerButtons = page.locator('.nav-item.item-1, .nav-item.item-2, .nav-item.item-3, .nav-item.item-4, .nav-item.item-5');
+    expect(await outerButtons.count()).toBe(5);
+    
+    // Check that center hub is visible
+    const centerHub = page.locator('.nav-item.item-center');
+    await expect(centerHub).toBeVisible();
   });
 
-  test('should display all language & literacy subcategory buttons', async ({ page }) => {
+  test('should display language & literacy subcategory buttons when clicked', async ({ page }) => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
     const subcategoryContainer = page.locator('.subcategory-container');
     await expect(subcategoryContainer).toBeVisible();
     
-    const subbuttons = page.locator('.sub-nav-button');
+    // Categories should be rectangular (not circular)
+    const subbuttons = page.locator('.sub-nav-button-rectangular');
     expect(await subbuttons.count()).toBe(2);
+    
+    // Verify rectangular shape by checking border-radius
+    const borderRadius = await subbuttons.first().evaluate(el => 
+      window.getComputedStyle(el).getPropertyValue('border-radius')
+    );
+    expect(borderRadius).not.toBe('50%'); // Should not be circular
+    
+    // Close by clicking again
+    await langLiteracyBtn.click();
+    await expect(subcategoryContainer).not.toBeVisible();
+  });
+
+  test('should show categories for each of the 5 navigation buttons', async ({ page }) => {
+    const buttonConfigs = [
+      { itemClass: 'item-1', expectedCount: 2, name: 'Language & Literacy' },
+      { itemClass: 'item-2', expectedCount: 1, name: 'Maths & Numbers' },
+      { itemClass: 'item-3', expectedCount: 1, name: 'Social/Emotional' },
+      { itemClass: 'item-4', expectedCount: 1, name: 'Physical' },
+      { itemClass: 'item-5', expectedCount: 1, name: 'Executive Function' },
+    ];
+
+    for (const config of buttonConfigs) {
+      const btn = page.locator(`.nav-item.${config.itemClass} .nav-button`);
+      await btn.click();
+      
+      const subcategoryContainer = page.locator('.subcategory-container');
+      await expect(subcategoryContainer).toBeVisible();
+      
+      const subbuttons = page.locator('.sub-nav-button-rectangular');
+      expect(await subbuttons.count()).toBe(config.expectedCount);
+      
+      // Close
+      await btn.click();
+    }
   });
 
   test('should allow animal selection', async ({ page }) => {

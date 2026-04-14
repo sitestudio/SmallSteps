@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
-import { RouterOutlet, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
+import { Router } from "@angular/router";
+import { RouterOutlet, RouterLink } from "@angular/router";
+import { CommonModule } from "@angular/common";
 
 interface Animal {
   id: string;
@@ -16,59 +16,135 @@ interface SubcategoryItem {
   color: string;
 }
 
+interface NavButton {
+  id: number;
+  label: string;
+  icon: string;
+  route?: string[];
+  items: SubcategoryItem[];
+}
+
 @Component({
-  selector: 'app-home',
+  selector: "app-home",
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink],
-  templateUrl: './home.html',
-  styleUrls: ['./home.scss']
+  templateUrl: "./home.html",
+  styleUrls: ["./home.scss"],
 })
 export class Home implements AfterViewInit {
   trainingMode = false;
   showNavButtons = false;
-  showSubcategories = false;
+
+  // Track which outer button (0-4) is active, null if none
+  activeNavIndex: number | null = null;
+
+  isAnimating = false;
 
   animals: Animal[] = [
-    { id: 'lion', name: 'Lion', svgName: 'animal-lion' },
-    { id: 'tiger', name: 'Tiger', svgName: 'animal-tiger' },
-    { id: 'elephant', name: 'Elephant', svgName: 'animal-elephant' },
-    { id: 'bear', name: 'Bear', svgName: 'animal-bear' },
-    { id: 'zebra', name: 'Zebra', svgName: 'animal-zebra' },
-    { id: 'giraffe', name: 'Giraffe', svgName: 'animal-giraffe' },
-    { id: 'monkey', name: 'Monkey', svgName: 'animal-monkey' },
-    { id: 'kangaroo', name: 'Kangaroo', svgName: 'animal-kangaroo' },
-    { id: 'panda', name: 'Panda', svgName: 'animal-panda' },
-    { id: 'koala', name: 'Koala', svgName: 'animal-koala' },
-    { id: 'hippo', name: 'Hippo', svgName: 'animal-hippo' },
-    { id: 'rhino', name: 'Rhino', svgName: 'animal-rhino' }
+    { id: "lion", name: "Lion", svgName: "animal-lion" },
+    { id: "tiger", name: "Tiger", svgName: "animal-tiger" },
+    { id: "elephant", name: "Elephant", svgName: "animal-elephant" },
+    { id: "bear", name: "Bear", svgName: "animal-bear" },
+    { id: "zebra", name: "Zebra", svgName: "animal-zebra" },
+    { id: "giraffe", name: "Giraffe", svgName: "animal-giraffe" },
+    { id: "monkey", name: "Monkey", svgName: "animal-monkey" },
+    { id: "kangaroo", name: "Kangaroo", svgName: "animal-kangaroo" },
+    { id: "panda", name: "Panda", svgName: "animal-panda" },
+    { id: "koala", name: "Koala", svgName: "animal-koala" },
+    { id: "hippo", name: "Hippo", svgName: "animal-hippo" },
+    { id: "rhino", name: "Rhino", svgName: "animal-rhino" },
   ];
 
-  subcategoryItems: SubcategoryItem[] = [
-    { 
-      id: 'sounds-speech', 
-      label: 'Sounds and speech', 
-      route: ['/sounds-speech/words-and-sentences'],
-      color: '#FF6B6B' 
+  // Define categories for each of the 5 outer buttons
+  navButtons: NavButton[] = [
+    {
+      id: 1,
+      label: "Language & Literacy",
+      icon: "📚",
+      items: [
+        {
+          id: "sounds-speech",
+          label: "Sounds and Speech",
+          route: ["/sounds-speech/words-and-sentences"],
+          color: "#FF6B6B",
+        },
+        {
+          id: "comprehension",
+          label: "Comprehension",
+          route: ["/comprehension"],
+          color: "#4D96FF",
+        },
+      ],
     },
-    { 
-      id: 'comprehension', 
-      label: 'Comprehension', 
-      route: ['/comprehension'],
-      color: '#4D96FF' 
-    }
+    {
+      id: 2,
+      label: "Maths & Numbers",
+      icon: "🔢",
+      items: [
+        {
+          id: "math-basics",
+          label: "Math Basics",
+          route: ["/math-numbers"],
+          color: "#9B59B6",
+        },
+      ],
+    },
+    {
+      id: 3,
+      label: "Social/Emotional",
+      icon: "❤️",
+      items: [
+        {
+          id: "social-emotional",
+          label: "Social/Emotional",
+          route: ["/social-emotional"],
+          color: "#E91E63",
+        },
+      ],
+    },
+    {
+      id: 4,
+      label: "Physical",
+      icon: "🏃",
+      items: [
+        {
+          id: "physical",
+          label: "Physical",
+          route: ["/physical"],
+          color: "#2ECC71",
+        },
+      ],
+    },
+    {
+      id: 5,
+      label: "Executive Function",
+      icon: "🧠",
+      items: [
+        {
+          id: "executive-function",
+          label: "Executive Function",
+          route: ["/executive-function"],
+          color: "#3498DB",
+        },
+      ],
+    },
   ];
 
   selectedAnimalId: string | null = null;
 
   constructor(
     private router: Router,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
   ) {}
 
   selectAnimal(animalId: string): void {
-    this.selectedAnimalId = (this.selectedAnimalId === animalId) ? null : animalId;
+    this.selectedAnimalId =
+      this.selectedAnimalId === animalId ? null : animalId;
     try {
-      localStorage.setItem('tinyStepsSelectedAnimal', JSON.stringify({ selected: this.selectedAnimalId }));
+      localStorage.setItem(
+        "tinyStepsSelectedAnimal",
+        JSON.stringify({ selected: this.selectedAnimalId }),
+      );
     } catch (e) {}
     this.cdRef.detectChanges();
   }
@@ -78,20 +154,20 @@ export class Home implements AfterViewInit {
   }
 
   getAnimalName(animalId: string): string {
-    const animal = this.animals.find(a => a.id === animalId);
-    return animal?.name || 'Animal';
+    const animal = this.animals.find((a) => a.id === animalId);
+    return animal?.name || "Animal";
   }
 
   get checkedAnimals(): Animal[] {
-    return this.animals.filter(animal => this.getAnimalSelected(animal.id));
+    return this.animals.filter((animal) => this.getAnimalSelected(animal.id));
   }
 
   get uncheckedAnimals(): Animal[] {
-    return this.animals.filter(animal => !this.getAnimalSelected(animal.id));
+    return this.animals.filter((animal) => !this.getAnimalSelected(animal.id));
   }
 
   ngOnInit(): void {
-    const saved = localStorage.getItem('tinyStepsSelectedAnimal');
+    const saved = localStorage.getItem("tinyStepsSelectedAnimal");
     if (saved) {
       try {
         this.selectedAnimalId = JSON.parse(saved).selected;
@@ -105,7 +181,7 @@ export class Home implements AfterViewInit {
 
   shouldShowDeleteButton(): boolean {
     if (!this.selectedAnimalId) return false;
-    const animal = this.animals.find(a => a.id === this.selectedAnimalId);
+    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
     return !!animal && this.checkedAnimals.includes(animal);
   }
 
@@ -113,16 +189,20 @@ export class Home implements AfterViewInit {
     this.trainingMode = (event.target as HTMLInputElement).checked;
   }
 
-  toggleLanguageLiteracy(): void {
-    if (this.trainingMode) {
-      this.router.navigate(['/training', 'literacy-first']);
+  toggleNavButton(index: number): void {
+    if (this.activeNavIndex === index) {
+      this.activeNavIndex = null;
     } else {
-      this.showSubcategories = !this.showSubcategories;
+      this.activeNavIndex = index;
     }
   }
 
+  getActiveButton(): NavButton | undefined {
+    return this.navButtons.find((_, i) => i === this.activeNavIndex);
+  }
+
   goHome() {
-    this.router.navigate(['/']);
+    this.router.navigate(["/"]);
   }
 
   goBack(): void {
@@ -131,14 +211,16 @@ export class Home implements AfterViewInit {
 
   deleteSelectedAnimal(): void {
     if (!this.selectedAnimalId) return;
-    
-    const animal = this.animals.find(a => a.id === this.selectedAnimalId);
+
+    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
     if (!animal) return;
-    
-    const confirmed = confirm('Are you sure you want to reset ' + animal.name + "'s progress?");
+
+    const confirmed = confirm(
+      "Are you sure you want to reset " + animal.name + "'s progress?",
+    );
     if (confirmed) {
       this.selectedAnimalId = null;
-      localStorage.removeItem('tinyStepsSelectedAnimal');
+      localStorage.removeItem("tinyStepsSelectedAnimal");
     }
   }
 }

@@ -67,10 +67,20 @@ p {
       display: flex;
       align-items: center;
       justify-content: center;
-    }
 
-    .nav-item.hidden {
-      display: none !important;
+      &.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        display: flex !important;
+      }
+
+      transition:
+        opacity 0.3s ease,
+        visibility 0.3s,
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        top 0.4s ease,
+        left 0.4s ease;
     }
 
     .nav-button {
@@ -90,7 +100,7 @@ p {
       font-size: 1rem;
       font-weight: 600;
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       text-decoration: none;
     }
 
@@ -109,6 +119,7 @@ p {
       font-size: 2rem;
     }
 
+    /* Position outer buttons in a circle */
     .item-1 {
       transform: rotate(0deg) translateY(-180px);
     }
@@ -158,32 +169,48 @@ p {
       background-color: var(--color-play);
     }
 
+    /* Centered button (when active) - moves to center of circle */
+    .nav-item.centered {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(0deg);
+      width: 180px;
+      height: 180px;
+      z-index: 6;
+
+      .nav-button {
+        transform: rotate(0deg);
+        width: 150px;
+        height: 150px;
+      }
+    }
+
+    /* Rectangular subcategory buttons container */
     .subcategory-container {
       position: absolute;
-      top: -80px;
+      top: -120px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       gap: 16px;
       z-index: 10;
 
-      .sub-nav-button {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        padding: 8px 10px;
+      .sub-nav-button-rectangular {
+        min-width: 80px;
+        padding: 12px 24px;
+        border-radius: 8px;
         box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
         font-family: "Fredoka", sans-serif;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         font-weight: 600;
         box-shadow:
           0 12px 28px 0 rgba(0, 0, 0, 0.2),
           0 2px 4px 0 rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         text-decoration: none;
         color: white;
 
