@@ -162,48 +162,85 @@ export class Home implements AfterViewInit {
 
   selectAnimal(animalId: string): void {
     const activeEducator = this.educatorService.getActiveEducator();
-    
+
     if (!activeEducator) {
-      this.selectedAnimalId = this.selectedAnimalId === animalId ? null : animalId;
+      this.selectedAnimalId =
+        this.selectedAnimalId === animalId ? null : animalId;
     } else {
-      const isAssigned = this.educatorService.getAssignedAnimals(activeEducator.id).includes(animalId);
-      
+      const isAssigned = this.educatorService
+        .getAssignedAnimals(activeEducator.id)
+        .includes(animalId);
+
       if (isAssigned) {
         this.educatorService.unassignAnimal(activeEducator.id, animalId);
       } else {
         this.educatorService.assignAnimal(animalId);
       }
     }
-    
+
     try {
       localStorage.setItem(
         "tinyStepsSelectedAnimal",
         JSON.stringify({ selected: this.selectedAnimalId }),
       );
     } catch (e) {}
-    
+
+    this.cdRef.detectChanges();
+  }
+
+  confirmRemoveAssignedAnimal(animalId: string, educatorId: string): void {
+    const animal = this.animals.find((a) => a.id === animalId);
+    const educator = this.educatorService
+      .getEducators()
+      .find((e) => e.id === educatorId);
+
+    if (animal && educator) {
+      const confirmed = window.confirm(
+        `Remove ${animal.name} from ${educator.name}?`,
+      );
+
+      if (confirmed) {
+        this.removeAssignedAnimal(animalId, educatorId);
+      }
+    }
+  }
+
+  removeAssignedAnimal(animalId: string, educatorId: string): void {
+    this.educatorService.unassignAnimal(educatorId, animalId);
+
+    try {
+      localStorage.setItem(
+        "tinyStepsSelectedAnimal",
+        JSON.stringify({ selected: this.selectedAnimalId }),
+      );
+    } catch (e) {}
+
     this.cdRef.detectChanges();
   }
 
   getAnimalSelected(animalId: string): boolean {
     const activeEducator = this.educatorService.getActiveEducator();
-    
+
     if (!activeEducator) {
       return this.selectedAnimalId === animalId;
     }
-    
-    const activeAnimal = this.educatorService.getActiveAnimal(activeEducator.id);
+
+    const activeAnimal = this.educatorService.getActiveAnimal(
+      activeEducator.id,
+    );
     return activeAnimal === animalId || this.selectedAnimalId === animalId;
   }
 
   getActiveAnimal(animalId: string): boolean {
     const activeEducator = this.educatorService.getActiveEducator();
-    
+
     if (!activeEducator) {
       return false;
     }
-    
-    const activeAnimal = this.educatorService.getActiveAnimal(activeEducator.id);
+
+    const activeAnimal = this.educatorService.getActiveAnimal(
+      activeEducator.id,
+    );
     return activeAnimal === animalId;
   }
 

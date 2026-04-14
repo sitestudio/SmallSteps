@@ -193,4 +193,31 @@ describe("Home Component", () => {
     component.toggleNavButton(1);
     expect(component.getActiveButton()?.items.length).toBe(1);
   });
+
+  it("should allow double-click to confirm removal of assigned animal", () => {
+    component.educatorService.addEducator("Test Educator 2");
+    const educators = component.educatorService.getEducators();
+    const educatorId = educators[educators.length - 1].id;
+    
+    component.selectEducator(educatorId);
+
+    // First assign an animal
+    component.selectAnimal("tiger");
+    
+    let assignedAnimals = component.educatorService.getAssignedAnimals(educatorId);
+    expect(assignedAnimals).toContain("tiger");
+
+    // Mock confirm to return true for the removal
+    const originalConfirm = window.confirm;
+    (window as any).confirm = () => true;
+
+    // Double-click should trigger confirmation and remove
+    component.confirmRemoveAssignedAnimal("tiger", educatorId);
+    
+    assignedAnimals = component.educatorService.getAssignedAnimals(educatorId);
+    expect(assignedAnimals).not.toContain("tiger");
+    
+    // Restore original confirm
+    (window as any).confirm = originalConfirm;
+  });
 });
