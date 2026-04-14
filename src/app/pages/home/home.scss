@@ -485,92 +485,99 @@ p {
     flex-direction: column;
     gap: 8px;
 
-    .educator-item {
+    .educator-and-animals {
       display: flex;
+      flex-direction: row;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 24px;
-      border-radius: 8px;
-      background-color: #60a5fa;
-      box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.1),
-        0 2px 4px rgba(0, 0, 0, 0.05);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: "Fredoka", sans-serif;
+      gap: 8px;
 
-      &:hover {
-        transform: scale(1.03);
+      .educator-item {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 3px 8px;
+        width: 25%;
+        max-width: 120px;
+        border-radius: 8px;
+        background-color: #60a5fa;
         box-shadow:
-          0 8px 16px rgba(0, 0, 0, 0.15),
-          0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      &.selected {
-        background-color: #3b82f6;
-        transform: scale(1.03);
-      }
-
-      .delete-educator-btn {
-        background: none;
-        border: none;
+          0 4px 8px rgba(0, 0, 0, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.05);
         cursor: pointer;
-        padding: 2px;
-        opacity: 0.5;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
+        font-family: "Fredoka", sans-serif;
 
         &:hover {
-          opacity: 1;
-          transform: scale(1.1);
+          box-shadow:
+            0 8px 16px rgba(0, 0, 0, 0.15),
+            0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &.selected {
+          background-color: #3b82f6;
+        }
+
+        .delete-educator-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 2px;
+          opacity: 0.5;
+          transition: all 0.2s;
+
+          &:hover {
+            opacity: 1;
+            transform: scale(1.1);
+          }
+        }
+
+        span {
+          flex: 1;
+          color: #2d3748;
+          font-size: 0.95rem;
         }
       }
 
-      span {
+      .assigned-animals-section {
         flex: 1;
-        color: #2d3748;
-        font-size: 0.95rem;
+        min-width: 200px;
+        background-color: #f8fafc;
+        border-radius: 12px;
+
+        h4 {
+          font-family: "Fredoka", sans-serif;
+          color: #2d3748;
+          margin-bottom: 0.75rem;
+          font-size: 1rem;
+        }
+
+        .animal-list {
+          display: flex;
+          gap: 4px;
+
+          @media (max-width: 900px) {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          @media (max-width: 600px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        .animal-item {
+          padding: 2px 4px;
+          border-radius: 6px;
+        }
+
+        .no-assigned-animals {
+          color: #64748b;
+          font-size: 0.9rem;
+          text-align: center;
+          margin: 1rem 0;
+        }
       }
-    }
-  }
-
-  .assigned-animals-section {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background-color: #f8fafc;
-    border-radius: 12px;
-
-    h4 {
-      font-family: "Fredoka", sans-serif;
-      color: #2d3748;
-      margin-bottom: 0.75rem;
-      font-size: 1rem;
-    }
-
-    .animal-list {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-
-      @media (max-width: 900px) {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      @media (max-width: 600px) {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .animal-item {
-      padding: 8px 16px;
-      border-radius: 8px;
-    }
-
-    .no-assigned-animals {
-      color: #64748b;
-      font-size: 0.9rem;
-      text-align: center;
-      margin: 1rem 0;
     }
   }
 }
@@ -621,26 +628,30 @@ p {
       }
     }
 
-    .educator-item {
-      padding: 10px 16px;
+    .educator-list {
+      .educator-and-animals {
+        .educator-item {
+          padding: 10px 16px;
 
-      span {
-        font-size: 0.9rem;
-      }
+          span {
+            font-size: 0.9rem;
+          }
 
-      .delete-educator-btn svg {
-        width: 14px;
-        height: 14px;
-      }
-    }
+          .delete-educator-btn svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
 
-    .assigned-animals-section {
-      h4 {
-        font-size: 0.95rem;
-      }
+        .assigned-animals-section {
+          h4 {
+            font-size: 0.95rem;
+          }
 
-      .animal-list {
-        grid-template-columns: repeat(3, 1fr);
+          .animal-list {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
       }
     }
   }

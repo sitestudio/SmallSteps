@@ -148,32 +148,44 @@ export class Home implements AfterViewInit {
   ) {}
 
   selectAnimal(animalId: string): void {
-    this.selectedAnimalId =
-      this.selectedAnimalId === animalId ? null : animalId;
+    const activeEducator = this.educatorService.getActiveEducator();
+    
+    if (!activeEducator) {
+      this.selectedAnimalId = this.selectedAnimalId === animalId ? null : animalId;
+    } else {
+      const isAssigned = this.educatorService.getAssignedAnimals(activeEducator.id).includes(animalId);
+      
+      if (isAssigned) {
+        this.educatorService.unassignAnimal(activeEducator.id, animalId);
+      } else {
+        this.educatorService.assignAnimal(animalId);
+      }
+    }
+    
     try {
       localStorage.setItem(
         "tinyStepsSelectedAnimal",
         JSON.stringify({ selected: this.selectedAnimalId }),
       );
     } catch (e) {}
+    
     this.cdRef.detectChanges();
   }
 
   getAnimalSelected(animalId: string): boolean {
-    return this.selectedAnimalId === animalId;
+    const activeEducator = this.educatorService.getActiveEducator();
+    
+    if (!activeEducator) {
+      return this.selectedAnimalId === animalId;
+    }
+    
+    const assignedIds = this.educatorService.getAssignedAnimals(activeEducator.id);
+    return assignedIds.includes(animalId) || this.selectedAnimalId === animalId;
   }
 
   getAnimalName(animalId: string): string {
     const animal = this.animals.find((a) => a.id === animalId);
     return animal?.name || "Animal";
-  }
-
-  get checkedAnimals(): Animal[] {
-    return this.animals.filter((animal) => this.getAnimalSelected(animal.id));
-  }
-
-  get uncheckedAnimals(): Animal[] {
-    return this.animals.filter((animal) => !this.getAnimalSelected(animal.id));
   }
 
   addEducator(): void {
@@ -228,12 +240,6 @@ export class Home implements AfterViewInit {
     this.ngOnInit();
   }
 
-  shouldShowDeleteButton(): boolean {
-    if (!this.selectedAnimalId) return false;
-    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
-    return !!animal && this.checkedAnimals.includes(animal);
-  }
-
   toggleTrainingMode(event: Event) {
     this.trainingMode = (event.target as HTMLInputElement).checked;
   }
@@ -256,20 +262,5 @@ export class Home implements AfterViewInit {
 
   goBack(): void {
     window.history.back();
-  }
-
-  deleteSelectedAnimal(): void {
-    if (!this.selectedAnimalId) return;
-
-    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
-    if (!animal) return;
-
-    const confirmed = confirm(
-      "Are you sure you want to reset " + animal.name + "'s progress?",
-    );
-    if (confirmed) {
-      this.selectedAnimalId = null;
-      localStorage.removeItem("tinyStepsSelectedAnimal");
-    }
   }
 }

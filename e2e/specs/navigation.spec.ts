@@ -16,7 +16,6 @@ test.describe('Navigation', () => {
     const trainingModeText = page.locator('.settings-panel span');
     await expect(trainingModeText).toBeVisible();
   });
-});
 
   test('should navigate to sounds & speech page', async ({ page }) => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');

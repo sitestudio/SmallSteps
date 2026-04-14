@@ -109,28 +109,34 @@ export class EducatorService {
     return assignment?.animalIds || [];
   }
 
-  assignAnimal(educatorId: string, animalId: string): void {
+  assignAnimal(animalId: string): boolean {
+    const activeEducatorId = this.activeEducatorId();
+    if (!activeEducatorId) {
+      return false;
+    }
+
     let assignment = this.assignments().find(
-      (a) => a.educatorId === educatorId,
+      (a) => a.educatorId === activeEducatorId,
     );
 
     if (!assignment) {
       assignment = {
-        educatorId,
+        educatorId: activeEducatorId,
         animalIds: [],
       };
       this.assignments.set([...this.assignments(), assignment]);
     } else if (assignment.animalIds.includes(animalId)) {
-      return;
+      return true;
     }
 
     assignment.animalIds.push(animalId);
     this.assignments.set(
       this.assignments().map((a) =>
-        a.educatorId === educatorId ? assignment! : a,
+        a.educatorId === activeEducatorId ? assignment! : a,
       ),
     );
     this.saveToLocalStorage();
+    return true;
   }
 
   unassignAnimal(educatorId: string, animalId: string): void {

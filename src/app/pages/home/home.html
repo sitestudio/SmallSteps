@@ -46,117 +46,76 @@
     </div>
   </div>
 
-  <div class="animal-selection-section">
-    <h3>Choose Your Animal</h3>
+  <div class="educator-section">
+    <h3>Educators</h3>
 
-    <div class="animal-section-header" *ngIf="checkedAnimals.length > 0">
-      Animals You've Started With
+    <div class="active-educator-label" *ngIf="activeEducator">
+      Active Educator: {{ activeEducator.name }}
     </div>
 
-    <div class="checked-animals-wrapper" *ngIf="checkedAnimals.length > 0">
-      <div class="animal-list">
-        @for (animal of checkedAnimals; track animal.id) {
-        <div
-          class="animal-item"
-          [class.selected]="getAnimalSelected(animal.id)"
-          (click)="selectAnimal(animal.id)"
-        >
-          <img
-            [src]="'./icons/' + animal.svgName + '.svg'"
-            [alt]="animal.name"
-            class="animal-icon"
-          />
-          <span class="animal-name">{{ animal.name }}</span>
+    <div class="educator-entry">
+      <input
+        placeholder="Enter educator name"
+        [(ngModel)]="educatorInput"
+        (keydown.enter)="addEducator()"
+      />
+      <button (click)="addEducator()">Save</button>
+      <button
+        (click)="deleteEducator(activeEducator?.id ?? '')"
+        [disabled]="!activeEducator"
+      >
+        Delete
+      </button>
+    </div>
+
+    <div class="educator-list" *ngIf="educatorService.educators$().length > 0">
+      @for (educator of educatorService.educators$(); track educator.id) {
+        <div class="educator-and-animals">
+          <div
+            class="educator-item"
+            [class.selected]="isEducatorSelected(educator.id)"
+            (click)="selectEducator(educator.id); $event.stopPropagation()"
+          >
+            <span>{{ educator.name }}</span>
+            <button
+              class="delete-educator-btn"
+              (click)="deleteEducator(educator.id); $event.stopPropagation()"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path
+                  fill="#64748b"
+                  d="M9 3h6v2h4v2h-1.5l-.833 15.167a2 2 0 0 1-2 2H9.333a2 2 0 0 1-2-2L7.5 7H6V5h4V3zm3 2v2h-2V5h2zm-4 4v12h10V9H8zm3 2c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div
+            class="assigned-animals-section"
+            *ngIf="isEducatorSelected(educator.id)"
+          >
+            <div class="animal-list">
+              @for (animal of getAssignedAnimals(); track animal.id) {
+                <div class="animal-item" (click)="selectAnimal(animal.id)">
+                  <img
+                    [src]="'./icons/' + animal.svgName + '.svg'"
+                    [alt]="animal.name"
+                    class="animal-icon"
+                  />
+                  <span class="animal-name">{{ animal.name }}</span>
+                </div>
+              }
+            </div>
+          </div>
         </div>
-        }
-      </div>
-
-      <button
-        class="delete-btn"
-        *ngIf="shouldShowDeleteButton()"
-        (click)="deleteSelectedAnimal()"
-      >
-        <svg viewBox="0 0 24 24" width="36" height="36">
-          <path
-            fill="#64748b"
-            d="M9 3h6v2h4v2h-1.5l-.833 15.167a2 2 0 0 1-2 2H9.333a2 2 0 0 1-2-2L7.5 7H6V5h4V3zm3 2v2h-2V5h2zm-4 4v12h10V9H8zm3 2c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <div
-      class="separator-line"
-      *ngIf="checkedAnimals.length > 0 && uncheckedAnimals.length > 0"
-    ></div>
-
-    <div class="animal-section-header" *ngIf="uncheckedAnimals.length > 0">
-      Animals to Try
-    </div>
-    <div class="animal-list" *ngIf="uncheckedAnimals.length > 0">
-      @for (animal of uncheckedAnimals; track animal.id) {
-      <div
-        class="animal-item"
-        [class.selected]="getAnimalSelected(animal.id)"
-        (click)="selectAnimal(animal.id)"
-      >
-        <img
-          [src]="'./icons/' + animal.svgName + '.svg'"
-          [alt]="animal.name"
-          class="animal-icon"
-        />
-        <span class="animal-name">{{ animal.name }}</span>
-      </div>
       }
     </div>
   </div>
-</div>
 
-<div class="educator-section">
-  <h3>Educators</h3>
-
-  <div class="active-educator-label" *ngIf="activeEducator">
-    Active Educator: {{ activeEducator.name }}
-  </div>
-
-  <div class="educator-entry">
-    <input
-      placeholder="Enter educator name"
-      [(ngModel)]="educatorInput"
-      (keydown.enter)="addEducator()"
-    />
-    <button (click)="addEducator()">Save</button>
-  </div>
-
-  <div class="educator-list">
-    @for (educator of educatorService.educators$(); track educator.id) {
-    <div
-      class="educator-item"
-      [class.selected]="isEducatorSelected(educator.id)"
-      (click)="selectEducator(educator.id)"
-    >
-      <span>{{ educator.name }}</span>
-      <button
-        class="delete-educator-btn"
-        (click)="deleteEducator(educator.id); $event.stopPropagation()"
-      >
-        <svg viewBox="0 0 24 24" width="16" height="16">
-          <path
-            fill="#64748b"
-            d="M9 3h6v2h4v2h-1.5l-.833 15.167a2 2 0 0 1-2 2H9.333a2 2 0 0 1-2-2L7.5 7H6V5h4V3zm3 2v2h-2V5h2zm-4 4v12h10V9H8zm3 2c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm3 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"
-          />
-        </svg>
-      </button>
-    </div>
-    }
-  </div>
-
-  <div class="assigned-animals-section" *ngIf="activeEducator">
-    <h4>Animals assigned to {{ activeEducator.name }}:</h4>
-
-    @if (getAssignedAnimals().length > 0) {
+  <div class="animal-selection-section">
+    <h3>Animals to Try</h3>
     <div class="animal-list">
-      @for (animal of getAssignedAnimals(); track animal.id) {
+      @for (animal of animals; track animal.id) {
       <div
         class="animal-item"
         [class.selected]="getAnimalSelected(animal.id)"
@@ -171,9 +130,6 @@
       </div>
       }
     </div>
-    } @else {
-    <p class="no-assigned-animals">No animals assigned to this educator yet.</p>
-    }
   </div>
 </div>
 
