@@ -76,22 +76,22 @@ main {
 .nav-btn {
   padding: 10px 25px;
   border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.05);
-  }
 }
 
-@media (max-width: 600px) {
-  .content-wrapper {
-    margin: 16px auto;
-    padding: 16px;
+:host-context(html.dark) {
+  header h1,
+  .back-btn,
+  .info-section h2,
+  .nav-btn {
+    color: var(--dark-text);
   }
 
-  header h1 {
-    font-size: 32px;
+  main,
+  .info-section p {
+    background-color: var(--dark-surface);
+  }
+
+  .bottom-nav {
+    background-color: var(--dark-surface);
   }
 }

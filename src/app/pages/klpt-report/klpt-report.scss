@@ -162,24 +162,34 @@
     margin-bottom: 24px;
   }
 
-  .checklist-item {
-    padding: 24px;
-  }
-
-  .checklist-content {
-    gap: 24px;
-  }
 }
 
-@media print {
-  .bottom-nav,
-  .action-buttons {
-    display: none !important;
+:host-context(html.dark) {
+  .report-header h1,
+  .handwritten-label,
+  .animal-section h2,
+  .checklist-item .item-title,
+  .nav-btn {
+    color: var(--dark-text);
   }
 
-  .report-container {
-    margin: 0 auto;
-    padding: 0;
-    min-height: auto;
+  .handwritten-label,
+  .date-display,
+  .checklist-item .item-description {
+    color: var(--dark-text);
+  }
+
+  .checklist-container,
+  .bottom-nav {
+    background-color: var(--dark-surface);
+  }
+
+  .checklist-item {
+    background-color: var(--dark-surface);
+    border-top-color: #3d414a;
+  }
+
+  .action-buttons .btn-download {
+    background-color: #0064e0;
   }
 }

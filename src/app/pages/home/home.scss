@@ -14,13 +14,12 @@ h1 {
   font-size: 3rem;
   color: #2d3748;
   margin-bottom: 10px;
-  text-shadow: 2px 2px 0px white;
   font-family: "Fredoka", sans-serif;
 }
 
 p {
   font-size: 1.2rem;
-  color: #64748b;
+  color: #5d6c7b;
 }
 
 .main-content {
@@ -164,7 +163,7 @@ p {
     /* Rectangular subcategory buttons container - nested inside nav-item */
     .subcategory-container {
       position: absolute;
-      top: -10px; /* 10px above the centered button */
+      top: -5px; /* moved closer to the centered button */
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -233,24 +232,30 @@ p {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px;
-    border-radius: 12px;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 12px 24px;
+    border-radius: 100px;
+    background-color: #fbbd41;
+    box-shadow:
+      0 8px 15px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: "Fredoka", sans-serif;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: scale(1.05);
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.15),
+        0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     &.selected {
-      background: #4d96ff;
+      background-color: #e0a62b;
+      transform: scale(1.05);
+    }
 
-      .animal-name {
-        color: white;
-      }
+    .animal-name {
+      color: #2d3748;
     }
   }
 
