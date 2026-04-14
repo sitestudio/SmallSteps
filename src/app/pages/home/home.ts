@@ -2,8 +2,14 @@ import { Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import { RouterOutlet, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
-interface Animal {
+import {
+  EducatorService,
+  type Educator,
+} from "../../services/educator.service";
+
+export interface Animal {
   id: string;
   name: string;
   svgName: string;
@@ -27,7 +33,7 @@ interface NavButton {
 @Component({
   selector: "app-home",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, RouterOutlet, RouterLink, FormsModule],
   templateUrl: "./home.html",
   styleUrls: ["./home.scss"],
 })
@@ -35,7 +41,6 @@ export class Home implements AfterViewInit {
   trainingMode = false;
   showNavButtons = false;
 
-  // Track which outer button (0-4) is active, null if none
   activeNavIndex: number | null = null;
 
   isAnimating = false;
@@ -55,7 +60,6 @@ export class Home implements AfterViewInit {
     { id: "rhino", name: "Rhino", svgName: "animal-rhino" },
   ];
 
-  // Define categories for each of the 5 outer buttons
   navButtons: NavButton[] = [
     {
       id: 1,
@@ -131,10 +135,16 @@ export class Home implements AfterViewInit {
   ];
 
   selectedAnimalId: string | null = null;
+  educatorInput = "";
+
+  get activeEducator(): Educator | null {
+    return this.educatorService.getActiveEducator();
+  }
 
   constructor(
     private router: Router,
     private cdRef: ChangeDetectorRef,
+    public educatorService: EducatorService,
   ) {}
 
   selectAnimal(animalId: string): void {
@@ -164,6 +174,45 @@ export class Home implements AfterViewInit {
 
   get uncheckedAnimals(): Animal[] {
     return this.animals.filter((animal) => !this.getAnimalSelected(animal.id));
+  }
+
+  addEducator(): void {
+    const result = this.educatorService.addEducator(this.educatorInput);
+    if (result) {
+      this.educatorInput = "";
+    }
+    this.cdRef.detectChanges();
+  }
+
+  deleteEducator(id: string): void {
+    this.educatorService.deleteEducator(id);
+  }
+
+  selectEducator(id: string | null): void {
+    const currentActive = this.educatorService.getActiveEducator();
+    if (currentActive?.id === id) {
+      this.educatorService.selectEducator(null);
+    } else {
+      this.educatorService.selectEducator(id);
+    }
+  }
+
+  getActiveEducator(): Educator | null {
+    return this.educatorService.getActiveEducator();
+  }
+
+  isEducatorSelected(id: string): boolean {
+    return this.educatorService.activeEducatorId$() === id;
+  }
+
+  getAssignedAnimals(): Animal[] {
+    const activeEducator = this.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => assignedIds.includes(a.id));
   }
 
   ngOnInit(): void {

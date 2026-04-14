@@ -423,3 +423,235 @@ p {
     }
   }
 }
+
+.educator-section {
+  flex: 1;
+  min-width: 280px;
+
+  h3 {
+    font-family: "Fredoka", sans-serif;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .active-educator-label {
+    font-family: "Fredoka", sans-serif;
+    color: #3b82f6;
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .educator-entry {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+
+    input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.95rem;
+
+      &:focus {
+        outline: none;
+        border-color: #60a5fa;
+      }
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #60a5fa;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #3b82f6;
+      }
+    }
+  }
+
+  .educator-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .educator-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      background-color: #60a5fa;
+      box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 2px 4px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: "Fredoka", sans-serif;
+
+      &:hover {
+        transform: scale(1.03);
+        box-shadow:
+          0 8px 16px rgba(0, 0, 0, 0.15),
+          0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      &.selected {
+        background-color: #3b82f6;
+        transform: scale(1.03);
+      }
+
+      .delete-educator-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 2px;
+        opacity: 0.5;
+        transition: all 0.2s;
+
+        &:hover {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+      }
+
+      span {
+        flex: 1;
+        color: #2d3748;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .assigned-animals-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 12px;
+
+    h4 {
+      font-family: "Fredoka", sans-serif;
+      color: #2d3748;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .animal-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+
+      @media (max-width: 900px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @media (max-width: 600px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .animal-item {
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .no-assigned-animals {
+      color: #64748b;
+      font-size: 0.9rem;
+      text-align: center;
+      margin: 1rem 0;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    gap: 1.5rem;
+  }
+
+  .animal-selection-section,
+  .educator-section {
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    gap: 1rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .animal-selection-section,
+  .educator-section {
+    min-width: 100%;
+  }
+
+  .animal-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .educator-section {
+    h3 {
+      font-size: 1.2rem;
+    }
+
+    .educator-entry {
+      input {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+      }
+
+      button {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+      }
+    }
+
+    .educator-item {
+      padding: 10px 16px;
+
+      span {
+        font-size: 0.9rem;
+      }
+
+      .delete-educator-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .assigned-animals-section {
+      h4 {
+        font-size: 0.95rem;
+      }
+
+      .animal-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  }
+
+  .bottom-nav {
+    gap: 10px;
+    padding: 10px;
+
+    .nav-btn {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+    }
+  }
+}
