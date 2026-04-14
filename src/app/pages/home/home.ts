@@ -172,9 +172,17 @@ export class Home implements AfterViewInit {
         .includes(animalId);
 
       if (isAssigned) {
-        this.educatorService.unassignAnimal(activeEducator.id, animalId);
+        const currentActive = this.educatorService.getActiveAnimal(
+          activeEducator.id,
+        );
+        if (currentActive === animalId) {
+          this.educatorService.setActiveAnimal(activeEducator.id, null);
+        } else {
+          this.educatorService.setActiveAnimal(activeEducator.id, animalId);
+        }
       } else {
         this.educatorService.assignAnimal(animalId);
+        this.educatorService.setActiveAnimal(activeEducator.id, animalId);
       }
     }
 

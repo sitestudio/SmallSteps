@@ -116,8 +116,6 @@ export class EducatorService {
     return assignment?.activeAnimalId || null;
   }
 
-
-
   setActiveAnimal(educatorId: string, animalId: string | null): void {
     let assignment = this.assignments().find(
       (a) => a.educatorId === educatorId,
@@ -131,10 +129,10 @@ export class EducatorService {
       };
       this.assignments.set([...this.assignments(), assignment]);
     } else {
-      assignment.activeAnimalId = animalId;
+      const updatedAssignment = { ...assignment, activeAnimalId: animalId };
       this.assignments.set(
         this.assignments().map((a) =>
-          a.educatorId === educatorId ? assignment! : a,
+          a.educatorId === educatorId ? updatedAssignment : a,
         ),
       );
     }

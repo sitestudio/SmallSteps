@@ -110,7 +110,7 @@
               <span class="animal-name">{{ animal.name }}</span>
               <button
                 class="remove-animal-btn"
-                (click)="removeAssignedAnimal(animal.id, educator.id); $event.stopPropagation()"
+                (click)="confirmRemoveAssignedAnimal(animal.id, educator.id); $event.stopPropagation()"
               >
                 <svg viewBox="0 0 24 24" width="16" height="16">
                   <path
