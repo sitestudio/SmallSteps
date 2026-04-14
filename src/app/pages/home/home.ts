@@ -141,6 +141,19 @@ export class Home implements AfterViewInit {
     return this.educatorService.getActiveEducator();
   }
 
+  get unassignedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+
+    if (!activeEducator) {
+      return this.animals;
+    }
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => !assignedIds.includes(a.id));
+  }
+
   constructor(
     private router: Router,
     private cdRef: ChangeDetectorRef,
