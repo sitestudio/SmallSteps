@@ -44,22 +44,6 @@ p {
     align-items: center;
     justify-content: center;
 
-    .center-hub {
-      width: 120px;
-      height: 120px;
-      background: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      z-index: 5;
-      font-weight: 600;
-      text-align: center;
-      font-size: 1.2rem;
-      border: 4px dashed #cbd5e1;
-    }
-
     .nav-item {
       position: absolute;
       width: 160px;
@@ -161,14 +145,6 @@ p {
       background-color: var(--color-exec);
     }
 
-    .item-center {
-      transform: rotate(0deg) translateY(-180px);
-    }
-    .item-center .nav-button {
-      transform: rotate(0deg);
-      background-color: var(--color-play);
-    }
-
     /* Centered button (when active) - moves to center of circle */
     .nav-item.centered {
       top: 50%;
@@ -185,10 +161,10 @@ p {
       }
     }
 
-    /* Rectangular subcategory buttons container */
+    /* Rectangular subcategory buttons container - nested inside nav-item */
     .subcategory-container {
       position: absolute;
-      top: -120px;
+      top: -10px; /* 10px above the centered button */
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -198,7 +174,7 @@ p {
       .sub-nav-button-rectangular {
         min-width: 80px;
         padding: 12px 24px;
-        border-radius: 8px;
+        border-radius: 8px; /* Rounded corners */
         box-sizing: border-box;
         display: flex;
         align-items: center;

@@ -26,7 +26,7 @@ describe("Home Component", () => {
     expect(component.navButtons.length).toBe(5);
   });
 
-  it("should have correct number of subcategories for Language & Literacy", () => {
+  it("should have correct number of subcategories for Language and Literacy", () => {
     const langButton = component.navButtons.find((b) => b.id === 1);
     expect(langButton?.items.length).toBe(2);
   });
@@ -35,7 +35,7 @@ describe("Home Component", () => {
     // Initially no button is active
     expect(component.activeNavIndex).toBeNull();
 
-    // Click button at index 0 (Language & Literacy)
+    // Click button at index 0 (Language and Literacy)
     component.toggleNavButton(0);
     expect(component.activeNavIndex).toBe(0);
 
@@ -65,11 +65,11 @@ describe("Home Component", () => {
     // Activate first button
     component.toggleNavButton(0);
     const active = component.getActiveButton();
-    expect(active?.label).toBe("Language & Literacy");
+    expect(active?.label).toBe("Language and Literacy");
   });
 
   it("should have correct number of subcategories for each button", () => {
-    expect(component.navButtons[0].items.length).toBe(2); // Language & Literacy
+    expect(component.navButtons[0].items.length).toBe(2); // Language and Literacy
     expect(component.navButtons[1].items.length).toBe(1); // Maths & Numbers
     expect(component.navButtons[2].items.length).toBe(1); // Social/Emotional
     expect(component.navButtons[3].items.length).toBe(1); // Physical
@@ -177,7 +177,7 @@ describe("Home Component", () => {
   it("should have correct centered button with matching label", () => {
     component.toggleNavButton(0);
     const active = component.getActiveButton();
-    expect(active?.label).toBe("Language & Literacy");
+    expect(active?.label).toBe("Language and Literacy");
 
     component.toggleNavButton(3);
     const active2 = component.getActiveButton();
@@ -185,7 +185,7 @@ describe("Home Component", () => {
   });
 
   it("should have correct number of items when different buttons are centered", () => {
-    // Language & Literacy has 2 subcategories
+    // Language and Literacy has 2 subcategories
     component.toggleNavButton(0);
     expect(component.getActiveButton()?.items.length).toBe(2);
 

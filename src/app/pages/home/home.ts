@@ -59,7 +59,7 @@ export class Home implements AfterViewInit {
   navButtons: NavButton[] = [
     {
       id: 1,
-      label: "Language & Literacy",
+      label: "Language and Literacy",
       icon: "📚",
       items: [
         {
