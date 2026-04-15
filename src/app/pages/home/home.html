@@ -32,9 +32,10 @@
         <div class="subcategory-container">
           @for (item of button.items; track item.id) {
           <a
-            [routerLink]="item.route"
+            [routerLink]="item.id === 'sounds-speech' ? null : item.route"
             class="sub-nav-button-rectangular"
             [style.backgroundColor]="item.color"
+            (click)="item.id === 'sounds-speech' && openWordsAndSentencesModal()"
           >
             <span>{{ item.label }}</span>
           </a>
@@ -94,33 +95,79 @@
           class="assigned-animals-section"
           *ngIf="isEducatorSelected(educator.id)"
         >
-          <div class="animal-list">
-            @for (animal of getAssignedAnimals(); track animal.id) {
-            <div
-              class="animal-item"
-              [class.active]="getActiveAnimal(animal.id)"
-              (click)="selectAnimal(animal.id)"
-              (dblclick)="confirmRemoveAssignedAnimal(animal.id, educator.id)"
-            >
-              <img
-                [src]="'./icons/' + animal.svgName + '.svg'"
-                [alt]="animal.name"
-                class="animal-icon"
-              />
-              <span class="animal-name">{{ animal.name }}</span>
-              <button
-                class="remove-animal-btn"
-                (click)="confirmRemoveAssignedAnimal(animal.id, educator.id); $event.stopPropagation()"
+          <div class="selected-animals-section">
+            <h4>Selected Animals</h4>
+            <div class="animal-list">
+              @for (animal of getSelectedAnimals(); track animal.id) {
+              <div
+                class="animal-item"
+                [class.active]="getActiveAnimal(animal.id)"
+                (click)="selectAnimal(animal.id)"
+                (dblclick)="confirmRemoveAssignedAnimal(animal.id, educator.id)"
               >
-                <svg viewBox="0 0 24 24" width="16" height="16">
-                  <path
-                    fill="#64748b"
-                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                  />
-                </svg>
-              </button>
+                <input
+                  type="checkbox"
+                  [checked]="true"
+                  (click)="$event.stopPropagation()"
+                />
+                <img
+                  [src]="'./icons/' + animal.svgName + '.svg'"
+                  [alt]="animal.name"
+                  class="animal-icon"
+                />
+                <span class="animal-name">{{ animal.name }}</span>
+                <button
+                  class="remove-animal-btn"
+                  (click)="confirmRemoveAssignedAnimal(animal.id, educator.id); $event.stopPropagation()"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path
+                      fill="#64748b"
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              }
             </div>
-            }
+          </div>
+
+          <div class="unselected-animals-section">
+            <h4>Unselected Animals</h4>
+            <div class="animal-list">
+              @for (animal of getUnselectedAssignedAnimals(); track animal.id) {
+              <div
+                class="animal-item"
+                [class.active]="getActiveAnimal(animal.id)"
+                (click)="selectAnimal(animal.id)"
+                (dblclick)="confirmRemoveAssignedAnimal(animal.id, educator.id)"
+              >
+                <input
+                  type="checkbox"
+                  [checked]="isSelectedAnimal(animal.id)"
+                  (change)="toggleAnimalSelection(animal.id, $event)"
+                  (click)="$event.stopPropagation()"
+                />
+                <img
+                  [src]="'./icons/' + animal.svgName + '.svg'"
+                  [alt]="animal.name"
+                  class="animal-icon"
+                />
+                <span class="animal-name">{{ animal.name }}</span>
+                <button
+                  class="remove-animal-btn"
+                  (click)="confirmRemoveAssignedAnimal(animal.id, educator.id); $event.stopPropagation()"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path
+                      fill="#64748b"
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -154,4 +201,13 @@
   <button (click)="goBack()" class="nav-btn nav-back">← Back</button>
 </nav>
 
+@if (showWordsAndSentencesModal) {
+  <div class="modal-backdrop" (click)="closeWordsAndSentencesModal()">
+    <app-words-and-sentences 
+      [isEmbedded]="true"
+      (generate)="handlePdfNotesGenerate($event)"
+      class="inline-modal"
+    ></app-words-and-sentences>
+  </div>
+}
 <router-outlet></router-outlet>

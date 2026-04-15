@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from "@angular/core";
+import { Component, AfterViewInit, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { RouterOutlet, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
@@ -8,6 +8,9 @@ import {
   EducatorService,
   type Educator,
 } from "../../services/educator.service";
+
+import { WordsAndSentences } from "../sounds-speech/words-and-sentences";
+import { PdfNotesModalComponent } from "../../components/pdf-notes-modal/pdf-notes-modal.component";
 
 export interface Animal {
   id: string;
@@ -33,7 +36,7 @@ interface NavButton {
 @Component({
   selector: "app-home",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, FormsModule],
+  imports: [CommonModule, RouterOutlet, RouterLink, FormsModule, WordsAndSentences],
   templateUrl: "./home.html",
   styleUrls: ["./home.scss"],
 })
@@ -44,6 +47,7 @@ export class Home implements AfterViewInit {
   activeNavIndex: number | null = null;
 
   isAnimating = false;
+  showWordsAndSentencesModal = false;
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -69,7 +73,7 @@ export class Home implements AfterViewInit {
         {
           id: "sounds-speech",
           label: "Sounds and Speech",
-          route: ["/sounds-speech/words-and-sentences"],
+          route: [],
           color: "#FF6B6B",
         },
         {
@@ -139,6 +143,41 @@ export class Home implements AfterViewInit {
 
   get activeEducator(): Educator | null {
     return this.educatorService.getActiveEducator();
+  }
+
+  get assignedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => assignedIds.includes(a.id));
+  }
+
+  getSelectedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => selectedIds.includes(a.id));
+  }
+
+  getUnselectedAssignedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return this.animals.filter(
+      (a) => assignedIds.includes(a.id) && !selectedIds.includes(a.id),
+    );
   }
 
   get unassignedAnimals(): Animal[] {
@@ -252,6 +291,24 @@ export class Home implements AfterViewInit {
     return activeAnimal === animalId;
   }
 
+  isSelectedAnimal(animalId: string): boolean {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return false;
+
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return selectedIds.includes(animalId);
+  }
+
+  toggleAnimalSelection(animalId: string, event: Event): void {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return;
+
+    event.stopPropagation();
+    this.educatorService.toggleAnimalSelection(activeEducator.id, animalId);
+  }
+
   getActiveAnimalName(animalId: string | null): string {
     if (!animalId) return "";
     const animal = this.animals.find((a) => a.id === animalId);
@@ -352,5 +409,17 @@ export class Home implements AfterViewInit {
 
   goBack(): void {
     window.history.back();
+  }
+
+  openWordsAndSentencesModal(): void {
+    this.showWordsAndSentencesModal = true;
+  }
+
+  closeWordsAndSentencesModal(): void {
+    this.showWordsAndSentencesModal = false;
+  }
+
+  handlePdfNotesGenerate(notes: string): void {
+    console.log("PDF Notes generated from inline modal:", notes);
   }
 }

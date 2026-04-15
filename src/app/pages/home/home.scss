@@ -698,3 +698,214 @@ p {
     }
   }
 }
+
+// Inline Modal Styles for Words and Sentences
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+
+  .inline-modal {
+    width: 95%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    // Override words-and-sentences styles for inline display
+    .content-wrapper {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 32px;
+
+      .back-link {
+        font-size: 16px;
+        margin-bottom: 24px;
+      }
+
+      .checklist-section {
+        .action-buttons-center {
+          flex-direction: row;
+          gap: 16px;
+
+          .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+
+            &-primary {
+              background-color: #fbbd41;
+              color: white;
+
+              &:hover {
+                background-color: #e0a62b;
+              }
+            }
+
+            &-secondary {
+              background-color: #f1f4f7;
+              color: #1c2b33;
+
+              &:hover {
+                background-color: #e4eaee;
+              }
+            }
+          }
+        }
+
+        .checklist {
+          margin-top: 24px;
+        }
+      }
+
+      header {
+        text-align: center;
+
+        h1 {
+          font-size: 32px;
+          color: #fbbd41;
+        }
+
+        p {
+          font-size: 14px;
+        }
+      }
+
+      .animal-display {
+        margin-bottom: 24px;
+
+        .selected-animal-icon {
+          width: 100px;
+          height: 100px;
+        }
+
+        .animal-name-display {
+          font-size: 18px;
+          color: #0064e0;
+        }
+      }
+
+      .selected-animals-header {
+        margin-bottom: 24px;
+
+        p {
+          font-size: 13px;
+        }
+      }
+
+      .unselected-animals-header {
+        margin-bottom: 24px;
+      }
+
+      :host-context(html.dark) {
+        .checklist-item {
+          background-color: var(--dark-surface);
+          border-top-color: #3d414a;
+
+          .item-main {
+            .checkbox-container {
+              input:checked ~ .checkmark {
+                background-color: #fbbd41;
+                border-color: #fbbd41;
+              }
+            }
+
+            .checkmark {
+              background-color: var(--dark-surface);
+              border-color: #6b707c;
+            }
+
+            .item-text {
+              color: var(--dark-text);
+
+              &:hover {
+                color: #fbbd41;
+              }
+            }
+
+            .chevron {
+              border-right-color: #9ca3af;
+              border-bottom-color: #9ca3af;
+            }
+          }
+
+          .description {
+            background-color: var(--dark-surface);
+          }
+        }
+
+        header h1 {
+          color: var(--dark-text);
+        }
+
+        p {
+          color: var(--dark-text);
+        }
+
+        .selected-animals-header {
+          background-color: var(--dark-bg-secondary);
+
+          p {
+            color: var(--dark-text-muted);
+          }
+
+          .animal-chip.active {
+            background-color: #fbbd41;
+            color: white;
+          }
+        }
+
+        .unselected-animals-header {
+          p {
+            color: var(--dark-text-muted);
+          }
+        }
+
+        .action-buttons-center {
+          .btn-primary {
+            background-color: #fbbd41;
+
+            &:hover {
+              background-color: #e0a62b;
+            }
+          }
+
+          .btn-secondary {
+            background-color: var(--dark-bg-secondary);
+            border-color: #3d414a;
+            color: var(--dark-text);
+
+            &:hover {
+              background-color: var(--dark-bg-tertiary);
+            }
+          }
+        }
+
+        .vertical-divider {
+          &::after {
+            background-color: #475569;
+          }
+        }
+
+        .back-link {
+          color: var(--dark-text);
+        }
+      }
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

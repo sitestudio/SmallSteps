@@ -1,6 +1,12 @@
 import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import jsPDF from "jspdf";
+
+import {
+  EducatorService,
+  type Educator,
+} from "../../services/educator.service";
 
 interface Animal {
   id: string;
@@ -129,7 +135,10 @@ export class PrintPdf implements OnInit {
     return this.getCheckedItems();
   }
 
-  constructor() {}
+  constructor(
+      private educatorService: EducatorService,
+      private route: ActivatedRoute
+    ) {}
 
   ngOnInit(): void {
     this.getSelectedAnimal();
@@ -151,20 +160,28 @@ export class PrintPdf implements OnInit {
   }
 
   getCheckedItems(): { text: string; description: string }[] {
-    const animalId = this.getSelectedAnimalId();
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
 
-    if (!animalId) return [];
+    const selectedAnimalId = this.getSelectedAnimalId();
+    if (!selectedAnimalId) return [];
 
     try {
-      const saved = localStorage.getItem("tinyStepsAnimalCheckboxes");
+      const saved = localStorage.getItem("tinyStepsEducatorCheckboxes");
       if (saved) {
-        const animalCheckboxes = JSON.parse(saved);
-        const checkboxes = animalCheckboxes[animalId] || [];
+        const checkboxesData = JSON.parse(saved);
+        const educatorCheckboxes = checkboxesData[activeEducator.id] || {};
+        const animalCheckboxes = educatorCheckboxes[selectedAnimalId];
 
-        return this.checklistItems
-          .map((item, index) => ({ ...item, isChecked: checkboxes[index] }))
-          .filter((item) => item.isChecked)
-          .map((item) => ({ text: item.text, description: item.description }));
+        if (!animalCheckboxes || !Array.isArray(animalCheckboxes)) return [];
+
+        const checkedIndices = animalCheckboxes
+          .map((checked: boolean, index: number) => (checked ? index : -1))
+          .filter((i: number) => i !== -1);
+
+        return checkedIndices.map(
+          (index: number) => this.checklistItems[index],
+        );
       }
     } catch (e) {}
 
@@ -193,31 +210,55 @@ export class PrintPdf implements OnInit {
       author: "TinySteps",
     });
 
+    const educator = this.educatorService.getActiveEducator();
+    const selectedAnimalName = this.selectedAnimal?.name || null;
+
+    // Header - Educator and Animal
+    let yPos = 20;
+
+    if (educator) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(30, 64, 175);
+      doc.text(`Educator: ${educator.name}`, 20, yPos);
+      yPos += 12;
+    }
+
+    if (selectedAnimalName) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(30, 64, 175);
+      doc.text(`Animal: ${selectedAnimalName}`, 20, yPos);
+      yPos += 12;
+    }
+
+    // Title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(51, 65, 85);
-    doc.text("KLPT Report", 105, 20, { align: "center" });
+    doc.text("KLPT Report", 105, yPos, { align: "center" });
+    yPos += 20;
 
+    // Date
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.setTextColor(100, 116, 139);
-    doc.text(`Date: ${this.currentDate}`, 105, 32, { align: "center" });
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Name:", 185, 20, { align: "right" });
-    doc.setLineWidth(2);
-    doc.line(130, 24, 185, 24);
+    doc.text(`Date: ${this.currentDate}`, 105, yPos, { align: "center" });
+    yPos += 20;
 
     const checkedItems = this.getCheckedItems();
 
     if (checkedItems.length === 0) {
       doc.setFontSize(14);
       doc.setTextColor(71, 85, 105);
-      doc.text("No checklist items checked", 105, 60, { align: "center" });
+      doc.text(
+        "No checklist items checked for selected animal",
+        105,
+        yPos + 20,
+        { align: "center" },
+      );
     } else {
-      let y = 50;
+      let y = yPos + 30;
       const lineHeight = 12;
 
       doc.setFont("helvetica", "normal");
@@ -247,16 +288,49 @@ export class PrintPdf implements OnInit {
 
         y += lineHeight;
       });
+
+      y += lineHeight * 2.0;
+
+      const savedNotes = this.route.snapshot.queryParamMap.get("notes");
+      let notesText: string | null = null;
+      if (savedNotes) {
+        try {
+          const decodedNotes = decodeURIComponent(savedNotes);
+          notesText = decodedNotes.trim() ? decodedNotes : null;
+        } catch (e) {}
+      }
+      if (notesText && notesText.trim()) {
+            y += lineHeight;
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.setTextColor(51, 65, 85);
+            const notesLabelLines = doc.splitTextToSize("Notes: ", 170);
+            doc.text(notesLabelLines, 20, y);
+            y += lineHeight * 0.8;
+
+            doc.setFont("helvetica", "normal");
+            const notesLines = doc.splitTextToSize(notesText, 170);
+            doc.text(notesLines, 20, y);
+            y += notesLines.length * lineHeight * 0.6;
+
+            if (y > 270) {
+              doc.addPage();
+              y = 20;
+            }
+      }
+
+      doc.setFontSize(10);
+      doc.setTextColor(156, 163, 175);
+      doc.text(
+        "Generated by TinySteps - Kindergarten Learning Toolkit",
+        105,
+        y + lineHeight * 0.5,
+        { align: "center" },
+      );
     }
 
-    doc.setFontSize(10);
-    doc.setTextColor(156, 163, 175);
-    doc.text(
-      "Generated by TinySteps - Kindergarten Learning Toolkit",
-      105,
-      295,
-      { align: "center" },
-    );
+    localStorage.removeItem("tinyStepsPdfNotes");
     doc.save("klpt-print-report.pdf");
   }
 }
