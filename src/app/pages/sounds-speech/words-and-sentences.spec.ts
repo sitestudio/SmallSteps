@@ -186,6 +186,22 @@ describe("WordsAndSentences", () => {
     expect(component.showPdfNotesModal).toBe(false);
   });
 
+
+  it("should have Add PDF Notes button in template", () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const buttons = compiled.querySelectorAll('button');
+    
+    let addButtonFound = false;
+    for (const button of buttons) {
+      if (button.textContent.includes('Add PDF Notes')) {
+        addButtonFound = true;
+        expect(button.textContent.trim()).toBe('Add PDF Notes');
+      }
+    }
+    
+    expect(addButtonFound).toBe(true);
+  });
+
   it("should have isDarkMode method", () => {
     expect(component.isDarkMode).toBeDefined();
     expect(typeof component.isDarkMode).toBe("function");
