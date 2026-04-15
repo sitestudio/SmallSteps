@@ -81,7 +81,7 @@ export class WordsAndSentences implements OnInit {
   ];
 
   expandedItem: string | null = null;
-  selectedAnimal: Animal | null = null;
+  selectedAnimalId: string | null = null;
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -105,54 +105,80 @@ export class WordsAndSentences implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getSelectedAnimal();
+    this.loadSelectedAnimals();
   }
 
-  getSelectedAnimal(): void {
-    // First, try to use the active animal from the assigned educator's state
-    let animalId: string | null = null;
-
+  loadSelectedAnimals(): void {
     const activeEducator = this.educatorService.getActiveEducator();
+
     if (activeEducator) {
-      // Get the active animal from the educator's assignment
-      const activeAnimal = this.educatorService.getActiveAnimal(
+      const selectedIds = this.educatorService.getSelectedAnimalIds(
         activeEducator.id,
       );
-      if (activeAnimal) {
-        animalId = activeAnimal;
-      }
-    }
 
-    // If no active animal from educator, check localStorage for previously selected animal
-    if (!animalId) {
+      if (selectedIds.length > 0) {
+        this.selectedAnimalId = selectedIds[0];
+        this.loadCheckboxesForSelectedAnimal();
+      } else {
+        const activeAnimal = this.educatorService.getActiveAnimal(
+          activeEducator.id,
+        );
+        if (activeAnimal) {
+          this.selectedAnimalId = activeAnimal;
+        }
+      }
+    } else {
       const saved = localStorage.getItem("tinyStepsSelectedAnimal");
       if (saved) {
         try {
-          animalId = JSON.parse(saved).selected;
+          this.selectedAnimalId = JSON.parse(saved).selected;
         } catch (e) {}
       }
     }
 
-    if (animalId) {
-      this.selectedAnimal = this.animals.find((a) => a.id === animalId) || null;
+    if (!this.selectedAnimalId) {
+      this.selectFirstAvailableAnimal();
     }
+  }
 
-    if (!this.selectedAnimal) {
-      const usedAnimals = this.getUsedAnimals();
+  selectFirstAvailableAnimal(): void {
+    const usedAnimals = this.getUsedAnimals();
+    const unusedAnimals = this.animals.filter(
+      (a) => !usedAnimals.includes(a.id),
+    );
 
-      const unusedAnimals = this.animals.filter(
-        (a) => !usedAnimals.includes(a.id),
-      );
-
-      if (unusedAnimals.length > 0) {
-        this.selectedAnimal = unusedAnimals[0];
-      } else {
-        this.selectedAnimal =
-          this.animals[Math.floor(Math.random() * this.animals.length)];
-      }
-
-      this.trackAnimalUse(this.selectedAnimal.id);
+    if (unusedAnimals.length > 0) {
+      this.selectedAnimalId = unusedAnimals[0].id;
+    } else {
+      this.selectedAnimalId =
+        this.animals[Math.floor(Math.random() * this.animals.length)].id;
     }
+    this.trackAnimalUse(this.selectedAnimalId);
+  }
+
+  getSelectedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => selectedIds.includes(a.id));
+  }
+
+  getUnselectedAssignedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return this.animals.filter(
+      (a) => assignedIds.includes(a.id) && !selectedIds.includes(a.id),
+    );
   }
 
   getUsedAnimals(): string[] {
@@ -188,6 +214,81 @@ export class WordsAndSentences implements OnInit {
     localStorage.setItem("tinyStepsAnimalState", JSON.stringify(state));
   }
 
+  selectSingleAnimal(animalId: string): void {
+    const activeEducator = this.educatorService.getActiveEducator();
+
+    if (!activeEducator) {
+      this.selectedAnimalId = animalId;
+      localStorage.setItem(
+        "tinyStepsSelectedAnimal",
+        JSON.stringify({ selected: animalId }),
+      );
+      return;
+    }
+
+    const assignedIds = this.educatorService.getAssignedAnimals(
+      activeEducator.id,
+    );
+
+    if (assignedIds.includes(animalId)) {
+      this.selectedAnimalId = animalId;
+
+      const currentSelectedIds = this.educatorService.getSelectedAnimalIds(
+        activeEducator.id,
+      );
+
+      if (!currentSelectedIds.includes(animalId)) {
+        this.educatorService.toggleAnimalSelection(activeEducator.id, animalId);
+      }
+
+      this.loadCheckboxesForSelectedAnimal();
+    } else {
+      const selectedIds = this.educatorService.getSelectedAnimalIds(
+        activeEducator.id,
+      );
+
+      if (selectedIds.includes(animalId)) {
+        this.educatorService.clearAllSelections(activeEducator.id);
+      }
+    }
+  }
+
+  loadCheckboxesForSelectedAnimal(): void {
+    if (!this.selectedAnimalId) return;
+
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return;
+
+    const animalId = this.selectedAnimalId;
+
+    try {
+      const saved = localStorage.getItem("tinyStepsEducatorCheckboxes");
+      if (saved) {
+        const checkboxesData = JSON.parse(saved);
+
+        const educatorCheckboxes = checkboxesData[activeEducator.id] || {};
+
+        if (!educatorCheckboxes[animalId]) {
+          educatorCheckboxes[animalId] = new Array(7).fill(false);
+          localStorage.setItem(
+            "tinyStepsEducatorCheckboxes",
+            JSON.stringify(checkboxesData),
+          );
+        }
+      } else {
+        const newStructure: any = {
+          [activeEducator.id]: {
+            [animalId]: new Array(7).fill(false),
+          },
+        };
+        localStorage.setItem(
+          "tinyStepsEducatorCheckboxes",
+          JSON.stringify(newStructure),
+        );
+      }
+    } catch (e) {}
+  }
+
   toggleExpand(itemId: string): void {
     if (this.expandedItem === itemId) {
       this.expandedItem = null;
@@ -197,95 +298,70 @@ export class WordsAndSentences implements OnInit {
   }
 
   isItemChecked(itemId: string): boolean {
-    const animalId = this.getSelectedAnimalId();
+    const animalId = this.selectedAnimalId;
 
     if (!animalId) return false;
 
     try {
-      const saved = localStorage.getItem("tinyStepsAnimalCheckboxes");
+      const saved = localStorage.getItem("tinyStepsEducatorCheckboxes");
       if (saved) {
-        const animalCheckboxes = JSON.parse(saved);
-        const itemIndex = parseInt(itemId.replace("item", "")) - 1;
-        return animalCheckboxes[animalId]?.[itemIndex] || false;
+        const checkboxesData = JSON.parse(saved);
+
+        const activeEducator = this.educatorService.getActiveEducator();
+        if (activeEducator) {
+          const educatorCheckboxes = checkboxesData[activeEducator.id] || {};
+          const animalCheckboxes = educatorCheckboxes[animalId];
+
+          if (animalCheckboxes) {
+            const itemIndex = parseInt(itemId.replace("item", "")) - 1;
+            return animalCheckboxes[itemIndex] || false;
+          }
+        }
       }
     } catch (e) {}
 
     return false;
   }
 
-  getSelectedAnimalId(): string | null {
-    let animalId: string | null = null;
-
-    const activeEducator = this.educatorService.getActiveEducator();
-    if (activeEducator) {
-      const activeAnimal = this.educatorService.getActiveAnimal(
-        activeEducator.id,
-      );
-      if (activeAnimal) {
-        animalId = activeAnimal;
-      }
-    }
-
-    if (!animalId) {
-      const saved = localStorage.getItem("tinyStepsSelectedAnimal");
-      if (saved) {
-        try {
-          animalId = JSON.parse(saved).selected;
-        } catch (e) {}
-      }
-    }
-
-    return animalId;
-  }
-
   handleCheck(event: Event, itemId: string): void {
     event.stopPropagation();
 
-    const animalId = this.getSelectedAnimalId();
+    const animalId = this.selectedAnimalId;
     if (!animalId) return;
 
     const checkbox = event.target as HTMLInputElement;
 
-    let animalCheckboxes: { [key: string]: boolean[] } = {};
+    let checkboxesData: any = {};
     try {
-      const saved = localStorage.getItem("tinyStepsAnimalCheckboxes");
+      const saved = localStorage.getItem("tinyStepsEducatorCheckboxes");
       if (saved) {
-        animalCheckboxes = JSON.parse(saved);
+        checkboxesData = JSON.parse(saved);
       }
     } catch (e) {}
 
-    if (!animalCheckboxes[animalId]) {
-      animalCheckboxes[animalId] = new Array(7).fill(false);
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return;
+
+    if (!checkboxesData[activeEducator.id]) {
+      checkboxesData[activeEducator.id] = {};
+    }
+
+    if (!checkboxesData[activeEducator.id][animalId]) {
+      checkboxesData[activeEducator.id][animalId] = new Array(7).fill(false);
     }
 
     const itemIndex = parseInt(itemId.replace("item", "")) - 1;
 
-    animalCheckboxes[animalId][itemIndex] = checkbox.checked;
+    checkboxesData[activeEducator.id][animalId][itemIndex] = checkbox.checked;
 
     localStorage.setItem(
-      "tinyStepsAnimalCheckboxes",
-      JSON.stringify(animalCheckboxes),
+      "tinyStepsEducatorCheckboxes",
+      JSON.stringify(checkboxesData),
     );
-  }
-
-  getSelectedAnimals(): Animal[] {
-    const activeEducator = this.educatorService.getActiveEducator();
-    if (!activeEducator) return [];
-
-    const selectedIds = this.educatorService.getSelectedAnimalIds(
-      activeEducator.id,
-    );
-    return this.animals.filter((a) => selectedIds.includes(a.id));
   }
 
   isAnimalActive(animalId: string): boolean {
-    const activeEducator = this.educatorService.getActiveEducator();
-    if (!activeEducator) return false;
-
-    const activeAnimal = this.educatorService.getActiveAnimal(
-      activeEducator.id,
-    );
-    return activeAnimal === animalId;
+    return this.selectedAnimalId === animalId;
   }
 
   navigateBack(): void {
@@ -317,6 +393,18 @@ export class WordsAndSentences implements OnInit {
     this.themeService.toggleTheme();
   }
 
+  getSelectedAnimalName(): string | null {
+    if (!this.selectedAnimalId) return null;
+    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
+    return animal?.name || null;
+  }
+
+  getSelectedAnimalSvgName(): string | null {
+    if (!this.selectedAnimalId) return null;
+    const animal = this.animals.find((a) => a.id === this.selectedAnimalId);
+    return animal?.svgName || null;
+  }
+
   generatePDF(): void {
     const doc = new jsPDF();
     doc.setProperties({
@@ -325,18 +413,9 @@ export class WordsAndSentences implements OnInit {
       author: "TinySteps",
     });
 
-    // Get active educator
     const educator = this.educatorService.getActiveEducator();
-    const savedAnimal = localStorage.getItem("tinyStepsSelectedAnimal");
-    let selectedAnimalId: string | null = null;
-    if (savedAnimal) {
-      try {
-        selectedAnimalId = JSON.parse(savedAnimal).selected;
-      } catch (e) {}
-    }
-    const activeAnimal = this.animals.find((a) => a.id === selectedAnimalId);
+    const activeAnimalName = this.getSelectedAnimalName();
 
-    // Header: Educator name
     if (educator) {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(16);
@@ -344,29 +423,26 @@ export class WordsAndSentences implements OnInit {
       doc.text(`Educator: ${educator.name}`, 20, 15);
     }
 
-    // Header: Active animal name
-    if (activeAnimal) {
+    if (activeAnimalName) {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(16);
       doc.setTextColor(30, 64, 175);
-      doc.text(`Animal: ${activeAnimal.name}`, 20, 25);
+      doc.text(`Animal: ${activeAnimalName}`, 20, 25);
     }
 
-    // Title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(51, 65, 85);
-    if (educator || activeAnimal) {
+    if (educator || activeAnimalName) {
       doc.text("KLPT Report", 105, 45, { align: "center" });
     } else {
       doc.text("KLPT Report", 105, 20, { align: "center" });
     }
 
-    // Date
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.setTextColor(100, 116, 139);
-    if (educator || activeAnimal) {
+    if (educator || activeAnimalName) {
       doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 57, {
         align: "center",
       });
@@ -377,60 +453,69 @@ export class WordsAndSentences implements OnInit {
     }
 
     const savedState = JSON.parse(
-      localStorage.getItem("tinyStepsAnimalCheckboxes") || "{}",
+      localStorage.getItem("tinyStepsEducatorCheckboxes") || "{}",
     );
 
-    if (Object.keys(savedState).length === 0) {
-      doc.setFontSize(14);
-      doc.setTextColor(71, 85, 105);
-      if (educator || activeAnimal) {
-        doc.text("No animals selected", 105, 85, { align: "center" });
-      } else {
-        doc.text("No animals selected", 105, 60, { align: "center" });
-      }
-    } else {
-      const lineHeight = 14;
-      let y = educator || activeAnimal ? 75 : 50;
+    const activeEducator = this.educatorService.getActiveEducator();
 
-      Object.entries(savedState).forEach(([animalId, checkboxes]) => {
-        const animal = this.animals.find((a) => a.id === animalId);
-        const animalName = animal?.name || "Animal";
-        const checkedIndices = (checkboxes as boolean[])
-          .map((checked, index) => (checked ? index : -1))
-          .filter((i) => i !== -1);
+    if (activeEducator) {
+      const educatorCheckboxes = savedState[activeEducator.id] || {};
 
-        if (checkedIndices.length > 0) {
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(14);
-          doc.setTextColor(51, 65, 85);
-          doc.text(animalName!, 105, y, { align: "center" });
-          y += lineHeight * 1.5;
-
-          checkedIndices.forEach((index) => {
-            const item = this.checklistItems[index];
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(11);
-            doc.setTextColor(51, 65, 85);
-            doc.text(item.text, 20, y);
-            y += lineHeight * 0.8;
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.setTextColor(75, 85, 99);
-            const descriptionLines = doc.splitTextToSize(item.description, 170);
-            doc.text(descriptionLines, 20, y);
-            y += descriptionLines.length * lineHeight * 0.8 + lineHeight;
-
-            if (y > 270) {
-              doc.addPage();
-              y = 20;
-            }
-          });
-
-          y += lineHeight * 0.5;
+      if (Object.keys(educatorCheckboxes).length === 0) {
+        doc.setFontSize(14);
+        doc.setTextColor(71, 85, 105);
+        if (educator || activeAnimalName) {
+          doc.text("No animals selected", 105, 85, { align: "center" });
+        } else {
+          doc.text("No animals selected", 105, 60, { align: "center" });
         }
-      });
+      } else {
+        const lineHeight = 14;
+        let y = educator || activeAnimalName ? 75 : 50;
+
+        Object.entries(educatorCheckboxes).forEach(([animalId, checkboxes]) => {
+          const animal = this.animals.find((a) => a.id === animalId);
+          const animalName = animal?.name || "Animal";
+          const checkedIndices = (checkboxes as boolean[])
+            .map((checked, index) => (checked ? index : -1))
+            .filter((i) => i !== -1);
+
+          if (checkedIndices.length > 0) {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.setTextColor(51, 65, 85);
+            doc.text(animalName!, 105, y, { align: "center" });
+            y += lineHeight * 1.5;
+
+            checkedIndices.forEach((index) => {
+              const item = this.checklistItems[index];
+
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(11);
+              doc.setTextColor(51, 65, 85);
+              doc.text(item.text, 20, y);
+              y += lineHeight * 0.8;
+
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              doc.setTextColor(75, 85, 99);
+              const descriptionLines = doc.splitTextToSize(
+                item.description,
+                170,
+              );
+              doc.text(descriptionLines, 20, y);
+              y += descriptionLines.length * lineHeight * 0.8 + lineHeight;
+
+              if (y > 270) {
+                doc.addPage();
+                y = 20;
+              }
+            });
+
+            y += lineHeight * 0.5;
+          }
+        });
+      }
     }
 
     doc.setFontSize(10);
@@ -438,7 +523,7 @@ export class WordsAndSentences implements OnInit {
     doc.text(
       "Generated by TinySteps - Kindergarten Learning Toolkit",
       105,
-      educator || activeAnimal ? 285 : 305,
+      educator || activeAnimalName ? 285 : 305,
       { align: "center" },
     );
     doc.save("words-and-sentences-checked-items.pdf");

@@ -55,6 +55,45 @@ export class EducatorService {
     }
   }
 
+  setSelectedAnimalIds(educatorId: string, animalIds: string[]): void {
+    let assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+
+    if (!assignment) {
+      assignment = {
+        educatorId: educatorId,
+        animalIds: [],
+        activeAnimalId: null,
+        selectedAnimalIds: animalIds,
+      };
+      this.assignments.set([...this.assignments(), assignment]);
+    } else {
+      const updatedAssignment = { ...assignment, selectedAnimalIds: animalIds };
+      this.assignments.set(
+        this.assignments().map((a) =>
+          a.educatorId === educatorId ? updatedAssignment : a,
+        ),
+      );
+    }
+    this.saveToLocalStorage();
+  }
+
+  clearAllSelections(educatorId: string): void {
+    const assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+    if (!assignment) return;
+
+    const updatedAssignment = { ...assignment, selectedAnimalIds: [] };
+    this.assignments.set(
+      this.assignments().map((a) =>
+        a.educatorId === educatorId ? updatedAssignment : a,
+      ),
+    );
+    this.saveToLocalStorage();
+  }
+
   private saveToLocalStorage(): void {
     try {
       const data = {

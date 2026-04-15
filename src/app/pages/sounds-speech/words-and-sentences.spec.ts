@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { WordsAndSentences } from "./words-and-sentences";
+import { EducatorService } from "../../services/educator.service";
 
 describe("WordsAndSentences", () => {
   let component: WordsAndSentences;
@@ -29,9 +30,9 @@ describe("WordsAndSentences", () => {
         onchange: null,
         addListener: () => {},
         removeListener: () => {},
+        dispatchEvent: () => false,
         addEventListener: () => {},
         removeEventListener: () => {},
-        dispatchEvent: () => false,
       }),
     });
 
@@ -69,7 +70,7 @@ describe("WordsAndSentences", () => {
     });
   });
 
-  it("should initialize with no expanded item", () => {
+  it("should have initialized with no expanded item", () => {
     expect(component.expandedItem).toBeNull();
   });
 
@@ -98,7 +99,7 @@ describe("WordsAndSentences", () => {
   it("should have lion animal with correct svgName", () => {
     const lion = component.animals.find((a) => a.id === "lion");
     expect(lion).toBeDefined();
-    if ( lion) {
+    if (lion) {
       expect(lion.id).toBe("lion");
       expect(lion.name).toBe("Lion");
       expect(lion.svgName).toBe("animal-lion");
@@ -127,5 +128,99 @@ describe("WordsAndSentences", () => {
   it("should have isDarkMode method", () => {
     expect(component.isDarkMode).toBeDefined();
     expect(typeof component.isDarkMode).toBe("function");
+  });
+
+  describe("Multi-select animal management", () => {
+    it("should return selected animals from service when educator is active", () => {
+      const service = TestBed.inject(EducatorService);
+      service.addEducator("Test Educator");
+      const educators = service.getEducators();
+      service.selectEducator(educators[0].id);
+
+      component.selectedAnimalId = "lion";
+      const selectedAnimals = component.getSelectedAnimals();
+
+      expect(selectedAnimals.length).toBe(0);
+    });
+
+    it("should return empty when no educator is selected", () => {
+      component.selectedAnimalId = "tiger";
+
+      const selectedAnimals = component.getSelectedAnimals();
+      expect(selectedAnimals.length).toBe(0);
+    });
+
+    it("should get animal name correctly", () => {
+      component.selectedAnimalId = "lion";
+      expect(component.getSelectedAnimalName()).toBe("Lion");
+    });
+
+    it("should get selected animal SVG name", () => {
+      component.selectedAnimalId = "tiger";
+      expect(component.getSelectedAnimalSvgName()).toBe("animal-tiger");
+    });
+  });
+
+  describe("Checkbox persistence", () => {
+    const mockLocalStorageCheckboxes = (() => {
+      let store: Record<string, string> = {};
+      return {
+        getItem: (key: string): string | null => store[key] || null,
+        setItem: (key: string, value: string): void => {
+          store[key] = value;
+        },
+        removeItem: (key: string): void => {
+          delete store[key];
+        },
+        clear: (): void => {
+          store = {};
+        },
+      };
+    })();
+
+    beforeEach(() => {
+      Object.defineProperty(window, "localStorage", {
+        value: mockLocalStorageCheckboxes,
+        writable: true,
+      });
+    });
+
+    it("should load checkboxes for selected animal", () => {
+      const service = TestBed.inject(EducatorService);
+      service.addEducator("Checkbox Test Educator");
+      const educators = service.getEducators();
+      service.selectEducator(educators[0].id);
+
+      component.selectedAnimalId = "lion";
+
+      expect(component.isItemChecked("item1")).toBe(false);
+    });
+
+    it("should save checkbox state", () => {
+      component.selectedAnimalId = "tiger";
+
+      const event = {
+        stopPropagation: () => {},
+        target: { checked: true },
+      } as unknown as Event;
+      component.handleCheck(event, "item1");
+
+      expect(component.isItemChecked("item1")).toBe(true);
+    });
+  });
+
+  describe("Animal state tracking", () => {
+    it("should track animal usage", () => {
+      component.trackAnimalUse("zebra");
+
+      const used = component.getUsedAnimals();
+      expect(used).toContain("zebra");
+    });
+
+    it("should select first available unused animal", () => {
+      component.selectFirstAvailableAnimal();
+
+      expect(component.selectedAnimalId).not.toBeNull();
+    });
   });
 });

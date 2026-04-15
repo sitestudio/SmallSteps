@@ -3,21 +3,42 @@
     >← Back to Sounds and Speech</a
   >
 
-  @if (selectedAnimal) {
+  @if (getSelectedAnimalSvgName()) {
   <div class="animal-display">
     <img
-      [src]="'./icons/' + selectedAnimal.svgName + '.svg'"
-      [alt]="selectedAnimal.name"
+      [src]="'./icons/' + getSelectedAnimalSvgName() + '.svg'"
+      [alt]="getSelectedAnimalName()"
       class="selected-animal-icon"
     />
-    <p class="animal-name-display">Playing with {{ selectedAnimal.name }}!</p>
+    <p class="animal-name-display">
+      Playing with {{ getSelectedAnimalName() }}!
+    </p>
   </div>
   } @if (getSelectedAnimals().length > 0) {
   <div class="selected-animals-header">
     <p>Selected Animals:</p>
     <div class="animal-chips">
       @for (animal of getSelectedAnimals(); track animal.id) {
-      <span class="animal-chip" [class.active]="isAnimalActive(animal.id)">
+      <span
+        class="animal-chip"
+        [class.active]="isAnimalActive(animal.id)"
+        (click)="selectSingleAnimal(animal.id); $event.stopPropagation()"
+      >
+        {{ animal.name }}
+      </span>
+      }
+    </div>
+  </div>
+  } @if (getUnselectedAssignedAnimals().length > 0) {
+  <div class="unselected-animals-header">
+    <p>Assigned (Unselected):</p>
+    <div class="animal-chips">
+      @for (animal of getUnselectedAssignedAnimals(); track animal.id) {
+      <span
+        class="animal-chip"
+        [class.active]="isAnimalActive(animal.id)"
+        (click)="selectSingleAnimal(animal.id); $event.stopPropagation()"
+      >
         {{ animal.name }}
       </span>
       }
