@@ -111,16 +111,18 @@ export class WordsAndSentences implements OnInit {
   getSelectedAnimal(): void {
     // First, try to use the active animal from the assigned educator's state
     let animalId: string | null = null;
-    
+
     const activeEducator = this.educatorService.getActiveEducator();
     if (activeEducator) {
       // Get the active animal from the educator's assignment
-      const activeAnimal = this.educatorService.getActiveAnimal(activeEducator.id);
+      const activeAnimal = this.educatorService.getActiveAnimal(
+        activeEducator.id,
+      );
       if (activeAnimal) {
         animalId = activeAnimal;
       }
     }
-    
+
     // If no active animal from educator, check localStorage for previously selected animal
     if (!animalId) {
       const saved = localStorage.getItem("tinyStepsSelectedAnimal");
@@ -212,23 +214,28 @@ export class WordsAndSentences implements OnInit {
   }
 
   getSelectedAnimalId(): string | null {
-    // First, try to use the active animal from the assigned educator's state
+    let animalId: string | null = null;
+
     const activeEducator = this.educatorService.getActiveEducator();
     if (activeEducator) {
-      const activeAnimal = this.educatorService.getActiveAnimal(activeEducator.id);
+      const activeAnimal = this.educatorService.getActiveAnimal(
+        activeEducator.id,
+      );
       if (activeAnimal) {
-        return activeAnimal;
+        animalId = activeAnimal;
       }
     }
 
-    // Fallback to localStorage
-    const saved = localStorage.getItem("tinyStepsSelectedAnimal");
-    if (saved) {
-      try {
-        return JSON.parse(saved).selected;
-      } catch (e) {}
+    if (!animalId) {
+      const saved = localStorage.getItem("tinyStepsSelectedAnimal");
+      if (saved) {
+        try {
+          animalId = JSON.parse(saved).selected;
+        } catch (e) {}
+      }
     }
-    return null;
+
+    return animalId;
   }
 
   handleCheck(event: Event, itemId: string): void {
@@ -259,6 +266,26 @@ export class WordsAndSentences implements OnInit {
       "tinyStepsAnimalCheckboxes",
       JSON.stringify(animalCheckboxes),
     );
+  }
+
+  getSelectedAnimals(): Animal[] {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
+
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return this.animals.filter((a) => selectedIds.includes(a.id));
+  }
+
+  isAnimalActive(animalId: string): boolean {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return false;
+
+    const activeAnimal = this.educatorService.getActiveAnimal(
+      activeEducator.id,
+    );
+    return activeAnimal === animalId;
   }
 
   navigateBack(): void {

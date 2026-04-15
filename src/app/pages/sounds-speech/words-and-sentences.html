@@ -1,15 +1,28 @@
 <div class="content-wrapper">
-  <a routerLink="/sounds-speech" class="back-link">← Back to Sounds and Speech</a>
+  <a routerLink="/sounds-speech" class="back-link"
+    >← Back to Sounds and Speech</a
+  >
 
   @if (selectedAnimal) {
-    <div class="animal-display">
-      <img
-        [src]="'./icons/' + selectedAnimal.svgName + '.svg'"
-        [alt]="selectedAnimal.name"
-        class="selected-animal-icon"
-      />
-      <p class="animal-name-display">Playing with {{ selectedAnimal.name }}!</p>
+  <div class="animal-display">
+    <img
+      [src]="'./icons/' + selectedAnimal.svgName + '.svg'"
+      [alt]="selectedAnimal.name"
+      class="selected-animal-icon"
+    />
+    <p class="animal-name-display">Playing with {{ selectedAnimal.name }}!</p>
+  </div>
+  } @if (getSelectedAnimals().length > 0) {
+  <div class="selected-animals-header">
+    <p>Selected Animals:</p>
+    <div class="animal-chips">
+      @for (animal of getSelectedAnimals(); track animal.id) {
+      <span class="animal-chip" [class.active]="isAnimalActive(animal.id)">
+        {{ animal.name }}
+      </span>
+      }
     </div>
+  </div>
   }
 
   <header>
@@ -20,31 +33,33 @@
   <section class="checklist-section">
     <ul class="checklist">
       @for (item of checklistItems; track item.id) {
-        <li class="checklist-item" [class.expanded]="expandedItem === item.id">
-          <div class="item-main">
-            <label class="checkbox-container">
-              <input
-                type="checkbox"
-                [checked]="isItemChecked(item.id)"
-                (click)="handleCheck($event, item.id)"
-              />
-              <span class="checkmark"></span>
-            </label>
-            <div class="item-text" (click)="toggleExpand(item.id)">
-              {{ item.text }}
-              <span class="chevron"></span>
-            </div>
+      <li class="checklist-item" [class.expanded]="expandedItem === item.id">
+        <div class="item-main">
+          <label class="checkbox-container">
+            <input
+              type="checkbox"
+              [checked]="isItemChecked(item.id)"
+              (click)="handleCheck($event, item.id)"
+            />
+            <span class="checkmark"></span>
+          </label>
+          <div class="item-text" (click)="toggleExpand(item.id)">
+            {{ item.text }}
+            <span class="chevron"></span>
           </div>
-          <div class="description">
-            <div class="description-content">{{ item.description }}</div>
-          </div>
-        </li>
+        </div>
+        <div class="description">
+          <div class="description-content">{{ item.description }}</div>
+        </div>
+      </li>
       }
     </ul>
 
     <div class="action-buttons-center">
       <button (click)="navigateBack()" class="btn btn-primary">← Back</button>
-      <button (click)="generatePDF()" class="btn btn-primary">Generate PDF</button>
+      <button (click)="generatePDF()" class="btn btn-primary">
+        Generate PDF
+      </button>
       <button (click)="navigateToHome()" class="btn btn-primary">Home →</button>
     </div>
   </section>

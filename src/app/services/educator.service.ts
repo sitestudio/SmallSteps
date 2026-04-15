@@ -9,6 +9,7 @@ export interface EducatorAssignment {
   educatorId: string;
   animalIds: string[];
   activeAnimalId: string | null;
+  selectedAnimalIds: string[];
 }
 
 const EDUCATORS_STORAGE_KEY = "tinyStepsEducators";
@@ -20,6 +21,7 @@ export class EducatorService {
   private educators = signal<Educator[]>([]);
   private activeEducatorId = signal<string | null>(null);
   private assignments = signal<EducatorAssignment[]>([]);
+  private readonly CHECKBOX_STORAGE_KEY = "tinyStepsEducatorCheckboxes";
 
   educators$ = this.educators.asReadonly();
   activeEducatorId$ = this.activeEducatorId.asReadonly();
@@ -27,6 +29,30 @@ export class EducatorService {
 
   constructor() {
     this.loadFromLocalStorage();
+    this.migrateCheckboxStorage();
+  }
+
+  private migrateCheckboxStorage(): void {
+    const oldData = localStorage.getItem("tinyStepsAnimalCheckboxes");
+    if (oldData && !localStorage.getItem(this.CHECKBOX_STORAGE_KEY)) {
+      try {
+        const oldCheckboxes = JSON.parse(oldData);
+        const activeEducator = this.getActiveEducator();
+
+        if (activeEducator) {
+          const newStructure: any = {};
+          newStructure[activeEducator.id] = oldCheckboxes;
+          localStorage.setItem(
+            this.CHECKBOX_STORAGE_KEY,
+            JSON.stringify(newStructure),
+          );
+        }
+
+        localStorage.removeItem("tinyStepsAnimalCheckboxes");
+      } catch (e) {
+        console.warn("Checkbox migration failed:", e);
+      }
+    }
   }
 
   private saveToLocalStorage(): void {
@@ -45,9 +71,17 @@ export class EducatorService {
       const saved = localStorage.getItem(EDUCATORS_STORAGE_KEY);
       if (saved) {
         const data = JSON.parse(saved);
+
+        const assignmentsWithDefault = (data.assignments || []).map(
+          (a: any) => ({
+            ...a,
+            selectedAnimalIds: a.selectedAnimalIds || a.animalIds || [],
+          }),
+        );
+
         this.educators.set(data.educators || []);
         this.activeEducatorId.set(data.activeEducatorId || null);
-        this.assignments.set(data.assignments || []);
+        this.assignments.set(assignmentsWithDefault);
       }
     } catch (e) {}
   }
@@ -89,6 +123,7 @@ export class EducatorService {
       this.activeEducatorId.set(null);
     }
 
+    localStorage.removeItem(EDUCATORS_STORAGE_KEY);
     this.saveToLocalStorage();
   }
 
@@ -116,6 +151,67 @@ export class EducatorService {
     return assignment?.activeAnimalId || null;
   }
 
+  getSelectedAnimalIds(educatorId: string): string[] {
+    const assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+    return assignment?.selectedAnimalIds || [];
+  }
+
+  setSelectedAnimals(educatorId: string, animalIds: string[]): void {
+    let assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+
+    if (!assignment) {
+      assignment = {
+        educatorId: educatorId,
+        animalIds: [],
+        activeAnimalId: null,
+        selectedAnimalIds: animalIds,
+      };
+      this.assignments.set([...this.assignments(), assignment]);
+    } else {
+      const updatedAssignment = { ...assignment, selectedAnimalIds: animalIds };
+      this.assignments.set(
+        this.assignments().map((a) =>
+          a.educatorId === educatorId ? updatedAssignment : a,
+        ),
+      );
+    }
+    this.saveToLocalStorage();
+  }
+
+  toggleAnimalSelection(educatorId: string, animalId: string): void {
+    const assignment = this.assignments().find(
+      (a) => a.educatorId === educatorId,
+    );
+
+    if (!assignment) return;
+
+    const isSelected = assignment.selectedAnimalIds.includes(animalId);
+    let updatedSelectedIds: string[];
+
+    if (isSelected) {
+      updatedSelectedIds = assignment.selectedAnimalIds.filter(
+        (id) => id !== animalId,
+      );
+    } else {
+      updatedSelectedIds = [...assignment.selectedAnimalIds, animalId];
+    }
+
+    const updatedAssignment = {
+      ...assignment,
+      selectedAnimalIds: updatedSelectedIds,
+    };
+    this.assignments.set(
+      this.assignments().map((a) =>
+        a.educatorId === educatorId ? updatedAssignment : a,
+      ),
+    );
+    this.saveToLocalStorage();
+  }
+
   setActiveAnimal(educatorId: string, animalId: string | null): void {
     let assignment = this.assignments().find(
       (a) => a.educatorId === educatorId,
@@ -126,6 +222,7 @@ export class EducatorService {
         educatorId: educatorId,
         animalIds: [],
         activeAnimalId: animalId,
+        selectedAnimalIds: [],
       };
       this.assignments.set([...this.assignments(), assignment]);
     } else {
@@ -154,6 +251,7 @@ export class EducatorService {
         educatorId: activeEducatorId,
         animalIds: [],
         activeAnimalId: null,
+        selectedAnimalIds: [animalId],
       };
       this.assignments.set([...this.assignments(), assignment]);
     } else if (assignment.animalIds.includes(animalId)) {
@@ -191,6 +289,13 @@ export class EducatorService {
       if (updatedAssignment.activeAnimalId === animalId) {
         updatedAssignment.activeAnimalId = null;
       }
+
+      const isSelected = updatedAssignment.selectedAnimalIds.includes(animalId);
+      let updatedSelectedIds = updatedAssignment.selectedAnimalIds;
+      if (isSelected) {
+        updatedSelectedIds = updatedSelectedIds.filter((id) => id !== animalId);
+      }
+      updatedAssignment.selectedAnimalIds = updatedSelectedIds;
       this.assignments.set(
         this.assignments().map((a) =>
           a.educatorId === educatorId ? updatedAssignment : a,

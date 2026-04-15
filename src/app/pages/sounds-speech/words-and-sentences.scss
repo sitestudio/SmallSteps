@@ -58,6 +58,44 @@ header {
   }
 }
 
+.selected-animals-header {
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  p {
+    font-family: "Montserrat", sans-serif;
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .animal-chips {
+    display: flex;
+    gap: 8px;
+  }
+
+  .animal-chip {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #e2e8f0;
+    color: #475569;
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    &.active {
+      background-color: #fbbd41;
+      color: white;
+    }
+  }
+}
+
 .checklist-section {
   text-align: center;
 

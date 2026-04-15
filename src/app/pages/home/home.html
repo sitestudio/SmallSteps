@@ -102,6 +102,12 @@
               (click)="selectAnimal(animal.id)"
               (dblclick)="confirmRemoveAssignedAnimal(animal.id, educator.id)"
             >
+              <input
+                type="checkbox"
+                [checked]="isSelectedAnimal(animal.id)"
+                (change)="toggleAnimalSelection(animal.id, $event)"
+                (click)="$event.stopPropagation()"
+              />
               <img
                 [src]="'./icons/' + animal.svgName + '.svg'"
                 [alt]="animal.name"

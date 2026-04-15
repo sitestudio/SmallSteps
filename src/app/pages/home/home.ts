@@ -252,6 +252,24 @@ export class Home implements AfterViewInit {
     return activeAnimal === animalId;
   }
 
+  isSelectedAnimal(animalId: string): boolean {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return false;
+
+    const selectedIds = this.educatorService.getSelectedAnimalIds(
+      activeEducator.id,
+    );
+    return selectedIds.includes(animalId);
+  }
+
+  toggleAnimalSelection(animalId: string, event: Event): void {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return;
+
+    event.stopPropagation();
+    this.educatorService.toggleAnimalSelection(activeEducator.id, animalId);
+  }
+
   getActiveAnimalName(animalId: string | null): string {
     if (!animalId) return "";
     const animal = this.animals.find((a) => a.id === animalId);
