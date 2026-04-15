@@ -81,41 +81,11 @@
 
     <div class="action-buttons-center">
       <button (click)="navigateBack()" class="btn btn-primary">← Back</button>
-      <button (click)="openPdfNotesModal()" class="btn btn-primary">
-        Add PDF Notes
-      </button>
       <button (click)="generatePDF()" class="btn btn-primary">
         Generate PDF
       </button>
       <button (click)="navigateToHome()" class="btn btn-primary">Home →</button>
     </div>
-
-    @if (isPdfNotesModalOpen) {
-    <div class="modal-backdrop" (click)="closePdfNotesModal()">
-      <div class="pdf-notes-modal" (click)="$event.stopPropagation()">
-        <h3>Add PDF Notes</h3>
-        <textarea
-          [(ngModel)]="pdfNotesText"
-          placeholder="Enter notes to include at the bottom of the PDF..."
-          rows="6"
-        ></textarea>
-        <div class="modal-buttons">
-          <button (click)="closePdfNotesModal()" class="btn btn-secondary">
-            Back
-          </button>
-          <button
-            (click)="generatePDF(); closePdfNotesModal()"
-            class="btn btn-primary"
-          >
-            Generate PDF
-          </button>
-          <button (click)="navigateToHome()" class="btn btn-primary">
-            Home
-          </button>
-        </div>
-      </div>
-    </div>
-    }
   </section>
 </div>
 

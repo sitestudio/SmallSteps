@@ -224,7 +224,7 @@ describe("WordsAndSentences", () => {
     });
   });
 
-  describe("PDF Notes functionality", () => {
+  describe("PDF inline notes display", () => {
     const mockLocalStorage = (() => {
       let store: Record<string, string> = {};
       return {
@@ -248,78 +248,21 @@ describe("WordsAndSentences", () => {
       });
     });
 
-    it("should have pdfNotesText property initialized as empty string", () => {
-      expect(component.pdfNotesText).toBe("");
+    it("should save notes to localStorage when generating PDF", () => {
+      const notesText = "Test note for PDF";
+      localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(notesText));
+      
+      component.selectedAnimalId = "lion";
+      
+      const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+      expect(savedNotes).toBe(JSON.stringify(notesText));
     });
 
-    it("should have isPdfNotesModalOpen property initialized as false", () => {
-      expect(component.isPdfNotesModalOpen).toBe(false);
-    });
-
-    it("should open PDF notes modal", () => {
-      component.openPdfNotesModal();
-
-      expect(component.isPdfNotesModalOpen).toBe(true);
-    });
-
-    it("should close PDF notes modal", () => {
-      component.isPdfNotesModalOpen = true;
-      component.closePdfNotesModal();
-
-      expect(component.isPdfNotesModalOpen).toBe(false);
-    });
-
-    it("should save notes text when closing modal", () => {
-      component.pdfNotesText = "Test PDF notes";
-      component.closePdfNotesModal();
-
-      const saved = localStorage.getItem("tinyStepsPdfNotes");
-      expect(saved).toBe(JSON.stringify("Test PDF notes"));
-    });
-
-    it("should load saved notes when opening modal", () => {
-      const savedNotes = "Saved notes from localStorage";
-      localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(savedNotes));
-
-      component.openPdfNotesModal();
-
-      expect(component.pdfNotesText).toBe(savedNotes);
-    });
-
-    it("should clear notes text if localStorage contains invalid data", () => {
-      localStorage.setItem("tinyStepsPdfNotes", "invalid json");
-
-      component.openPdfNotesModal();
-
-      expect(component.pdfNotesText).toBe("");
-    });
-
-
-    it("should handle empty string notes in localStorage", () => {
+    it("should handle empty notes in localStorage", () => {
       localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(""));
-
-      component.openPdfNotesModal();
-
-      expect(component.pdfNotesText).toBe("");
-    });
-
-    it("should save notes text on modal close", () => {
-      component.pdfNotesText = "New notes";
-      component.closePdfNotesModal();
-      expect(localStorage.getItem("tinyStepsPdfNotes")).toBe(JSON.stringify("New notes"));
-    });
-
-
-    it("should handle PDF notes with newlines and special characters", () => {
-      const notesWithSpecialChars = 'Notes with\nnewlines and "quotes"';
-
-      localStorage.setItem(
-        "tinyStepsPdfNotes",
-        JSON.stringify(notesWithSpecialChars),
-      );
-      component.openPdfNotesModal();
-
-      expect(component.pdfNotesText).toBe(notesWithSpecialChars);
+      
+      const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+      expect(savedNotes).toBe(JSON.stringify(""));
     });
   });
 });

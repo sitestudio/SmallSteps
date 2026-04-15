@@ -84,9 +84,6 @@ export class WordsAndSentences implements OnInit {
   expandedItem: string | null = null;
   selectedAnimalId: string | null = null;
 
-  pdfNotesText: string = "";
-  isPdfNotesModalOpen: boolean = false;
-
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
     { id: "tiger", name: "Tiger", svgName: "animal-tiger" },
@@ -561,6 +558,35 @@ export class WordsAndSentences implements OnInit {
               }
             });
 
+            y += lineHeight * 2.0;
+
+            const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+            if (savedNotes) {
+              try {
+                const notesText = JSON.parse(savedNotes);
+                if (notesText && notesText.trim()) {
+                  y += lineHeight * 0.5;
+
+                  doc.setFont("helvetica", "bold");
+                  doc.setFontSize(10);
+                  doc.setTextColor(51, 65, 85);
+                  const notesLabelLines = doc.splitTextToSize("Notes: ", 170);
+                  doc.text(notesLabelLines, 20, y);
+                  y += lineHeight * 0.8;
+
+                  doc.setFont("helvetica", "normal");
+                  const notesLines = doc.splitTextToSize(notesText, 170);
+                  doc.text(notesLines, 20, y);
+                  y += notesLines.length * lineHeight * 0.6;
+
+                  if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                  }
+                }
+              } catch (e) {}
+            }
+
             y += lineHeight * 0.5;
           }
         }
@@ -575,43 +601,8 @@ export class WordsAndSentences implements OnInit {
       educator || activeAnimalName ? 285 : 305,
       { align: "center" },
     );
-    // Add PDF notes if available
-    const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
-    if (savedNotes) {
-      try {
-        const notesText = JSON.parse(savedNotes);
-        if (notesText && notesText.trim()) {
-          doc.setFont("helvetica", "italic");
-          doc.setFontSize(10);
-          doc.setTextColor(75, 85, 99);
-          const notesLines = doc.splitTextToSize(notesText, 170);
-          let yPos = educator || activeAnimalName ? 285 : 305;
-          doc.text(notesLines, 20, yPos + 10);
-        }
-      } catch (e) {}
-    }
 
     doc.save("words-and-sentences-checked-items.pdf");
-  }
-
-  openPdfNotesModal(): void {
-    // Load saved notes from localStorage
-    const saved = localStorage.getItem("tinyStepsPdfNotes");
-    if (saved) {
-      try {
-        this.pdfNotesText = JSON.parse(saved);
-      } catch (e) {}
-    }
-    this.isPdfNotesModalOpen = true;
-  }
-
-  closePdfNotesModal(): void {
-    // Save notes to localStorage
-    localStorage.setItem(
-      "tinyStepsPdfNotes",
-      JSON.stringify(this.pdfNotesText),
-    );
-    this.isPdfNotesModalOpen = false;
   }
 
   printPage(): void {
