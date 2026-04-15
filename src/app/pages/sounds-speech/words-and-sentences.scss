@@ -94,6 +94,21 @@ header {
       color: white;
     }
   }
+
+  .vertical-divider {
+    height: 4px;
+    width: 100%;
+    margin-top: 24px;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 2px;
+      height: 30px;
+      margin: -15px auto 0;
+      background-color: #cbd5e1;
+    }
+  }
 }
 
 .checklist-section {
@@ -363,6 +378,43 @@ header {
         }
       }
     }
+
+    .vertical-divider {
+      &::after {
+        background-color: #475569;
+      }
+    }
+
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .pdf-notes-modal {
+      background-color: var(--dark-surface);
+
+      h3 {
+        color: var(--dark-text);
+      }
+
+      textarea {
+        background-color: var(--dark-input-bg, #3d414a);
+        border-color: #6b707c;
+        color: var(--dark-text);
+
+        &:focus {
+          border-color: #fbbd41;
+        }
+      }
+
+      .modal-buttons .btn-secondary {
+        background-color: var(--dark-input-bg, #3d414a);
+        color: var(--dark-text);
+
+        &:hover {
+          background-color: #475569;
+        }
+      }
+    }
   }
 
   @media (max-width: 600px) {
@@ -397,6 +449,87 @@ header {
     .nav-btn,
     .animal-display {
       display: none !important;
+    }
+  }
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .pdf-notes-modal {
+    background-color: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+    h3 {
+      font-family: "Montserrat", sans-serif;
+      color: #1c2b33;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: #fbbd41;
+      }
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+
+      .btn {
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+
+        &-primary {
+          background-color: #fbbd41;
+          color: white;
+
+          &:hover {
+            background-color: #e0a62b;
+          }
+        }
+
+        &-secondary {
+          background-color: #f1f4f7;
+          color: #1c2b33;
+
+          &:hover {
+            background-color: #e4eaee;
+          }
+        }
+      }
     }
   }
 }

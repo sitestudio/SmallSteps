@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet } from "@angular/router";
 import { ThemeService } from "../../services/theme.service";
@@ -30,7 +31,7 @@ interface AnimalState {
 @Component({
   selector: "app-words-and-sentences",
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, FormsModule, RouterOutlet],
   templateUrl: "./words-and-sentences.html",
   styleUrls: ["./words-and-sentences.scss"],
 })
@@ -83,6 +84,9 @@ export class WordsAndSentences implements OnInit {
   expandedItem: string | null = null;
   selectedAnimalId: string | null = null;
 
+  pdfNotesText: string = "";
+  isPdfNotesModalOpen: boolean = false;
+
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
     { id: "tiger", name: "Tiger", svgName: "animal-tiger" },
@@ -117,6 +121,7 @@ export class WordsAndSentences implements OnInit {
       );
 
       if (selectedIds.length > 0) {
+        // Always select first animal from selected list (leftmost)
         this.selectedAnimalId = selectedIds[0];
         this.loadCheckboxesForSelectedAnimal();
       } else {
@@ -526,7 +531,40 @@ export class WordsAndSentences implements OnInit {
       educator || activeAnimalName ? 285 : 305,
       { align: "center" },
     );
-    doc.save("words-and-sentences-checked-items.pdf");
+        // Add PDF notes if available
+    const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+    if (savedNotes) {
+      try {
+        const notesText = JSON.parse(savedNotes);
+        if (notesText && notesText.trim()) {
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(10);
+          doc.setTextColor(75, 85, 99);
+          const notesLines = doc.splitTextToSize(notesText, 170);
+          let yPos = educator || activeAnimalName ? 285 : 305;
+          doc.text(notesLines, 20, yPos + 10);
+        }
+      } catch (e) {}
+    }
+
+doc.save("words-and-sentences-checked-items.pdf");
+  }
+
+  openPdfNotesModal(): void {
+    // Load saved notes from localStorage
+    const saved = localStorage.getItem("tinyStepsPdfNotes");
+    if (saved) {
+      try {
+        this.pdfNotesText = JSON.parse(saved);
+      } catch (e) {}
+    }
+    this.isPdfNotesModalOpen = true;
+  }
+
+  closePdfNotesModal(): void {
+    // Save notes to localStorage
+    localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(this.pdfNotesText));
+    this.isPdfNotesModalOpen = false;
   }
 
   printPage(): void {
