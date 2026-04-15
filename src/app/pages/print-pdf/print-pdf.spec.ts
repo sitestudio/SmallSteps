@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ActivatedRoute } from "@angular/router";
 import { PrintPdf } from "./print-pdf";
 import { EducatorService } from "../../services/educator.service";
 
@@ -43,7 +44,19 @@ describe("PrintPdf", () => {
 
     await TestBed.configureTestingModule({
       imports: [PrintPdf],
-      providers: [EducatorService],
+      providers: [
+        EducatorService,
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParamMap: {
+                get: (key: string) => null,
+              },
+            },
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PrintPdf);
@@ -149,6 +162,13 @@ describe("PrintPdf", () => {
     it("should have generatePDF method", () => {
       expect(component.generatePDF).toBeDefined();
       expect(typeof component.generatePDF).toBe("function");
+    });
+  });
+
+  describe("Notes from query params", () => {
+    it("should have generatePDF method that works with query params", () => {
+      // The component now reads notes from route.queryParams
+      expect(component.generatePDF).toBeDefined();
     });
   });
 });

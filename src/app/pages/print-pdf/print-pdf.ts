@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import jsPDF from "jspdf";
 
@@ -134,7 +135,10 @@ export class PrintPdf implements OnInit {
     return this.getCheckedItems();
   }
 
-  constructor(private educatorService: EducatorService) {}
+  constructor(
+      private educatorService: EducatorService,
+      private route: ActivatedRoute
+    ) {}
 
   ngOnInit(): void {
     this.getSelectedAnimal();
@@ -287,11 +291,15 @@ export class PrintPdf implements OnInit {
 
       y += lineHeight * 2.0;
 
-      const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+      const savedNotes = this.route.snapshot.queryParamMap.get("notes");
+      let notesText: string | null = null;
       if (savedNotes) {
         try {
-          const notesText = JSON.parse(savedNotes);
-          if (notesText && notesText.trim()) {
+          const decodedNotes = decodeURIComponent(savedNotes);
+          notesText = decodedNotes.trim() ? decodedNotes : null;
+        } catch (e) {}
+      }
+      if (notesText && notesText.trim()) {
             y += lineHeight;
 
             doc.setFont("helvetica", "bold");
@@ -310,8 +318,6 @@ export class PrintPdf implements OnInit {
               doc.addPage();
               y = 20;
             }
-          }
-        } catch (e) {}
       }
 
       doc.setFontSize(10);

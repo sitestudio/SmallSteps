@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { Router, RouterOutlet } from "@angular/router";
+import { Router, RouterOutlet, ActivatedRoute } from "@angular/router";
 import { ThemeService } from "../../services/theme.service";
 import jsPDF from "jspdf";
 
@@ -9,6 +9,8 @@ import {
   EducatorService,
   type Educator,
 } from "../../services/educator.service";
+
+import { PdfNotesModalComponent } from "../../components/pdf-notes-modal/pdf-notes-modal.component";
 
 interface Animal {
   id: string;
@@ -31,7 +33,7 @@ interface AnimalState {
 @Component({
   selector: "app-words-and-sentences",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet],
+  imports: [CommonModule, FormsModule, RouterOutlet, PdfNotesModalComponent],
   templateUrl: "./words-and-sentences.html",
   styleUrls: ["./words-and-sentences.scss"],
 })
@@ -83,6 +85,8 @@ export class WordsAndSentences implements OnInit {
 
   expandedItem: string | null = null;
   selectedAnimalId: string | null = null;
+  showPdfNotesModal = false;
+  pdfNotes = "";
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -101,12 +105,26 @@ export class WordsAndSentences implements OnInit {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private themeService: ThemeService,
     public educatorService: EducatorService,
   ) {}
 
   ngOnInit(): void {
     this.loadSelectedAnimals();
+    this.checkForNotesFromRoute();
+  }
+
+  checkForNotesFromRoute(): void {
+    const notes = this.route.snapshot.queryParamMap.get("notes");
+    if (notes) {
+      try {
+        const decodedNotes = decodeURIComponent(notes);
+        if (decodedNotes && decodedNotes.trim()) {
+          this.pdfNotes = decodedNotes;
+        }
+      } catch (e) {}
+    }
   }
 
   loadSelectedAnimals(): void {
@@ -407,14 +425,30 @@ export class WordsAndSentences implements OnInit {
     return animal?.svgName || null;
   }
 
-  openPdfNotes(): void {
-    const notes = prompt("Enter PDF notes (optional):", "");
-    if (notes !== null) {
-      localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(notes));
+  openPdfNotesModal(): void {
+    this.showPdfNotesModal = true;
+  }
+
+  handlePdfNotesGenerate(notes: string): void {
+    this.pdfNotes = notes;
+    this.showPdfNotesModal = false;
+    
+    // Navigate to print-pdf page with notes as query param
+    if (notes && notes.trim()) {
+      const encodedNotes = encodeURIComponent(notes);
+      this.router.navigate(['/print-pdf'], { queryParams: { notes: encodedNotes } });
+    } else {
+      // Navigate without notes if empty
+      this.router.navigate(['/print-pdf']);
     }
   }
 
-  generatePDF(): void {
+  handlePdfNotesClose(): void {
+    this.showPdfNotesModal = false;
+    this.pdfNotes = "";
+  }
+
+  generatePDF(notesOverride?: string): void {
     const doc = new jsPDF();
     doc.setProperties({
       title: "KLPT Report",
@@ -567,31 +601,26 @@ export class WordsAndSentences implements OnInit {
 
             y += lineHeight * 2.0;
 
-            const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
-            if (savedNotes) {
-              try {
-                const notesText = JSON.parse(savedNotes);
-                if (notesText && notesText.trim()) {
-                  y += lineHeight * 0.5;
+            const notesText = notesOverride || this.pdfNotes;
+            if (notesText && notesText.trim()) {
+              y += lineHeight * 0.5;
 
-                  doc.setFont("helvetica", "bold");
-                  doc.setFontSize(10);
-                  doc.setTextColor(51, 65, 85);
-                  const notesLabelLines = doc.splitTextToSize("Notes: ", 170);
-                  doc.text(notesLabelLines, 20, y);
-                  y += lineHeight * 0.8;
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.setTextColor(51, 65, 85);
+              const notesLabelLines = doc.splitTextToSize("Notes: ", 170);
+              doc.text(notesLabelLines, 20, y);
+              y += lineHeight * 0.8;
 
-                  doc.setFont("helvetica", "normal");
-                  const notesLines = doc.splitTextToSize(notesText, 170);
-                  doc.text(notesLines, 20, y);
-                  y += notesLines.length * lineHeight * 0.6;
+              doc.setFont("helvetica", "normal");
+              const notesLines = doc.splitTextToSize(notesText, 170);
+              doc.text(notesLines, 20, y);
+              y += notesLines.length * lineHeight * 0.6;
 
-                  if (y > 270) {
-                    doc.addPage();
-                    y = 20;
-                  }
-                }
-              } catch (e) {}
+              if (y > 270) {
+                doc.addPage();
+                y = 20;
+              }
             }
 
             y += lineHeight * 0.5;

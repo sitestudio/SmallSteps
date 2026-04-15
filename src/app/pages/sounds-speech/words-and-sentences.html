@@ -81,7 +81,6 @@
 
     <div class="action-buttons-center">
       <button (click)="navigateBack()" class="btn btn-primary">← Back</button>
-      <button (click)="openPdfNotes()" class="btn btn-primary">PDF Notes</button>
       <button (click)="generatePDF()" class="btn btn-primary">
         Generate PDF
       </button>
@@ -89,5 +88,11 @@
     </div>
   </section>
 </div>
+
+  <app-pdf-notes-modal
+    *ngIf="showPdfNotesModal"
+    (generate)="handlePdfNotesGenerate($event)"
+    (close)="handlePdfNotesClose()"
+  ></app-pdf-notes-modal>
 
 <router-outlet></router-outlet>
