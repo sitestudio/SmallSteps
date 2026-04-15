@@ -252,6 +252,12 @@ export class Home implements AfterViewInit {
     return activeAnimal === animalId;
   }
 
+  getActiveAnimalName(animalId: string | null): string {
+    if (!animalId) return "";
+    const animal = this.animals.find((a) => a.id === animalId);
+    return animal?.name || "";
+  }
+
   getAnimalName(animalId: string): string {
     const animal = this.animals.find((a) => a.id === animalId);
     return animal?.name || "Animal";
@@ -280,6 +286,21 @@ export class Home implements AfterViewInit {
 
   getActiveEducator(): Educator | null {
     return this.educatorService.getActiveEducator();
+  }
+
+  getActiveEducatorDisplayName(): string {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return "";
+
+    const activeAnimalId = this.educatorService.getActiveAnimal(
+      activeEducator.id,
+    );
+    const activeAnimalName = this.getActiveAnimalName(activeAnimalId);
+
+    if (activeAnimalName) {
+      return `${activeEducator.name}, ${activeAnimalName}`;
+    }
+    return activeEducator.name;
   }
 
   isEducatorSelected(id: string): boolean {

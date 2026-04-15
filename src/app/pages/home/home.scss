@@ -570,6 +570,15 @@ p {
           background-color: #e5e7eb;
           padding: 2px 4px;
           border-radius: 6px;
+
+          &.active {
+            background-color: #fef3c7;
+            border: 2px solid #facc15;
+
+            &:hover {
+              background-color: #fde68a;
+            }
+          }
         }
         .remove-animal-btn {
           background: none;

@@ -493,4 +493,80 @@ describe("Home Component", () => {
       expect(service2.getActiveEducator()?.id).toBe(educatorId);
     });
   });
+
+  describe("Active Educator Display Name", () => {
+    it("should return educator name only when no animal is assigned", () => {
+      component.educatorService.addEducator("Dr. Smith");
+      const educators = component.educatorService.getEducators();
+      const educatorId = educators[educators.length - 1].id;
+
+      component.selectEducator(educatorId);
+
+      const displayName = component.getActiveEducatorDisplayName();
+      expect(displayName).toBe("Dr. Smith");
+    });
+
+    it("should return educator name with animal when active", () => {
+      component.educatorService.addEducator("Ms. Johnson");
+      const educators = component.educatorService.getEducators();
+      const educatorId = educators[educators.length - 1].id;
+
+      component.selectEducator(educatorId);
+      component.selectAnimal("lion");
+
+      const displayName = component.getActiveEducatorDisplayName();
+      expect(displayName).toBe("Ms. Johnson, Lion");
+    });
+
+    it("should show correct format with different animals", () => {
+      component.educatorService.addEducator("Mr. Williams");
+      const educators = component.educatorService.getEducators();
+      const educatorId = educators[educators.length - 1].id;
+
+      component.selectEducator(educatorId);
+      component.selectAnimal("tiger");
+
+      const displayName = component.getActiveEducatorDisplayName();
+      expect(displayName).toBe("Mr. Williams, Tiger");
+    });
+
+    it("should return empty string when no educator selected", () => {
+      component.selectEducator(null);
+      const displayName = component.getActiveEducatorDisplayName();
+      expect(displayName).toBe("");
+    });
+  });
+
+  describe("Active Animal Background Color Highlighting", () => {
+    it("should return true when animal is active for educator", () => {
+      component.educatorService.addEducator("Test Educator");
+      const educators = component.educatorService.getEducators();
+      const educatorId = educators[educators.length - 1].id;
+
+      component.selectEducator(educatorId);
+      component.selectAnimal("zebra");
+
+      const isActive = component.getActiveAnimal("zebra");
+      expect(isActive).toBe(true);
+    });
+
+    it("should return false when animal is not active", () => {
+      component.educatorService.addEducator("Test Educator 2");
+      const educators = component.educatorService.getEducators();
+      const educatorId = educators[educators.length - 1].id;
+
+      component.selectEducator(educatorId);
+      component.selectAnimal("giraffe");
+      component.selectAnimal("giraffe");
+
+      const isActive = component.getActiveAnimal("giraffe");
+      expect(isActive).toBe(false);
+    });
+
+    it("should return false when no educator selected", () => {
+      component.selectEducator(null);
+      const isActive = component.getActiveAnimal("monkey");
+      expect(isActive).toBe(false);
+    });
+  });
 });
