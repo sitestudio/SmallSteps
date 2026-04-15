@@ -32,9 +32,10 @@
         <div class="subcategory-container">
           @for (item of button.items; track item.id) {
           <a
-            [routerLink]="item.route"
+            [routerLink]="item.id === 'sounds-speech' ? null : item.route"
             class="sub-nav-button-rectangular"
             [style.backgroundColor]="item.color"
+            (click)="item.id === 'sounds-speech' && openWordsAndSentencesModal()"
           >
             <span>{{ item.label }}</span>
           </a>
@@ -200,4 +201,13 @@
   <button (click)="goBack()" class="nav-btn nav-back">← Back</button>
 </nav>
 
+@if (showWordsAndSentencesModal) {
+  <div class="modal-backdrop" (click)="closeWordsAndSentencesModal()">
+    <app-words-and-sentences 
+      [isEmbedded]="true"
+      (generate)="handlePdfNotesGenerate($event)"
+      class="inline-modal"
+    ></app-words-and-sentences>
+  </div>
+}
 <router-outlet></router-outlet>

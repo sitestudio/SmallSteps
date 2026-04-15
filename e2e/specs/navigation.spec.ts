@@ -17,17 +17,26 @@ test.describe('Navigation', () => {
     await expect(trainingModeText).toBeVisible();
   });
 
-  test('should navigate to sounds & speech page', async ({ page }) => {
+  test('should open words and sentences modal when clicking Sounds and Speech', async ({ page }) => {
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
     const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
+    // The modal should be visible inline, not a separate route
+    await page.waitForSelector('.modal-backdrop', { timeout: 5000 });
+    
+    // Verify modal backdrop is visible
+    const backdrop = page.locator('.modal-backdrop');
+    await expect(backdrop).toBeVisible();
+    
+    // Verify words-and-sentences content is inside modal
     await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
     
+    // URL should still be home (hash route)
     const url = page.url();
-    expect(url).toContain('sounds-speech/words-and-sentences');
+    expect(url).toContain('/home');
   });
 
   test('should navigate to comprehension page', async ({ page }) => {
@@ -43,7 +52,7 @@ test.describe('Navigation', () => {
     expect(url).toContain('comprehension');
   });
 
-  test('back button works from sounds & speech', async ({ page }) => {
+  test('close button closes words and sentences modal', async ({ page }) => {
     // Navigate to sounds & speech
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
@@ -51,31 +60,33 @@ test.describe('Navigation', () => {
     const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
-    await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
+    await page.waitForSelector('.modal-backdrop', { timeout: 5000 });
     
-    // Click back
-    const backBtn = page.locator('.nav-back');
-    await backBtn.click();
+    // Click close on modal backdrop to close it
+    await page.locator('.modal-backdrop').click();
     
-    // Should return to home
+    // Modal should be closed, modal-backdrop should not exist
+    await expect(page.locator('.modal-backdrop')).not.toBeVisible();
+    
+    // Should still be on home
     await page.waitForSelector('app-home', { timeout: 5000 });
   });
 
-  test('should persist animal selection through navigation', async ({ page }) => {
+  test('should persist animal selection when opening words and sentences modal', async ({ page }) => {
     const firstAnimal = page.locator('.animal-item').first();
     
     // Select animal on home
     await firstAnimal.click();
     expect(await firstAnimal).toHaveClass(/selected/);
     
-    // Navigate to sounds & speech
+    // Click Sounds and Speech to open modal
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
     const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
-    // Check selected animal displays
+    // Check selected animal displays in modal
     const animalDisplay = page.locator('.selected-animal-icon');
     await expect(animalDisplay).toBeVisible();
   });
@@ -90,21 +101,21 @@ test.describe('Navigation', () => {
     await expect(subcategoryContainer).toBeVisible();
   });
 
-  test('can navigate back to home from sounds & speech', async ({ page }) => {
-    // Navigate to sounds & speech
+  test('can navigate to home from words and sentences modal', async ({ page }) => {
+    // Open sounds & speech modal
     const langLiteracyBtn = page.locator('.nav-item.item-1 .nav-button');
     await langLiteracyBtn.click();
     
     const soundsSpeechBtn = page.locator('.sub-nav-button-rectangular:has-text("Sounds and Speech")');
     await soundsSpeechBtn.click();
     
-    await page.waitForSelector('app-words-and-sentences', { timeout: 5000 });
+    await page.waitForSelector('.modal-backdrop', { timeout: 5000 });
     
-    // Click home button
+    // Click home button to navigate away
     const homeBtn = page.locator('.nav-home');
     await homeBtn.click();
     
-    // Should be on home
+    // Should be on home (modal should have been closed)
     await expect(page.locator('app-home')).toBeVisible();
   });
 });

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, Output, EventEmitter, Input, Optional } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet, ActivatedRoute } from "@angular/router";
@@ -89,6 +89,11 @@ export class WordsAndSentences implements OnInit {
   pdfNotes = "";
   @ViewChild(PdfNotesModalComponent) pdfNotesModal?: PdfNotesModalComponent;
 
+  // Input to control modal visibility from parent component
+  @Input() isEmbedded: boolean = false;
+
+  @Output() generate = new EventEmitter<string>();
+
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
     { id: "tiger", name: "Tiger", svgName: "animal-tiger" },
@@ -106,7 +111,7 @@ export class WordsAndSentences implements OnInit {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
+    @Optional() private route: ActivatedRoute | null,
     private themeService: ThemeService,
     public educatorService: EducatorService,
   ) {}
@@ -117,6 +122,7 @@ export class WordsAndSentences implements OnInit {
   }
 
   checkForNotesFromRoute(): void {
+    if (!this.route) return;
     const notes = this.route.snapshot.queryParamMap.get("notes");
     if (notes) {
       try {
@@ -126,6 +132,16 @@ export class WordsAndSentences implements OnInit {
         }
       } catch (e) {}
     }
+  }
+
+  // Method to set notes from parent component
+  setNotes(notes: string): void {
+    this.pdfNotes = notes;
+  }
+
+  // Event emitter for when PDF is generated
+  onGeneratePDF(notes: string): void {
+    this.generate.emit(notes);
   }
 
   loadSelectedAnimals(): void {
@@ -388,7 +404,10 @@ export class WordsAndSentences implements OnInit {
   navigateBack(): void {
     const isTraining = localStorage.getItem("trainingMode") === "true";
 
-    if (isTraining) {
+    if (this.isEmbedded) {
+      // When embedded in modal, just close it
+      this.closeModal();
+    } else if (isTraining) {
       this.router.navigate(["/"]);
     } else {
       window.history.back();
@@ -396,7 +415,12 @@ export class WordsAndSentences implements OnInit {
   }
 
   navigateToHome(): void {
-    this.router.navigate(["/"]);
+    if (this.isEmbedded) {
+      // When embedded, go to home and close modal
+      this.router.navigate(["/"]);
+    } else {
+      this.router.navigate(["/"]);
+    }
   }
 
   isDarkMode(): boolean {
@@ -643,6 +667,13 @@ export class WordsAndSentences implements OnInit {
 
     localStorage.removeItem("tinyStepsPdfNotes");
     doc.save("words-and-sentences-checked-items.pdf");
+  }
+
+  closeModal(): void {
+    this.showPdfNotesModal = false;
+    if (this.isEmbedded) {
+      // When embedded, just modal close behavior via parent
+    }
   }
 
   printPage(): void {

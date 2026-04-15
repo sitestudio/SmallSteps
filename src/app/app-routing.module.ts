@@ -19,13 +19,7 @@ const routes: Routes = [
     loadComponent: () =>
       import("./pages/sounds-speech/sounds-speech").then((m) => m.SoundsSpeech),
   },
-  {
-    path: "sounds-speech/words-and-sentences",
-    loadComponent: () =>
-      import("./pages/sounds-speech/words-and-sentences").then(
-        (m) => m.WordsAndSentences,
-      ),
-  },
+
   {
     path: "training/sounds-speech-training",
     loadComponent: () =>
