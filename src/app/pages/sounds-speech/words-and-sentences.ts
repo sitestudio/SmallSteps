@@ -466,7 +466,9 @@ export class WordsAndSentences implements OnInit {
     if (activeEducator) {
       const educatorCheckboxes = savedState[activeEducator.id] || {};
 
-      if (Object.keys(educatorCheckboxes).length === 0) {
+      // Filter to only include the currently selected animal
+      const selectedAnimalId = this.selectedAnimalId;
+      if (!selectedAnimalId) {
         doc.setFontSize(14);
         doc.setTextColor(71, 85, 105);
         if (educator || activeAnimalName) {
@@ -475,24 +477,66 @@ export class WordsAndSentences implements OnInit {
           doc.text("No animals selected", 105, 60, { align: "center" });
         }
       } else {
-        const lineHeight = 14;
-        let y = educator || activeAnimalName ? 75 : 50;
+        const selectedAnimalCheckboxes = educatorCheckboxes[selectedAnimalId];
 
-        Object.entries(educatorCheckboxes).forEach(([animalId, checkboxes]) => {
-          const animal = this.animals.find((a) => a.id === animalId);
-          const animalName = animal?.name || "Animal";
-          const checkedIndices = (checkboxes as boolean[])
-            .map((checked, index) => (checked ? index : -1))
-            .filter((i) => i !== -1);
+        if (
+          !selectedAnimalCheckboxes ||
+          selectedAnimalCheckboxes.length === 0
+        ) {
+          doc.setFontSize(14);
+          doc.setTextColor(71, 85, 105);
+          if (educator || activeAnimalName) {
+            doc.text(
+              "No checklist items checked for selected animal",
+              105,
+              85,
+              { align: "center" },
+            );
+          } else {
+            doc.text(
+              "No checklist items checked for selected animal",
+              105,
+              60,
+              { align: "center" },
+            );
+          }
+        } else {
+          const checkedIndices = selectedAnimalCheckboxes
+            .map((checked: boolean, index: number) => (checked ? index : -1))
+            .filter((i: number) => i !== -1);
 
-          if (checkedIndices.length > 0) {
+          if (checkedIndices.length === 0) {
+            doc.setFontSize(14);
+            doc.setTextColor(71, 85, 105);
+            if (educator || activeAnimalName) {
+              doc.text(
+                "No checklist items checked for selected animal",
+                105,
+                85,
+                { align: "center" },
+              );
+            } else {
+              doc.text(
+                "No checklist items checked for selected animal",
+                105,
+                60,
+                { align: "center" },
+              );
+            }
+          } else {
+            const lineHeight = 14;
+            let y = educator || activeAnimalName ? 75 : 50;
+
+            const animal = this.animals.find((a) => a.id === selectedAnimalId);
+            const animalName = animal?.name || "Animal";
+
             doc.setFont("helvetica", "bold");
             doc.setFontSize(14);
             doc.setTextColor(51, 65, 85);
             doc.text(animalName!, 105, y, { align: "center" });
             y += lineHeight * 1.5;
 
-            checkedIndices.forEach((index) => {
+            checkedIndices.forEach((index: number) => {
               const item = this.checklistItems[index];
 
               doc.setFont("helvetica", "bold");
@@ -519,7 +563,7 @@ export class WordsAndSentences implements OnInit {
 
             y += lineHeight * 0.5;
           }
-        });
+        }
       }
     }
 
@@ -531,7 +575,7 @@ export class WordsAndSentences implements OnInit {
       educator || activeAnimalName ? 285 : 305,
       { align: "center" },
     );
-        // Add PDF notes if available
+    // Add PDF notes if available
     const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
     if (savedNotes) {
       try {
@@ -547,7 +591,7 @@ export class WordsAndSentences implements OnInit {
       } catch (e) {}
     }
 
-doc.save("words-and-sentences-checked-items.pdf");
+    doc.save("words-and-sentences-checked-items.pdf");
   }
 
   openPdfNotesModal(): void {
@@ -563,7 +607,10 @@ doc.save("words-and-sentences-checked-items.pdf");
 
   closePdfNotesModal(): void {
     // Save notes to localStorage
-    localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(this.pdfNotesText));
+    localStorage.setItem(
+      "tinyStepsPdfNotes",
+      JSON.stringify(this.pdfNotesText),
+    );
     this.isPdfNotesModalOpen = false;
   }
 

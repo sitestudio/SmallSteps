@@ -2,6 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import jsPDF from "jspdf";
 
+import {
+  EducatorService,
+  type Educator,
+} from "../../services/educator.service";
+
 interface Animal {
   id: string;
   name: string;
@@ -129,7 +134,7 @@ export class PrintPdf implements OnInit {
     return this.getCheckedItems();
   }
 
-  constructor() {}
+  constructor(private educatorService: EducatorService) {}
 
   ngOnInit(): void {
     this.getSelectedAnimal();
@@ -151,20 +156,28 @@ export class PrintPdf implements OnInit {
   }
 
   getCheckedItems(): { text: string; description: string }[] {
-    const animalId = this.getSelectedAnimalId();
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return [];
 
-    if (!animalId) return [];
+    const selectedAnimalId = this.getSelectedAnimalId();
+    if (!selectedAnimalId) return [];
 
     try {
-      const saved = localStorage.getItem("tinyStepsAnimalCheckboxes");
+      const saved = localStorage.getItem("tinyStepsEducatorCheckboxes");
       if (saved) {
-        const animalCheckboxes = JSON.parse(saved);
-        const checkboxes = animalCheckboxes[animalId] || [];
+        const checkboxesData = JSON.parse(saved);
+        const educatorCheckboxes = checkboxesData[activeEducator.id] || {};
+        const animalCheckboxes = educatorCheckboxes[selectedAnimalId];
 
-        return this.checklistItems
-          .map((item, index) => ({ ...item, isChecked: checkboxes[index] }))
-          .filter((item) => item.isChecked)
-          .map((item) => ({ text: item.text, description: item.description }));
+        if (!animalCheckboxes || !Array.isArray(animalCheckboxes)) return [];
+
+        const checkedIndices = animalCheckboxes
+          .map((checked: boolean, index: number) => (checked ? index : -1))
+          .filter((i: number) => i !== -1);
+
+        return checkedIndices.map(
+          (index: number) => this.checklistItems[index],
+        );
       }
     } catch (e) {}
 
@@ -193,31 +206,55 @@ export class PrintPdf implements OnInit {
       author: "TinySteps",
     });
 
+    const educator = this.educatorService.getActiveEducator();
+    const selectedAnimalName = this.selectedAnimal?.name || null;
+
+    // Header - Educator and Animal
+    let yPos = 20;
+
+    if (educator) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(30, 64, 175);
+      doc.text(`Educator: ${educator.name}`, 20, yPos);
+      yPos += 12;
+    }
+
+    if (selectedAnimalName) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(30, 64, 175);
+      doc.text(`Animal: ${selectedAnimalName}`, 20, yPos);
+      yPos += 12;
+    }
+
+    // Title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(51, 65, 85);
-    doc.text("KLPT Report", 105, 20, { align: "center" });
+    doc.text("KLPT Report", 105, yPos, { align: "center" });
+    yPos += 20;
 
+    // Date
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.setTextColor(100, 116, 139);
-    doc.text(`Date: ${this.currentDate}`, 105, 32, { align: "center" });
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Name:", 185, 20, { align: "right" });
-    doc.setLineWidth(2);
-    doc.line(130, 24, 185, 24);
+    doc.text(`Date: ${this.currentDate}`, 105, yPos, { align: "center" });
+    yPos += 20;
 
     const checkedItems = this.getCheckedItems();
 
     if (checkedItems.length === 0) {
       doc.setFontSize(14);
       doc.setTextColor(71, 85, 105);
-      doc.text("No checklist items checked", 105, 60, { align: "center" });
+      doc.text(
+        "No checklist items checked for selected animal",
+        105,
+        yPos + 20,
+        { align: "center" },
+      );
     } else {
-      let y = 50;
+      let y = yPos + 30;
       const lineHeight = 12;
 
       doc.setFont("helvetica", "normal");
@@ -257,6 +294,30 @@ export class PrintPdf implements OnInit {
       295,
       { align: "center" },
     );
+
+    // Add PDF notes if available
+    const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+    if (savedNotes) {
+      try {
+        const notesText = JSON.parse(savedNotes);
+        if (notesText && notesText.trim()) {
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(10);
+          doc.setTextColor(75, 85, 99);
+          const notesLines = doc.splitTextToSize(notesText, 170);
+          let yPosNotes = 295;
+          notesLines.forEach((line: string) => {
+            if (yPosNotes > 285) {
+              doc.addPage();
+              yPosNotes = 20;
+            }
+            doc.text(line, 20, yPosNotes);
+            yPosNotes += 10;
+          });
+        }
+      } catch (e) {}
+    }
+
     doc.save("klpt-print-report.pdf");
   }
 }
