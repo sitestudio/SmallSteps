@@ -407,6 +407,13 @@ export class WordsAndSentences implements OnInit {
     return animal?.svgName || null;
   }
 
+  openPdfNotes(): void {
+    const notes = prompt("Enter PDF notes (optional):", "");
+    if (notes !== null) {
+      localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(notes));
+    }
+  }
+
   generatePDF(): void {
     const doc = new jsPDF();
     doc.setProperties({
@@ -602,6 +609,7 @@ export class WordsAndSentences implements OnInit {
       { align: "center" },
     );
 
+    localStorage.removeItem("tinyStepsPdfNotes");
     doc.save("words-and-sentences-checked-items.pdf");
   }
 

@@ -125,6 +125,11 @@ describe("WordsAndSentences", () => {
     expect(typeof component.generatePDF).toBe("function");
   });
 
+  it("should have openPdfNotes method", () => {
+    expect(component.openPdfNotes).toBeDefined();
+    expect(typeof component.openPdfNotes).toBe("function");
+  });
+
   it("should have isDarkMode method", () => {
     expect(component.isDarkMode).toBeDefined();
     expect(typeof component.isDarkMode).toBe("function");
@@ -251,18 +256,99 @@ describe("WordsAndSentences", () => {
     it("should save notes to localStorage when generating PDF", () => {
       const notesText = "Test note for PDF";
       localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(notesText));
-      
+
       component.selectedAnimalId = "lion";
-      
+
       const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
       expect(savedNotes).toBe(JSON.stringify(notesText));
     });
 
     it("should handle empty notes in localStorage", () => {
       localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(""));
-      
+
       const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
       expect(savedNotes).toBe(JSON.stringify(""));
+    });
+
+    it("should open PDF notes prompt when openPdfNotes is called", () => {
+      const savedPrompt = window.prompt;
+      let capturedArgs: any[] | null = null;
+
+      window.prompt = ((...args: any[]) => {
+        capturedArgs = args;
+        return "Test notes content";
+      }) as any;
+
+      component.openPdfNotes();
+
+      expect(capturedArgs).toEqual(["Enter PDF notes (optional):", ""]);
+
+      window.prompt = savedPrompt;
+    });
+
+    it("should save notes to localStorage when prompt returns value", () => {
+      const savedPrompt = window.prompt;
+      const storeBefore = { ...mockLocalStorage };
+
+      window.prompt = ((...args: any[]) => "Test notes content") as any;
+
+      component.openPdfNotes();
+
+      const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+      expect(savedNotes).toBe(JSON.stringify("Test notes content"));
+
+      window.prompt = savedPrompt;
+    });
+
+    it("should not save to localStorage when prompt is cancelled", () => {
+      const savedPrompt = window.prompt;
+
+      localStorage.removeItem("tinyStepsPdfNotes");
+
+      window.prompt = ((...args: any[]) => null) as any;
+
+      component.openPdfNotes();
+
+      const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+      expect(savedNotes).toBeNull();
+
+      window.prompt = savedPrompt;
+    });
+  });
+
+  describe("PDF notes cleanup", () => {
+    const mockLocalStorage = (() => {
+      let store: Record<string, string> = {};
+      return {
+        getItem: (key: string): string | null => store[key] || null,
+        setItem: (key: string, value: string): void => {
+          store[key] = value;
+        },
+        removeItem: (key: string): void => {
+          delete store[key];
+        },
+        clear: (): void => {
+          store = {};
+        },
+      };
+    })();
+
+    beforeEach(() => {
+      Object.defineProperty(window, "localStorage", {
+        value: mockLocalStorage,
+        writable: true,
+      });
+    });
+
+    it("should clear notes from localStorage after generating PDF", () => {
+      const notesText = "Test note for cleanup";
+      localStorage.setItem("tinyStepsPdfNotes", JSON.stringify(notesText));
+
+      component.selectedAnimalId = "lion";
+      component.generatePDF();
+
+      const savedNotes = localStorage.getItem("tinyStepsPdfNotes");
+      expect(savedNotes).toBeNull();
     });
   });
 });

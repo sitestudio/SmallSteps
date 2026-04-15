@@ -324,6 +324,7 @@ export class PrintPdf implements OnInit {
       );
     }
 
+    localStorage.removeItem("tinyStepsPdfNotes");
     doc.save("klpt-print-report.pdf");
   }
 }
