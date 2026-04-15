@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { Router, RouterOutlet, ActivatedRoute } from "@angular/router";
@@ -87,6 +87,7 @@ export class WordsAndSentences implements OnInit {
   selectedAnimalId: string | null = null;
   showPdfNotesModal = false;
   pdfNotes = "";
+  @ViewChild(PdfNotesModalComponent) pdfNotesModal?: PdfNotesModalComponent;
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -427,6 +428,8 @@ export class WordsAndSentences implements OnInit {
 
   openPdfNotesModal(): void {
     this.showPdfNotesModal = true;
+    // Call the child modal's open() method after view is initialized
+    setTimeout(() => this.pdfNotesModal?.open(), 0);
   }
 
   handlePdfNotesGenerate(notes: string): void {

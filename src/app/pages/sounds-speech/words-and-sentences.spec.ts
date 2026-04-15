@@ -186,7 +186,6 @@ describe("WordsAndSentences", () => {
     expect(component.showPdfNotesModal).toBe(false);
   });
 
-
   it("should have Add PDF Notes button in template", () => {
     const compiled = fixture.debugElement.nativeElement;
     const buttons = compiled.querySelectorAll('button');
