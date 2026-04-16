@@ -47,19 +47,6 @@
     </div>
   </div>
 
-
-  <!-- Expansion panel between 5 buttons and Educators section -->
-  @if (showExpansionPanel) {
-    <div class="expansion-panel-section">
-      <div class="expansion-panel-content" (click)="$event.stopPropagation()">
-        <app-words-and-sentences
-          [isEmbedded]="true"
-          [showBackNav]="false"
-          (generate)="handlePdfNotesGenerate($event)"
-        ></app-words-and-sentences>
-      </div>
-    </div>
-  }
   <div class="educator-section">
     <h3>Educators</h3>
 
@@ -67,9 +54,8 @@
       Active Educator: {{ getActiveEducatorDisplayName() }}
     </div>
 
-
-  <!-- Expansion panel between 5 buttons and Educators section -->
-  @if (showExpansionPanel) {
+    <!-- Expansion panel between 5 buttons and Educators section -->
+    @if (showExpansionPanel) {
     <div class="expansion-panel-section">
       <div class="expansion-panel-content" (click)="$event.stopPropagation()">
         <app-words-and-sentences
@@ -79,7 +65,35 @@
         ></app-words-and-sentences>
       </div>
     </div>
-  }
+    }
+
+    <!-- Inline Error Notification Modal -->
+    <div
+      class="modal-backdrop"
+      (click)="closeInlineNotification()"
+      *ngIf="showInlineNotification"
+    >
+      <div
+        class="modal-content"
+        (click)="$event.stopPropagation()"
+        role="alert"
+      >
+        <div class="modal-header">
+          <h3>Attention</h3>
+        </div>
+
+        <div class="modal-body">
+          <p>{{ inlineNotificationMessage }}</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="closeInlineNotification()" class="btn-cancel">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="educator-entry">
       <input
         placeholder="Enter educator name"
@@ -228,12 +242,12 @@
 </nav>
 
 @if (showWordsAndSentencesModal) {
-  <div class="modal-backdrop" (click)="closeWordsAndSentencesModal()">
-    <app-words-and-sentences 
-      [isEmbedded]="true"
-      (generate)="handlePdfNotesGenerate($event)"
-      class="inline-modal"
-    ></app-words-and-sentences>
-  </div>
+<div class="modal-backdrop" (click)="closeWordsAndSentencesModal()">
+  <app-words-and-sentences
+    [isEmbedded]="true"
+    (generate)="handlePdfNotesGenerate($event)"
+    class="inline-modal"
+  ></app-words-and-sentences>
+</div>
 }
 <router-outlet></router-outlet>

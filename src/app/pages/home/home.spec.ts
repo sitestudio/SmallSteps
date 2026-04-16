@@ -6,6 +6,7 @@ import { EducatorService } from "../../services/educator.service";
 describe("Home Component", () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
+  let educatorService: EducatorService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -14,6 +15,7 @@ describe("Home Component", () => {
   });
 
   beforeEach(() => {
+    educatorService = TestBed.inject(EducatorService);
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -576,6 +578,24 @@ describe("Home Component", () => {
     });
 
     it("should toggle expansion panel on toggleExpansionPanel call", () => {
+      // Create educator and assign animal first
+      component.educatorService.addEducator("Test Educator");
+      const educators = component.educatorService.getEducators();
+      component.selectEducator(educators[0].id);
+
+      // Assign animal first
+      component.educatorService.assignAnimal("lion");
+      component.educatorService.setActiveAnimal(educators[0].id, "lion");
+      console.log(
+        "Active Educator:",
+        component.educatorService.getActiveEducator(),
+      );
+      console.log(
+        "Active Animal:",
+        component.educatorService.getActiveAnimal(educators[0].id),
+      );
+
+      // Now toggle should work
       component.toggleExpansionPanel();
       expect(component.showExpansionPanel).toBe(true);
 
@@ -595,14 +615,27 @@ describe("Home Component", () => {
     });
 
     it("should reset showExpansionPanel in closeWordsAndSentencesModal", () => {
-      component.openWordsAndSentencesModal();  // First set to true
+      component.openWordsAndSentencesModal(); // First set to true
       component.closeWordsAndSentencesModal();
       expect(component.showExpansionPanel).toBe(false);
     });
 
     it("should not interfere with nav button state", () => {
+      // Clear service data
+      educatorService["educators"].set([]);
+      educatorService["activeEducatorId"].set(null);
+      educatorService["assignments"].set([]);
+      localStorage.clear();
+
       expect(component.activeNavIndex).toBeNull();
       expect(component.showExpansionPanel).toBe(false);
+
+      // Create educator and assign animal first
+      component.educatorService.addEducator("Test Educator Nav");
+      const educators = component.educatorService.getEducators();
+      component.selectEducator(educators[0].id);
+      component.educatorService.assignAnimal("lion");
+      component.educatorService.setActiveAnimal(educators[0].id, "lion");
 
       component.toggleNavButton(0);
       expect(component.activeNavIndex).toBe(0);
@@ -611,6 +644,87 @@ describe("Home Component", () => {
       expect(component.showExpansionPanel).toBe(false);
 
       component.toggleExpansionPanel();
+      expect(component.showExpansionPanel).toBe(true);
+    });
+  });
+
+  describe("Inline Notification Modal", () => {
+    it("should have showInlineNotification property initialized to false", () => {
+      expect(component.showInlineNotification).toBe(false);
+    });
+
+    it("should have inlineNotificationMessage property initialized to empty string", () => {
+      expect(component.inlineNotificationMessage).toBe("");
+    });
+
+    it("should show inline notification when canShowWordsAndSentences returns false (no educator)", () => {
+      // Clear any existing data
+      localStorage.clear();
+      educatorService["educators"].set([]);
+      educatorService["activeEducatorId"].set(null);
+      educatorService["assignments"].set([]);
+
+      // Toggle expansion panel without selecting an educator
+      component.toggleExpansionPanel();
+
+      expect(component.showInlineNotification).toBe(true);
+      expect(component.inlineNotificationMessage).toContain(
+        "Please select an active educator",
+      );
+    });
+
+    it("should show inline notification when canShowWordsAndSentences returns false (no active animal)", () => {
+      // Clear any existing data
+      localStorage.clear();
+      educatorService["educators"].set([]);
+      educatorService["activeEducatorId"].set(null);
+      educatorService["assignments"].set([]);
+
+      // Create an educator but don't assign any animal
+      component.educatorService.addEducator("Test Educator No Animal");
+      const educators = component.educatorService.getEducators();
+      component.selectEducator(educators[0].id);
+
+      // Toggle expansion panel without selecting an animal
+      component.toggleExpansionPanel();
+
+      expect(component.showInlineNotification).toBe(true);
+      expect(component.inlineNotificationMessage).toContain("Please select a");
+      expect(component.inlineNotificationMessage).toContain(
+        "Sounds and Speech",
+      );
+    });
+
+    it("should close inline notification when closeInlineNotification is called", () => {
+      // Set up state that triggers the notification
+      component.showInlineNotification = true;
+      component.inlineNotificationMessage = "Test message";
+
+      // Close the notification
+      component.closeInlineNotification();
+
+      expect(component.showInlineNotification).toBe(false);
+      expect(component.inlineNotificationMessage).toBe("");
+    });
+
+    it("should show expansion panel when educator and animal are selected", () => {
+      // Clear any existing data
+      localStorage.clear();
+      educatorService["educators"].set([]);
+      educatorService["activeEducatorId"].set(null);
+      educatorService["assignments"].set([]);
+
+      // Create educator and assign animal
+      component.educatorService.addEducator("Test Educator Valid");
+      const educators = component.educatorService.getEducators();
+      component.selectEducator(educators[0].id);
+      component.educatorService.assignAnimal("lion");
+      component.educatorService.setActiveAnimal(educators[0].id, "lion");
+
+      // Toggle expansion panel should work without showing notification
+      component.toggleExpansionPanel();
+
+      expect(component.showInlineNotification).toBe(false);
       expect(component.showExpansionPanel).toBe(true);
     });
   });
