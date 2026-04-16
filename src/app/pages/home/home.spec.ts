@@ -569,4 +569,49 @@ describe("Home Component", () => {
       expect(isActive).toBe(false);
     });
   });
+
+  describe("Expansion Panel", () => {
+    it("should have showExpansionPanel property initialized to false", () => {
+      expect(component.showExpansionPanel).toBe(false);
+    });
+
+    it("should toggle expansion panel on toggleExpansionPanel call", () => {
+      component.toggleExpansionPanel();
+      expect(component.showExpansionPanel).toBe(true);
+
+      component.toggleExpansionPanel();
+      expect(component.showExpansionPanel).toBe(false);
+    });
+
+    it("should close expansion panel on closeExpansionPanel call", () => {
+      component.showExpansionPanel = true;
+      component.closeExpansionPanel();
+      expect(component.showExpansionPanel).toBe(false);
+    });
+
+    it("should set showExpansionPanel in openWordsAndSentencesModal", () => {
+      component.openWordsAndSentencesModal();
+      expect(component.showExpansionPanel).toBe(true);
+    });
+
+    it("should reset showExpansionPanel in closeWordsAndSentencesModal", () => {
+      component.openWordsAndSentencesModal();  // First set to true
+      component.closeWordsAndSentencesModal();
+      expect(component.showExpansionPanel).toBe(false);
+    });
+
+    it("should not interfere with nav button state", () => {
+      expect(component.activeNavIndex).toBeNull();
+      expect(component.showExpansionPanel).toBe(false);
+
+      component.toggleNavButton(0);
+      expect(component.activeNavIndex).toBe(0);
+
+      // Expansion panel should be independent of nav button
+      expect(component.showExpansionPanel).toBe(false);
+
+      component.toggleExpansionPanel();
+      expect(component.showExpansionPanel).toBe(true);
+    });
+  });
 });

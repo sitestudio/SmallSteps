@@ -35,7 +35,7 @@
             [routerLink]="item.id === 'sounds-speech' ? null : item.route"
             class="sub-nav-button-rectangular"
             [style.backgroundColor]="item.color"
-            (click)="item.id === 'sounds-speech' && openWordsAndSentencesModal()"
+            (click)="toggleExpansionPanel(); $event.stopPropagation()"
           >
             <span>{{ item.label }}</span>
           </a>
@@ -47,6 +47,19 @@
     </div>
   </div>
 
+
+  <!-- Expansion panel between 5 buttons and Educators section -->
+  @if (showExpansionPanel) {
+    <div class="expansion-panel-section">
+      <div class="expansion-panel-content" (click)="$event.stopPropagation()">
+        <app-words-and-sentences
+          [isEmbedded]="true"
+          [showBackNav]="false"
+          (generate)="handlePdfNotesGenerate($event)"
+        ></app-words-and-sentences>
+      </div>
+    </div>
+  }
   <div class="educator-section">
     <h3>Educators</h3>
 
@@ -54,6 +67,19 @@
       Active Educator: {{ getActiveEducatorDisplayName() }}
     </div>
 
+
+  <!-- Expansion panel between 5 buttons and Educators section -->
+  @if (showExpansionPanel) {
+    <div class="expansion-panel-section">
+      <div class="expansion-panel-content" (click)="$event.stopPropagation()">
+        <app-words-and-sentences
+          [isEmbedded]="true"
+          [showBackNav]="false"
+          (generate)="handlePdfNotesGenerate($event)"
+        ></app-words-and-sentences>
+      </div>
+    </div>
+  }
     <div class="educator-entry">
       <input
         placeholder="Enter educator name"

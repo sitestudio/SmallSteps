@@ -48,6 +48,7 @@ export class Home implements AfterViewInit {
 
   isAnimating = false;
   showWordsAndSentencesModal = false;
+  showExpansionPanel = false;
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -413,13 +414,23 @@ export class Home implements AfterViewInit {
 
   openWordsAndSentencesModal(): void {
     this.showWordsAndSentencesModal = true;
+    this.showExpansionPanel = true;
   }
 
   closeWordsAndSentencesModal(): void {
     this.showWordsAndSentencesModal = false;
+    this.showExpansionPanel = false;
   }
 
   handlePdfNotesGenerate(notes: string): void {
     console.log("PDF Notes generated from inline modal:", notes);
+  }
+
+  toggleExpansionPanel(): void {
+    this.showExpansionPanel = !this.showExpansionPanel;
+  }
+
+  closeExpansionPanel(): void {
+    this.showExpansionPanel = false;
   }
 }

@@ -90,6 +90,7 @@ export class WordsAndSentences implements OnInit {
   @ViewChild(PdfNotesModalComponent) pdfNotesModal?: PdfNotesModalComponent;
 
   // Input to control modal visibility from parent component
+  @Input() showBackNav: boolean = true;
   @Input() isEmbedded: boolean = false;
 
   @Output() generate = new EventEmitter<string>();
