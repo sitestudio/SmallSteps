@@ -50,6 +50,9 @@ export class Home implements AfterViewInit {
   showWordsAndSentencesModal = false;
   showExpansionPanel = false;
 
+  showInlineNotification = false;
+  inlineNotificationMessage = "";
+
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
     { id: "tiger", name: "Tiger", svgName: "animal-tiger" },
@@ -427,10 +430,46 @@ export class Home implements AfterViewInit {
   }
 
   toggleExpansionPanel(): void {
+    const validation = this.canShowWordsAndSentences();
+    
+    if (!validation.canShow) {
+      this.inlineNotificationMessage = validation.errorMessage || "Invalid state";
+      this.showInlineNotification = true;
+      return;
+    }
+    
     this.showExpansionPanel = !this.showExpansionPanel;
   }
+
 
   closeExpansionPanel(): void {
     this.showExpansionPanel = false;
   }
+  closeInlineNotification(): void {
+    this.showInlineNotification = false;
+    this.inlineNotificationMessage = "";
+  }
+
+  canShowWordsAndSentences(): { canShow: boolean; errorMessage?: string } {
+    const activeEducator = this.educatorService.getActiveEducator();
+    
+    if (!activeEducator) {
+      return { 
+        canShow: false, 
+        errorMessage: "Please select an active educator first." 
+      };
+    }
+    
+    const activeAnimalId = this.educatorService.getActiveAnimal(activeEducator.id);
+    
+    if (!activeAnimalId) {
+      return { 
+        canShow: false, 
+        errorMessage: `Please select a "Sounds and Speech" animal for ${activeEducator.name}.` 
+      };
+    }
+    
+    return { canShow: true };
+  }
+
 }
