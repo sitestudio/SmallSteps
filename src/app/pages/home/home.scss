@@ -6,7 +6,7 @@
 
 header {
   text-align: center;
-  margin-bottom: 100px;
+  margin-bottom: 32px;
   z-index: 10;
 }
 
@@ -27,179 +27,151 @@ p {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
 
   @media (max-width: 900px) {
     gap: 1.5rem;
   }
 }
 
-.circle-section {
-  .circle-container {
-    position: relative;
-    width: 500px;
-    height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.nav-section {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-    .nav-item {
-      position: absolute;
-      width: 160px;
-      height: 160px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+.nav-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  width: 100%;
 
-      &.hidden {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        display: flex !important;
-      }
+  &.nav-row-1 {
+    margin-bottom: 8px;
+  }
 
-      transition:
-        opacity 0.3s ease,
-        visibility 0.3s,
-        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-        top 0.4s ease,
-        left 0.4s ease;
+  &.nav-row-2 {
+    margin-bottom: 8px;
+  }
+
+  &.nav-row-3 {
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 900px) {
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    gap: 6px;
+
+    &.nav-row-1,
+    &.nav-row-2,
+    &.nav-row-3 {
+      padding: 4px 0;
     }
+  }
+}
 
-    .nav-button {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 15px;
-      color: white;
-      font-family: "Fredoka", sans-serif;
+.nav-btn-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 16px;
+  border: none;
+  font-family: "Fredoka", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  min-height: 48px;
+
+  .btn-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  &:hover:not(.disabled):not([disabled]) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  &.active {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+    outline: 3px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+  }
+
+  &.disabled,
+  &[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    filter: grayscale(60%);
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  @media (max-width: 900px) {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    min-height: 42px;
+    border-radius: 12px;
+
+    .btn-icon {
       font-size: 1rem;
-      font-weight: 600;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      text-decoration: none;
     }
+  }
 
-    .nav-button:hover {
-      transform: scale(1.15);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    }
+  @media (max-width: 600px) {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+    min-height: 38px;
+    border-radius: 10px;
+    gap: 5px;
 
-    .nav-button span {
-      display: block;
-      margin-top: 8px;
-      line-height: 1.2;
+    .btn-icon {
+      font-size: 0.9rem;
     }
+  }
+}
 
-    .icon {
-      font-size: 2rem;
-    }
+.nav-btn-secondary {
+  background-color: #5a67d8;
 
-    /* Position outer buttons in a circle */
-    .item-1 {
-      transform: rotate(0deg) translateY(-180px);
-    }
-    .item-1 .nav-button {
-      transform: rotate(0deg);
-      background-color: var(--color-lang);
-    }
+  &.active {
+    background-color: #4c51bf;
+  }
 
-    .item-2 {
-      transform: rotate(72deg) translateY(-180px);
-    }
-    .item-2 .nav-button {
-      transform: rotate(-72deg);
-      background-color: var(--color-math);
-    }
+  &[disabled] {
+    background-color: #a0aec0;
+  }
+}
 
-    .item-3 {
-      transform: rotate(144deg) translateY(-180px);
-    }
-    .item-3 .nav-button {
-      transform: rotate(-144deg);
-      background-color: var(--color-soc);
-    }
+.nav-btn-tertiary {
+  background-color: #48bb78;
 
-    .item-4 {
-      transform: rotate(216deg) translateY(-180px);
-    }
-    .item-4 .nav-button {
-      transform: rotate(-216deg);
-      background-color: var(--color-phys);
-      color: #444;
-    }
+  &.active {
+    background-color: #38a169;
+  }
 
-    .item-5 {
-      transform: rotate(288deg) translateY(-180px);
-    }
-    .item-5 .nav-button {
-      transform: rotate(-288deg);
-      background-color: var(--color-exec);
-    }
-
-    /* Centered button (when active) - moves to center of circle */
-    .nav-item.centered {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(0deg);
-      width: 180px;
-      height: 180px;
-      z-index: 6;
-
-      .nav-button {
-        transform: rotate(0deg);
-        width: 150px;
-        height: 150px;
-      }
-    }
-
-    /* Rectangular subcategory buttons container - nested inside nav-item */
-    .subcategory-container {
-      position: absolute;
-      top: -5px; /* moved closer to the centered button */
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 16px;
-      z-index: 10;
-
-      .sub-nav-button-rectangular {
-        min-width: 80px;
-        padding: 12px 24px;
-        border-radius: 8px; /* Rounded corners */
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        font-family: "Fredoka", sans-serif;
-        font-size: 0.9rem;
-        font-weight: 600;
-        box-shadow:
-          0 12px 28px 0 rgba(0, 0, 0, 0.2),
-          0 2px 4px 0 rgba(0, 0, 0, 0.1);
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        text-decoration: none;
-        color: white;
-
-        &:hover {
-          transform: scale(1.05);
-          box-shadow: 0 24px 48px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        span {
-          display: block;
-          line-height: 1.2;
-        }
-      }
-    }
+  &:hover:not(.disabled):not([disabled]) {
+    background-color: #38a169;
   }
 }
 
@@ -699,6 +671,79 @@ p {
   }
 }
 
+// Inline Words & Sentences Panel
+.ws-inline-panel {
+  width: 100%;
+  max-width: 1200px;
+  margin: 16px 0;
+  background-color: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.ws-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #fbbd41;
+  border-bottom: 1px solid #e0a62b;
+
+  h2 {
+    margin: 0;
+    font-family: "Fredoka", sans-serif;
+    font-size: 1.25rem;
+    color: white;
+  }
+}
+
+.ws-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-height: 32px;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+.ws-panel-content {
+  min-height: 200px;
+}
+
+:host-context(html.dark) .ws-inline-panel {
+  background-color: var(--dark-surface);
+}
+
+:host-context(html.dark) .ws-panel-header {
+  background-color: #e0a62b;
+  border-bottom-color: #c49020;
+
+  h2 {
+    color: white;
+  }
+}
+
+:host-context(html.dark) .ws-close-btn {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
 // Inline Modal Styles for Words and Sentences
 .modal-backdrop {
   position: fixed;
@@ -713,194 +758,7 @@ p {
   z-index: 1000;
   animation: fadeIn 0.2s ease;
 
-  .inline-modal {
-    width: 95%;
-    max-width: 720px;
-    max-height: 90vh;
-    overflow-y: auto;
-
-    // Override words-and-sentences styles for inline display
-    .content-wrapper {
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 32px;
-
-      .back-link {
-        font-size: 16px;
-        margin-bottom: 24px;
-      }
-
-      .checklist-section {
-        .action-buttons-center {
-          flex-direction: row;
-          gap: 16px;
-
-          .btn {
-            padding: 12px 30px;
-            border-radius: 8px;
-
-            &-primary {
-              background-color: #fbbd41;
-              color: white;
-
-              &:hover {
-                background-color: #e0a62b;
-              }
-            }
-
-            &-secondary {
-              background-color: #f1f4f7;
-              color: #1c2b33;
-
-              &:hover {
-                background-color: #e4eaee;
-              }
-            }
-          }
-        }
-
-        .checklist {
-          margin-top: 24px;
-        }
-      }
-
-      header {
-        text-align: center;
-
-        h1 {
-          font-size: 32px;
-          color: #fbbd41;
-        }
-
-        p {
-          font-size: 14px;
-        }
-      }
-
-      .animal-display {
-        margin-bottom: 24px;
-
-        .selected-animal-icon {
-          width: 100px;
-          height: 100px;
-        }
-
-        .animal-name-display {
-          font-size: 18px;
-          color: #0064e0;
-        }
-      }
-
-      .selected-animals-header {
-        margin-bottom: 24px;
-
-        p {
-          font-size: 13px;
-        }
-      }
-
-      .unselected-animals-header {
-        margin-bottom: 24px;
-      }
-
-      :host-context(html.dark) {
-        .checklist-item {
-          background-color: var(--dark-surface);
-          border-top-color: #3d414a;
-
-          .item-main {
-            .checkbox-container {
-              input:checked ~ .checkmark {
-                background-color: #fbbd41;
-                border-color: #fbbd41;
-              }
-            }
-
-            .checkmark {
-              background-color: var(--dark-surface);
-              border-color: #6b707c;
-            }
-
-            .item-text {
-              color: var(--dark-text);
-
-              &:hover {
-                color: #fbbd41;
-              }
-            }
-
-            .chevron {
-              border-right-color: #9ca3af;
-              border-bottom-color: #9ca3af;
-            }
-          }
-
-          .description {
-            background-color: var(--dark-surface);
-          }
-        }
-
-        header h1 {
-          color: var(--dark-text);
-        }
-
-        p {
-          color: var(--dark-text);
-        }
-
-        .selected-animals-header {
-          background-color: var(--dark-bg-secondary);
-
-          p {
-            color: var(--dark-text-muted);
-          }
-
-          .animal-chip.active {
-            background-color: #fbbd41;
-            color: white;
-          }
-        }
-
-        .unselected-animals-header {
-          p {
-            color: var(--dark-text-muted);
-          }
-        }
-
-        .action-buttons-center {
-          .btn-primary {
-            background-color: #fbbd41;
-
-            &:hover {
-              background-color: #e0a62b;
-            }
-          }
-
-          .btn-secondary {
-            background-color: var(--dark-bg-secondary);
-            border-color: #3d414a;
-            color: var(--dark-text);
-
-            &:hover {
-              background-color: var(--dark-bg-tertiary);
-            }
-          }
-        }
-
-        .vertical-divider {
-          &::after {
-            background-color: #475569;
-          }
-        }
-
-        .back-link {
-          color: var(--dark-text);
-        }
-      }
-    }
-  }
-
-  // Generic inline notification modal styles (shared with PDF notes modal)
+// Generic inline notification modal styles (shared with PDF notes modal)
   .modal-backdrop {
     position: fixed;
     top: 0;

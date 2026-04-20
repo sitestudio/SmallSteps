@@ -15,36 +15,53 @@
 </header>
 
 <div class="main-content">
-  <div class="circle-section">
-    <div class="circle-container">
+  <div class="nav-section" (click)="onOutsideClick($event)">
+    <!-- Row 1: Top Level Buttons -->
+    <div class="nav-row nav-row-1">
       @for (button of navButtons; track button.id) {
-      <div
-        class="nav-item item-{{button.id}}"
-        [class.hidden]="activeNavIndex !== null && activeNavIndex !== button.id - 1"
-        [class.centered]="activeNavIndex === button.id - 1"
-        (click)="toggleNavButton(button.id - 1)"
+      <button
+        class="nav-btn-pill"
+        [class.active]="isTopLevelActive(button.id - 1)"
+        [class.disabled]="isTopLevelDisabled(button.id - 1)"
+        [style.background-color]="getButtonColor(button.id)"
+        (click)="onTopLevelClick(button.id - 1); $event.stopPropagation()"
       >
-        <a class="nav-button">
-          <div class="icon">{{button.icon}}</div>
-          <span>{{button.label}}</span>
-        </a>
-        @if (activeNavIndex === button.id - 1) {
-        <div class="subcategory-container">
-          @for (item of button.items; track item.id) {
-          <a
-            [routerLink]="item.id === 'sounds-speech' ? null : item.route"
-            class="sub-nav-button-rectangular"
-            [style.backgroundColor]="item.color"
-            (click)="toggleExpansionPanel(); $event.stopPropagation()"
-          >
-            <span>{{ item.label }}</span>
-          </a>
-          }
-        </div>
-        }
-      </div>
+        <span class="btn-icon">{{button.icon}}</span>
+        <span>{{button.label}}</span>
+      </button>
       }
     </div>
+
+    <!-- Row 2: Second Level Buttons (only when a top-level is selected) -->
+    @if (selectedTopLevel !== null) {
+    <div class="nav-row nav-row-2">
+      @for (item of getSecondLevelItems(); track item.id) {
+      <button
+        class="nav-btn-pill nav-btn-secondary"
+        [class.active]="isSecondLevelActive(item.id)"
+        [disabled]="selectedSecondLevel !== null && selectedSecondLevel !== item.id"
+        (click)="onSecondLevelClick(item.id); $event.stopPropagation()"
+      >
+        <span>{{item.label}}</span>
+      </button>
+      }
+    </div>
+
+    <!-- Row 3: Third Level Buttons (only when a second-level is selected) -->
+    @if (selectedSecondLevel !== null) {
+    <div class="nav-row nav-row-3">
+      @for (thirdItem of getThirdLevelItems(); track thirdItem.id) {
+      <button
+        class="nav-btn-pill nav-btn-tertiary"
+        [class.active]="selectedThirdLevel === thirdItem.id"
+        (click)="onThirdLevelClick(thirdItem.id); $event.stopPropagation()"
+      >
+        <span>{{thirdItem.label}}</span>
+      </button>
+      }
+    </div>
+    }
+    }
   </div>
 
   <div class="educator-section">
@@ -54,10 +71,16 @@
       Active Educator: {{ getActiveEducatorDisplayName() }}
     </div>
 
-    <!-- Expansion panel between 5 buttons and Educators section -->
-    @if (showExpansionPanel) {
-    <div class="expansion-panel-section">
-      <div class="expansion-panel-content" (click)="$event.stopPropagation()">
+    <!-- Inline Words & Sentences checklist -->
+    @if (showWordsAndSentences) {
+    <div class="ws-inline-panel">
+      <div class="ws-panel-header">
+        <h2>Words and Sentences</h2>
+        <button class="ws-close-btn" (click)="closeWordsAndSentences()" title="Close">
+          <span class="close-icon">&#x2715;</span> Close
+        </button>
+      </div>
+      <div class="ws-panel-content" (click)="$event.stopPropagation()">
         <app-words-and-sentences
           [isEmbedded]="true"
           [showBackNav]="false"
@@ -241,13 +264,4 @@
   <button (click)="goBack()" class="nav-btn nav-back">← Back</button>
 </nav>
 
-@if (showWordsAndSentencesModal) {
-<div class="modal-backdrop" (click)="closeWordsAndSentencesModal()">
-  <app-words-and-sentences
-    [isEmbedded]="true"
-    (generate)="handlePdfNotesGenerate($event)"
-    class="inline-modal"
-  ></app-words-and-sentences>
-</div>
-}
 <router-outlet></router-outlet>
