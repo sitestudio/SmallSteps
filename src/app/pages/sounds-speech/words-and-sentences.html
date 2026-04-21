@@ -76,6 +76,22 @@
       }
     </ul>
 
+    @if (showPdfNotesTextarea) {
+    <div class="pdf-notes-textarea-panel">
+      <label>PDF Notes</label>
+      <textarea
+        [value]="pdfNotesText"
+        (input)="pdfNotesText = $any($event.target).value"
+        placeholder="Add your notes here..."
+        rows="6"
+      ></textarea>
+      <div class="pdf-notes-actions">
+        <button type="button" (click)="savePdfNotes()" class="btn-save-notes">Save Notes</button>
+        <button type="button" (click)="closePdfNotesTextarea()" class="btn-cancel-notes">Cancel</button>
+      </div>
+    </div>
+    }
+
     <div class="action-buttons-center">
       <button (click)="navigateBack()" class="btn btn-primary">← Back</button>
       <button (click)="openPdfNotesModal()" class="btn btn-primary">Add PDF Notes</button>

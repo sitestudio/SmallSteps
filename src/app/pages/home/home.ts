@@ -59,9 +59,6 @@ export class Home implements AfterViewInit {
   showInlineNotification = false;
   inlineNotificationMessage = "";
 
-  showPdfNotesTextarea = false;
-  pdfNotesText = "";
-
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
     { id: "tiger", name: "Tiger", svgName: "animal-tiger" },
@@ -519,21 +516,10 @@ export class Home implements AfterViewInit {
     console.log("PDF Notes generated from inline modal:", notes);
   }
 
-  openPdfNotesTextarea(): void {
-    this.showPdfNotesTextarea = true;
-    this.pdfNotesText = "";
-  }
-
-  closePdfNotesTextarea(): void {
-    this.showPdfNotesTextarea = false;
-    this.pdfNotesText = "";
-  }
-
-  savePdfNotes(): void {
-    if (this.pdfNotesText.trim()) {
-      localStorage.setItem("tinyStepsPdfNotes", this.pdfNotesText);
+  savePdfNotes(notes: string): void {
+    if (notes.trim()) {
+      localStorage.setItem("tinyStepsPdfNotes", notes);
     }
-    this.showPdfNotesTextarea = false;
   }
 
   toggleExpansionPanel(): void {

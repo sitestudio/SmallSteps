@@ -93,8 +93,11 @@ export class WordsAndSentences implements OnInit {
   @Input() showBackNav: boolean = true;
   @Input() isEmbedded: boolean = false;
 
+  showPdfNotesTextarea = false;
+  pdfNotesText = "";
+
   @Output() generate = new EventEmitter<string>();
-  @Output() pdfNotesClick = new EventEmitter<void>();
+  @Output() pdfNotesSave = new EventEmitter<string>();
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -454,7 +457,10 @@ export class WordsAndSentences implements OnInit {
 
   openPdfNotesModal(): void {
     if (this.isEmbedded) {
-      this.pdfNotesClick.emit();
+      this.showPdfNotesTextarea = !this.showPdfNotesTextarea;
+      if (this.showPdfNotesTextarea) {
+        this.pdfNotesText = "";
+      }
       return;
     }
     this.showPdfNotesModal = true;
@@ -479,6 +485,18 @@ export class WordsAndSentences implements OnInit {
   handlePdfNotesClose(): void {
     this.showPdfNotesModal = false;
     this.pdfNotes = "";
+  }
+
+  savePdfNotes(): void {
+    if (this.pdfNotesText.trim()) {
+      localStorage.setItem("tinyStepsPdfNotes", this.pdfNotesText);
+    }
+    this.pdfNotesSave.emit(this.pdfNotesText);
+  }
+
+  closePdfNotesTextarea(): void {
+    this.showPdfNotesTextarea = false;
+    this.pdfNotesText = "";
   }
 
   generatePDF(notesOverride?: string): void {
