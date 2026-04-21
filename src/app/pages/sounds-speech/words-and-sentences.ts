@@ -460,14 +460,15 @@ export class WordsAndSentences implements OnInit {
   handlePdfNotesGenerate(notes: string): void {
     this.pdfNotes = notes;
     this.showPdfNotesModal = false;
-    
-    // Navigate to print-pdf page with notes as query param
-    if (notes && notes.trim()) {
-      const encodedNotes = encodeURIComponent(notes);
-      this.router.navigate(['/print-pdf'], { queryParams: { notes: encodedNotes } });
+    if (this.isEmbedded) {
+      this.generatePDF();
     } else {
-      // Navigate without notes if empty
-      this.router.navigate(['/print-pdf']);
+      if (notes && notes.trim()) {
+        const encodedNotes = encodeURIComponent(notes);
+        this.router.navigate(['/print-pdf'], { queryParams: { notes: encodedNotes } });
+      } else {
+        this.router.navigate(['/print-pdf']);
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { RouterOutlet, RouterLink } from "@angular/router";
+import { RouterOutlet } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
@@ -18,25 +18,28 @@ export interface Animal {
   svgName: string;
 }
 
-interface SubcategoryItem {
+interface ThirdLevelItem {
   id: string;
   label: string;
-  route: string[];
-  color: string;
 }
 
-interface NavButton {
+interface SecondLevelItem {
+  id: string;
+  label: string;
+  thirdLevel?: ThirdLevelItem[];
+}
+
+interface TopLevelButton {
   id: number;
   label: string;
   icon: string;
-  route?: string[];
-  items: SubcategoryItem[];
+  secondLevel?: SecondLevelItem[];
 }
 
 @Component({
   selector: "app-home",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, FormsModule, WordsAndSentences],
+  imports: [CommonModule, RouterOutlet, FormsModule, WordsAndSentences],
   templateUrl: "./home.html",
   styleUrls: ["./home.scss"],
 })
@@ -44,10 +47,13 @@ export class Home implements AfterViewInit {
   trainingMode = false;
   showNavButtons = false;
 
-  activeNavIndex: number | null = null;
+  // 3-level hierarchical nav state
+  selectedTopLevel: number | null = null;
+  selectedSecondLevel: string | null = null;
+  selectedThirdLevel: string | null = null;
 
   isAnimating = false;
-  showWordsAndSentencesModal = false;
+  showWordsAndSentences = false;
   showExpansionPanel = false;
 
   showInlineNotification = false;
@@ -68,23 +74,31 @@ export class Home implements AfterViewInit {
     { id: "rhino", name: "Rhino", svgName: "animal-rhino" },
   ];
 
-  navButtons: NavButton[] = [
+  navButtons: TopLevelButton[] = [
     {
       id: 1,
       label: "Language and Literacy",
       icon: "📚",
-      items: [
+      secondLevel: [
         {
           id: "sounds-speech",
           label: "Sounds and Speech",
-          route: [],
-          color: "#FF6B6B",
+          thirdLevel: [
+            { id: "words-sentences", label: "Words and Sentences" },
+            { id: "storytelling", label: "Storytelling/Conversations" },
+            { id: "sounds-words", label: "Sounds in Words" },
+          ],
         },
         {
           id: "comprehension",
           label: "Comprehension",
-          route: ["/comprehension"],
-          color: "#4D96FF",
+          thirdLevel: [
+            { id: "retelling", label: "Retelling" },
+            { id: "interpreting", label: "Interpreting" },
+            { id: "linking", label: "Linking" },
+            { id: "evaluating", label: "Evaluating" },
+            { id: "text-purpose", label: "Text Purpose" },
+          ],
         },
       ],
     },
@@ -92,53 +106,21 @@ export class Home implements AfterViewInit {
       id: 2,
       label: "Maths & Numbers",
       icon: "🔢",
-      items: [
-        {
-          id: "math-basics",
-          label: "Math Basics",
-          route: ["/math-numbers"],
-          color: "#9B59B6",
-        },
-      ],
     },
     {
       id: 3,
       label: "Social/Emotional",
       icon: "❤️",
-      items: [
-        {
-          id: "social-emotional",
-          label: "Social/Emotional",
-          route: ["/social-emotional"],
-          color: "#E91E63",
-        },
-      ],
     },
     {
       id: 4,
       label: "Physical",
       icon: "🏃",
-      items: [
-        {
-          id: "physical",
-          label: "Physical",
-          route: ["/physical"],
-          color: "#2ECC71",
-        },
-      ],
     },
     {
       id: 5,
       label: "Executive Function",
       icon: "🧠",
-      items: [
-        {
-          id: "executive-function",
-          label: "Executive Function",
-          route: ["/executive-function"],
-          color: "#3498DB",
-        },
-      ],
     },
   ];
 
@@ -395,16 +377,89 @@ export class Home implements AfterViewInit {
     this.trainingMode = (event.target as HTMLInputElement).checked;
   }
 
-  toggleNavButton(index: number): void {
-    if (this.activeNavIndex === index) {
-      this.activeNavIndex = null;
+  onTopLevelClick(index: number): void {
+    if (this.selectedTopLevel === index) {
+      this.resetAllSelections();
     } else {
-      this.activeNavIndex = index;
+      this.selectedTopLevel = index;
+      this.selectedSecondLevel = null;
     }
   }
 
-  getActiveButton(): NavButton | undefined {
-    return this.navButtons.find((_, i) => i === this.activeNavIndex);
+  onSecondLevelClick(secondLevelId: string): void {
+    if (this.selectedSecondLevel === secondLevelId) {
+      this.selectedSecondLevel = null;
+    } else {
+      this.selectedSecondLevel = secondLevelId;
+    }
+  }
+
+  resetAllSelections(): void {
+    this.selectedTopLevel = null;
+    this.selectedSecondLevel = null;
+  }
+
+  isTopLevelActive(index: number): boolean {
+    return this.selectedTopLevel === index;
+  }
+
+  isTopLevelDisabled(index: number): boolean {
+    return this.selectedTopLevel !== null && this.selectedTopLevel !== index;
+  }
+
+  isSecondLevelActive(secondLevelId: string): boolean {
+    return this.selectedSecondLevel === secondLevelId;
+  }
+
+  getActiveTopButton(): TopLevelButton | undefined {
+    if (this.selectedTopLevel === null) return undefined;
+    return this.navButtons[this.selectedTopLevel];
+  }
+
+  getSecondLevelItems(): SecondLevelItem[] | undefined {
+    const activeButton = this.getActiveTopButton();
+    return activeButton?.secondLevel;
+  }
+
+  getThirdLevelItems(): ThirdLevelItem[] | undefined {
+    const secondLevel = this.getSecondLevelItems();
+    if (!secondLevel || !this.selectedSecondLevel) return undefined;
+    const item = secondLevel.find((s) => s.id === this.selectedSecondLevel);
+    return item?.thirdLevel;
+  }
+
+  onThirdLevelClick(thirdLevelId: string): void {
+    if (thirdLevelId === 'words-sentences') {
+      this.showWordsAndSentences = !this.showWordsAndSentences;
+      if (this.showWordsAndSentences) {
+        this.showExpansionPanel = true;
+      }
+      return;
+    }
+    
+    if (this.selectedThirdLevel === thirdLevelId) {
+      this.selectedThirdLevel = null;
+    } else {
+      this.selectedThirdLevel = thirdLevelId;
+    }
+  }
+
+  getButtonColor(buttonId: number): string {
+    const colors: Record<number, string> = {
+      1: "#FF6B6B",
+      2: "#9B59B6",
+      3: "#E91E63",
+      4: "#2ECC71",
+      5: "#3498DB",
+    };
+    return colors[buttonId] || "#667eea";
+  }
+
+  onOutsideClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest(".nav-btn-pill")) {
+      this.resetAllSelections();
+    }
   }
 
   goHome() {
@@ -416,13 +471,18 @@ export class Home implements AfterViewInit {
   }
 
   openWordsAndSentencesModal(): void {
-    this.showWordsAndSentencesModal = true;
+    this.showWordsAndSentences = true;
     this.showExpansionPanel = true;
   }
 
   closeWordsAndSentencesModal(): void {
-    this.showWordsAndSentencesModal = false;
+    this.showWordsAndSentences = false;
     this.showExpansionPanel = false;
+    this.selectedThirdLevel = null;
+  }
+
+  closeWordsAndSentences(): void {
+    this.closeWordsAndSentencesModal();
   }
 
   handlePdfNotesGenerate(notes: string): void {
