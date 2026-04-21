@@ -465,8 +465,8 @@ export class WordsAndSentences implements OnInit {
     }
     this.showPdfNotesModal = true;
     setTimeout(() => {
-      this.pdfNotesModal?.setNotes(this.getPdfNotesForCurrentPair());
       this.pdfNotesModal?.open();
+      this.pdfNotesModal?.setNotes(this.getPdfNotesForCurrentPair());
     }, 0);
   }
 
@@ -488,6 +488,14 @@ export class WordsAndSentences implements OnInit {
   handlePdfNotesClose(): void {
     this.showPdfNotesModal = false;
     this.pdfNotes = "";
+  }
+
+  onPdfNotesInput(value: string): void {
+    this.pdfNotesText = value;
+    if (value.trim()) {
+      const key = this.getPdfNotesStorageKey();
+      localStorage.setItem(key, value);
+    }
   }
 
   savePdfNotes(): void {
