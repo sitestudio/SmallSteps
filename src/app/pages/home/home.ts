@@ -179,6 +179,15 @@ export class Home implements AfterViewInit {
     return this.animals.filter((a) => !assignedIds.includes(a.id));
   }
 
+  get wordsAndSentencesReady(): boolean {
+    return this.canShowWordsAndSentences().canShow;
+  }
+
+  get wordsAndSentencesAlertMessage(): string {
+    const result = this.canShowWordsAndSentences();
+    return result.errorMessage || "";
+  }
+
   constructor(
     private router: Router,
     private cdRef: ChangeDetectorRef,
@@ -430,9 +439,19 @@ export class Home implements AfterViewInit {
 
   onThirdLevelClick(thirdLevelId: string): void {
     if (thirdLevelId === 'words-sentences') {
+      const validation = this.canShowWordsAndSentences();
+      
+      if (!validation.canShow) {
+        this.inlineNotificationMessage = validation.errorMessage || "";
+        this.showInlineNotification = true;
+        return;
+      }
+      
       this.showWordsAndSentences = !this.showWordsAndSentences;
       if (this.showWordsAndSentences) {
         this.showExpansionPanel = true;
+      } else {
+        this.showExpansionPanel = false;
       }
       return;
     }
@@ -471,6 +490,14 @@ export class Home implements AfterViewInit {
   }
 
   openWordsAndSentencesModal(): void {
+    const validation = this.canShowWordsAndSentences();
+    
+    if (!validation.canShow) {
+      this.inlineNotificationMessage = validation.errorMessage || "";
+      this.showInlineNotification = true;
+      return;
+    }
+    
     this.showWordsAndSentences = true;
     this.showExpansionPanel = true;
   }
@@ -512,23 +539,23 @@ export class Home implements AfterViewInit {
 
   canShowWordsAndSentences(): { canShow: boolean; errorMessage?: string } {
     const activeEducator = this.educatorService.getActiveEducator();
-    
+
     if (!activeEducator) {
-      return { 
-        canShow: false, 
-        errorMessage: "Please select an active educator first." 
+      return {
+        canShow: false,
+        errorMessage: "Add and select an educator to get started.",
       };
     }
-    
+
     const activeAnimalId = this.educatorService.getActiveAnimal(activeEducator.id);
-    
+
     if (!activeAnimalId) {
-      return { 
-        canShow: false, 
-        errorMessage: `Please select a "Sounds and Speech" animal for ${activeEducator.name}.` 
+      return {
+        canShow: false,
+        errorMessage: `Select an animal for ${activeEducator.name} to continue.`,
       };
     }
-    
+
     return { canShow: true };
   }
 
