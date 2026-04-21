@@ -94,6 +94,7 @@ export class WordsAndSentences implements OnInit {
   @Input() isEmbedded: boolean = false;
 
   @Output() generate = new EventEmitter<string>();
+  @Output() pdfNotesClick = new EventEmitter<void>();
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -452,8 +453,11 @@ export class WordsAndSentences implements OnInit {
   }
 
   openPdfNotesModal(): void {
+    if (this.isEmbedded) {
+      this.pdfNotesClick.emit();
+      return;
+    }
     this.showPdfNotesModal = true;
-    // Call the child modal's open() method after view is initialized
     setTimeout(() => this.pdfNotesModal?.open(), 0);
   }
 

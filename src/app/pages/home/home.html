@@ -101,7 +101,23 @@
           [isEmbedded]="true"
           [showBackNav]="false"
           (generate)="handlePdfNotesGenerate($event)"
+          (pdfNotesClick)="openPdfNotesTextarea()"
         ></app-words-and-sentences>
+
+        @if (showPdfNotesTextarea) {
+        <div class="pdf-notes-textarea-panel">
+          <label>PDF Notes</label>
+          <textarea
+            [(ngModel)]="pdfNotesText"
+            placeholder="Add your notes here..."
+            rows="6"
+          ></textarea>
+          <div class="pdf-notes-actions">
+            <button (click)="savePdfNotes()" class="btn-save-notes">Save Notes</button>
+            <button (click)="closePdfNotesTextarea()" class="btn-cancel-notes">Cancel</button>
+          </div>
+        </div>
+        }
       </div>
     </div>
     }
