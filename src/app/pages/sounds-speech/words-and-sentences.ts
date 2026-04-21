@@ -713,7 +713,6 @@ export class WordsAndSentences implements OnInit {
       { align: "center" },
     );
 
-    localStorage.removeItem(this.getPdfNotesStorageKey());
     doc.save("words-and-sentences-checked-items.pdf");
   }
 
