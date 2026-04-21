@@ -518,7 +518,13 @@ export class Home implements AfterViewInit {
 
   savePdfNotes(notes: string): void {
     if (notes.trim()) {
-      localStorage.setItem("tinyStepsPdfNotes", notes);
+      const activeEducator = this.educatorService.getActiveEducator();
+      if (activeEducator) {
+        const key = `tinyStepsPdfNotes_${activeEducator.id}_${this.selectedAnimalId || ""}`;
+        localStorage.setItem(key, notes);
+      } else {
+        localStorage.setItem("tinyStepsPdfNotes", notes);
+      }
     }
   }
 

@@ -224,6 +224,10 @@ export class PdfNotesModalComponent {
     this.pdfNotes = '';
   }
 
+  setNotes(notes: string): void {
+    this.pdfNotes = notes;
+  }
+
   onClose(): void {
     this.isOpen = false;
     this.close.emit();

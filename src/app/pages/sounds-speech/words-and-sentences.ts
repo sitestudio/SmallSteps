@@ -459,12 +459,15 @@ export class WordsAndSentences implements OnInit {
     if (this.isEmbedded) {
       this.showPdfNotesTextarea = !this.showPdfNotesTextarea;
       if (this.showPdfNotesTextarea) {
-        this.pdfNotesText = "";
+        this.pdfNotesText = this.getPdfNotesForCurrentPair();
       }
       return;
     }
     this.showPdfNotesModal = true;
-    setTimeout(() => this.pdfNotesModal?.open(), 0);
+    setTimeout(() => {
+      this.pdfNotesModal?.setNotes(this.getPdfNotesForCurrentPair());
+      this.pdfNotesModal?.open();
+    }, 0);
   }
 
   handlePdfNotesGenerate(notes: string): void {
@@ -489,7 +492,8 @@ export class WordsAndSentences implements OnInit {
 
   savePdfNotes(): void {
     if (this.pdfNotesText.trim()) {
-      localStorage.setItem("tinyStepsPdfNotes", this.pdfNotesText);
+      const key = this.getPdfNotesStorageKey();
+      localStorage.setItem(key, this.pdfNotesText);
     }
     this.pdfNotesSave.emit(this.pdfNotesText);
   }
@@ -497,6 +501,18 @@ export class WordsAndSentences implements OnInit {
   closePdfNotesTextarea(): void {
     this.showPdfNotesTextarea = false;
     this.pdfNotesText = "";
+  }
+
+  getPdfNotesStorageKey(): string {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return "tinyStepsPdfNotes";
+    const animalId = this.selectedAnimalId || "";
+    return `tinyStepsPdfNotes_${activeEducator.id}_${animalId}`;
+  }
+
+  getPdfNotesForCurrentPair(): string {
+    const key = this.getPdfNotesStorageKey();
+    return localStorage.getItem(key) || "";
   }
 
   generatePDF(notesOverride?: string): void {
@@ -652,7 +668,7 @@ export class WordsAndSentences implements OnInit {
 
             y += lineHeight * 2.0;
 
-            const notesText = notesOverride || this.pdfNotes;
+            const notesText = notesOverride || this.pdfNotes || this.getPdfNotesForCurrentPair();
             if (notesText && notesText.trim()) {
               y += lineHeight * 0.5;
 
@@ -689,7 +705,7 @@ export class WordsAndSentences implements OnInit {
       { align: "center" },
     );
 
-    localStorage.removeItem("tinyStepsPdfNotes");
+    localStorage.removeItem(this.getPdfNotesStorageKey());
     doc.save("words-and-sentences-checked-items.pdf");
   }
 

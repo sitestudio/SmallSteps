@@ -215,6 +215,105 @@ header {
     }
   }
 
+  .pdf-notes-textarea-panel {
+    margin: 24px 0;
+    text-align: left;
+
+    label {
+      display: block;
+      font-family: "Montserrat", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1c2b33;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 16px;
+      border: 2px solid #dee3e9;
+      border-radius: 12px;
+      font-family: "Inter", sans-serif;
+      font-size: 15px;
+      resize: vertical;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      color: #1c2b33;
+      background-color: white;
+
+      &:focus {
+        outline: none;
+        border-color: #0064e0;
+        box-shadow: 0 0 0 3px rgba(0, 100, 224, 0.2);
+      }
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .pdf-notes-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      justify-content: flex-end;
+    }
+
+    .btn-save-notes {
+      padding: 10px 28px;
+      border-radius: 100px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background-color: #fbbd41;
+      color: white;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #e0a62b;
+        transform: scale(1.05);
+      }
+    }
+
+    .btn-cancel-notes {
+      padding: 10px 28px;
+      border-radius: 100px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background-color: transparent;
+      border: 2px solid #dee3e9;
+      color: #1c2b33;
+      transition: all 0.2s ease;
+
+      &:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+      }
+    }
+
+    :host-context(html.dark) {
+      label { color: var(--dark-text); }
+
+      textarea {
+        background-color: var(--dark-surface);
+        border-color: var(--dark-border);
+        color: var(--dark-text);
+
+        &::placeholder { color: #64748b; }
+      }
+
+      .btn-cancel-notes {
+        border-color: #3d414a;
+        color: var(--dark-text);
+      }
+    }
+  }
+
   .action-buttons-center {
     display: flex;
     justify-content: center;
