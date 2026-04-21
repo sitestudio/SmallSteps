@@ -187,7 +187,7 @@ import { FormsModule } from '@angular/forms';
 
       .btn-cancel {
         background-color: var(--dark-bg-secondary);
-        color: var(--dark-text-muted);
+        color: var(--dark-text);
       }
 
       .btn-cancel:hover {

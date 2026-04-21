@@ -737,7 +737,7 @@ p {
 
 :host-context(html.dark) .ws-close-btn {
   background-color: rgba(255, 255, 255, 0.15);
-  color: white;
+  color: var(--dark-text);
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.25);
