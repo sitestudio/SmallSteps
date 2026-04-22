@@ -291,7 +291,12 @@ header {
 
       .btn-cancel-notes {
         border-color: #3d414a;
-        color: var(--dark-text);
+        background-color: #fbbd41;
+        color: white;
+
+        &:hover {
+          background-color: #e0a62b;
+        }
       }
     }
   }
