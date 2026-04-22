@@ -186,12 +186,12 @@ import { FormsModule } from '@angular/forms';
       }
 
       .btn-cancel {
-        background-color: var(--dark-bg-secondary);
-        color: var(--dark-text-muted);
+        background-color: #374151;
+        color: #f1f9e8;
       }
 
       .btn-cancel:hover {
-        background-color: var(--dark-bg-tertiary);
+        background-color: #4b5563;
       }
     }
 
@@ -222,6 +222,10 @@ export class PdfNotesModalComponent {
   open(): void {
     this.isOpen = true;
     this.pdfNotes = '';
+  }
+
+  setNotes(notes: string): void {
+    this.pdfNotes = notes;
   }
 
   onClose(): void {

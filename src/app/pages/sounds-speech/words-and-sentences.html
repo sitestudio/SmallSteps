@@ -49,10 +49,7 @@
   <div class="vertical-divider"></div>
   }
 
-  <header>
-    <h1>Words and Sentences</h1>
-    <p>Teacher Assessment Checklist</p>
-  </header>
+  <header></header>
 
   <section class="checklist-section">
     <ul class="checklist">
@@ -79,13 +76,26 @@
       }
     </ul>
 
+    @if (showPdfNotesTextarea) {
+    <div class="pdf-notes-textarea-panel">
+      <label>PDF Notes</label>
+      <textarea
+        [value]="pdfNotesText"
+        (input)="onPdfNotesInput($any($event.target).value)"
+        placeholder="Add your notes here..."
+        rows="6"
+      ></textarea>
+      <div class="pdf-notes-actions">
+        <button type="button" (click)="closePdfNotesTextarea()" class="btn btn-primary">Close</button>
+      </div>
+    </div>
+    }
+
     <div class="action-buttons-center">
-      <button (click)="navigateBack()" class="btn btn-primary">← Back</button>
       <button (click)="openPdfNotesModal()" class="btn btn-primary">Add PDF Notes</button>
       <button (click)="generatePDF()" class="btn btn-primary">
         Generate PDF
       </button>
-      <button (click)="navigateToHome()" class="btn btn-primary">Home →</button>
     </div>
   </section>
 </div>

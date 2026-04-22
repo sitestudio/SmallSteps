@@ -93,7 +93,11 @@ export class WordsAndSentences implements OnInit {
   @Input() showBackNav: boolean = true;
   @Input() isEmbedded: boolean = false;
 
+  showPdfNotesTextarea = false;
+  pdfNotesText = "";
+
   @Output() generate = new EventEmitter<string>();
+  @Output() pdfNotesSave = new EventEmitter<string>();
 
   animals: Animal[] = [
     { id: "lion", name: "Lion", svgName: "animal-lion" },
@@ -452,9 +456,18 @@ export class WordsAndSentences implements OnInit {
   }
 
   openPdfNotesModal(): void {
+    if (this.isEmbedded) {
+      this.showPdfNotesTextarea = !this.showPdfNotesTextarea;
+      if (this.showPdfNotesTextarea) {
+        this.pdfNotesText = this.getPdfNotesForCurrentPair();
+      }
+      return;
+    }
     this.showPdfNotesModal = true;
-    // Call the child modal's open() method after view is initialized
-    setTimeout(() => this.pdfNotesModal?.open(), 0);
+    setTimeout(() => {
+      this.pdfNotesModal?.open();
+      this.pdfNotesModal?.setNotes(this.getPdfNotesForCurrentPair());
+    }, 0);
   }
 
   handlePdfNotesGenerate(notes: string): void {
@@ -475,6 +488,39 @@ export class WordsAndSentences implements OnInit {
   handlePdfNotesClose(): void {
     this.showPdfNotesModal = false;
     this.pdfNotes = "";
+  }
+
+  onPdfNotesInput(value: string): void {
+    this.pdfNotesText = value;
+    if (value.trim()) {
+      const key = this.getPdfNotesStorageKey();
+      localStorage.setItem(key, value);
+    }
+  }
+
+  savePdfNotes(): void {
+    if (this.pdfNotesText.trim()) {
+      const key = this.getPdfNotesStorageKey();
+      localStorage.setItem(key, this.pdfNotesText);
+    }
+    this.pdfNotesSave.emit(this.pdfNotesText);
+  }
+
+  closePdfNotesTextarea(): void {
+    this.showPdfNotesTextarea = false;
+    this.pdfNotesText = "";
+  }
+
+  getPdfNotesStorageKey(): string {
+    const activeEducator = this.educatorService.getActiveEducator();
+    if (!activeEducator) return "tinyStepsPdfNotes";
+    const animalId = this.selectedAnimalId || "";
+    return `tinyStepsPdfNotes_${activeEducator.id}_${animalId}`;
+  }
+
+  getPdfNotesForCurrentPair(): string {
+    const key = this.getPdfNotesStorageKey();
+    return localStorage.getItem(key) || "";
   }
 
   generatePDF(notesOverride?: string): void {
@@ -630,7 +676,7 @@ export class WordsAndSentences implements OnInit {
 
             y += lineHeight * 2.0;
 
-            const notesText = notesOverride || this.pdfNotes;
+            const notesText = notesOverride || this.pdfNotes || this.getPdfNotesForCurrentPair();
             if (notesText && notesText.trim()) {
               y += lineHeight * 0.5;
 
@@ -667,7 +713,6 @@ export class WordsAndSentences implements OnInit {
       { align: "center" },
     );
 
-    localStorage.removeItem("tinyStepsPdfNotes");
     doc.save("words-and-sentences-checked-items.pdf");
   }
 

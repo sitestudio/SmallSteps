@@ -49,15 +49,31 @@
 
     <!-- Row 3: Third Level Buttons (only when a second-level is selected) -->
     @if (selectedSecondLevel !== null) {
-    <div class="nav-row nav-row-3">
-      @for (thirdItem of getThirdLevelItems(); track thirdItem.id) {
-      <button
-        class="nav-btn-pill nav-btn-tertiary"
-        [class.active]="selectedThirdLevel === thirdItem.id"
-        (click)="onThirdLevelClick(thirdItem.id); $event.stopPropagation()"
-      >
-        <span>{{thirdItem.label}}</span>
-      </button>
+    <div class="nav-row-3-wrapper">
+      <div class="nav-row nav-row-3">
+        @for (thirdItem of getThirdLevelItems(); track thirdItem.id) {
+        <button
+          class="nav-btn-pill nav-btn-tertiary"
+          [class.active]="selectedThirdLevel === thirdItem.id"
+          (click)="onThirdLevelClick(thirdItem.id); $event.stopPropagation()"
+        >
+          <span>{{thirdItem.label}}</span>
+        </button>
+        }
+      </div>
+
+      @if (selectedThirdLevel === 'words-sentences' && !wordsAndSentencesReady) {
+      <div class="qld-page-alert qld-page-alert--warning" role="alert">
+        <div class="qld-page-alert__icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        </div>
+        <div class="qld-page-alert__content">
+          <h2 class="qld-page-alert__heading">Ready to use Words and Sentences</h2>
+          <p>{{ wordsAndSentencesAlertMessage }}</p>
+        </div>
+      </div>
       }
     </div>
     }
@@ -65,10 +81,8 @@
   </div>
 
   <div class="educator-section">
-    <h3>Educators</h3>
-
     <div class="active-educator-label" *ngIf="activeEducator">
-      Active Educator: {{ getActiveEducatorDisplayName() }}
+      Active: {{ getActiveEducatorDisplayName() }}
     </div>
 
     <!-- Inline Words & Sentences checklist -->
@@ -85,6 +99,7 @@
           [isEmbedded]="true"
           [showBackNav]="false"
           (generate)="handlePdfNotesGenerate($event)"
+          (pdfNotesSave)="savePdfNotes($event)"
         ></app-words-and-sentences>
       </div>
     </div>
