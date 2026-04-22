@@ -259,25 +259,6 @@ header {
       justify-content: flex-end;
     }
 
-    .btn-cancel-notes {
-      padding: 10px 28px;
-      border-radius: 100px;
-      font-family: "Montserrat", sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      background-color: transparent;
-      border: 2px solid #dee3e9;
-      color: #1c2b33;
-      transition: all 0.2s ease;
-
-      &:hover {
-        opacity: 0.9;
-        transform: scale(1.05);
-      }
-    }
-
     :host-context(html.dark) {
       label { color: var(--dark-text); }
 
@@ -288,16 +269,23 @@ header {
 
         &::placeholder { color: #64748b; }
       }
+    }
+  }
 
-      .btn-cancel-notes {
-        border-color: #3d414a;
-        background-color: #fbbd41;
-        color: white;
+  .btn-primary {
+    padding: 14px 32px;
+    border-radius: 100px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background-color: #fbbd41;
+    color: white;
+    transition: all 0.2s ease;
 
-        &:hover {
-          background-color: #e0a62b;
-        }
-      }
+    &:hover {
+      background-color: #e0a62b;
     }
   }
 
@@ -316,15 +304,6 @@ header {
       cursor: pointer;
       border: none;
       transition: all 0.2s ease;
-
-      &-primary {
-        background-color: #fbbd41;
-        color: white;
-
-        &:hover {
-          background-color: #e0a62b;
-        }
-      }
 
       &-secondary {
         background-color: transparent;
@@ -417,19 +396,19 @@ header {
     .action-buttons-center {
       margin-bottom: 48px;
 
-      .btn-primary {
-        background-color: #fbbd41;
-        color: white;
-
-        &:hover {
-          background-color: #e0a62b;
-        }
-      }
-
       .btn-secondary {
         background-color: transparent;
         border: 2px solid #3d414a;
         color: var(--dark-text);
+      }
+    }
+
+    .btn-primary {
+      background-color: #fbbd41;
+      color: white;
+
+      &:hover {
+        background-color: #e0a62b;
       }
     }
 
