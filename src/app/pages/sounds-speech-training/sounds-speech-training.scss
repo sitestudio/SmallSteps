@@ -1,7 +1,7 @@
 .content-wrapper {
-  max-width: 960px;
+  max-width: var(--content-max);
   margin: 80px auto;
-  padding: 24px;
+  padding: 24px var(--page-gutter);
 }
 
 header {
@@ -9,35 +9,35 @@ header {
   margin-bottom: 48px;
 
   h1 {
-    font-family: "Montserrat", sans-serif;
-    color: #1c2b33;
-    font-size: 48px;
-    font-weight: 500;
+    font-family: var(--font-display);
+    color: var(--klpt-ink);
+    font-size: clamp(2.3rem, 5vw, 4.8rem);
+    line-height: 1.1;
   }
 }
 
 main {
-  background: white;
-  border-radius: 24px;
+  background: var(--klpt-surface);
+  border-radius: 8px;
   padding: 32px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--klpt-shadow);
 }
 
 .info-section {
   margin-bottom: 32px;
 
   h2 {
-    font-family: "Montserrat", sans-serif;
-    color: #1c2b33;
-    font-size: 24px;
+    font-family: var(--font-display);
+    color: var(--klpt-ink);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.12;
     margin-bottom: 16px;
-    font-weight: 500;
   }
 
   p {
-    color: #64748b;
-    font-size: 16px;
-    line-height: 1.6;
+    color: var(--klpt-muted);
+    font-size: 1rem;
+    line-height: 1.7;
   }
 }
 
@@ -50,31 +50,31 @@ main {
   justify-content: center;
   gap: 24px;
   padding: 15px;
-  background: white;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--klpt-surface);
+  border-top: 1px solid var(--klpt-border);
   z-index: 20;
 }
 
 .nav-btn {
   padding: 10px 25px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 160ms ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
   }
 }
 
 @media (max-width: 600px) {
   .content-wrapper {
     margin: 16px auto;
-    padding: 16px;
+    padding: 16px var(--page-gutter);
   }
 
   header h1 {
-    font-size: 32px;
+    font-size: clamp(2rem, 4vw, 3.25rem);
   }
 }
 
@@ -94,12 +94,12 @@ main {
 
   .bottom-nav {
     background-color: var(--dark-surface);
-    border-top: 1px solid #3d414a;
+    border-top-color: var(--klpt-border);
   }
 
   .nav-btn {
     background-color: var(--dark-surface);
-    border: 1px solid #3d414a;
+    border: 1px solid var(--klpt-border);
     color: var(--dark-text);
   }
 }

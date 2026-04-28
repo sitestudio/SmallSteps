@@ -6,7 +6,7 @@
 
 .page-container {
   padding: 80px 24px 120px;
-  max-width: 768px;
+  max-width: var(--content-max);
   margin: 0 auto;
 
   @media (max-width: 600px) {
@@ -19,10 +19,10 @@ header {
   margin-bottom: 48px;
 
   h1 {
-    font-family: 'Montserrat', sans-serif;
-    color: #1C2B33;
-    font-size: 36px;
-    font-weight: 500;
+    font-family: var(--font-display);
+    color: var(--klpt-ink);
+    font-size: clamp(2.3rem, 5vw, 4.8rem);
+    line-height: 1.1;
     margin-bottom: 8px;
   }
 }
@@ -33,15 +33,15 @@ header {
   left: 24px;
   background: none;
   border: none;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
   padding: 8px 16px;
   border-radius: 8px;
-  color: #1C2B33;
-  transition: all 0.2s ease;
+  color: var(--klpt-ink);
+  transition: all 160ms ease;
 
   &:hover {
-    background: #F1F5F9;
+    background: var(--klpt-cream);
   }
 }
 
@@ -49,10 +49,10 @@ header {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: white;
+  background: var(--klpt-surface);
   padding: 10px 24px;
-  border-radius: 100px;
-  box-shadow: 0 12px 28px 0 rgba(0,0,0,0.2), 0 2px 4px 0 rgba(0,0,0,0.1);
+  border-radius: 8px;
+  box-shadow: var(--klpt-shadow);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -70,22 +70,22 @@ header {
   margin-bottom: 32px;
 
   h3 {
-    font-family: 'Montserrat', sans-serif;
-    color: #1C2B33;
-    font-size: 24px;
-    font-weight: 600;
+    font-family: var(--font-display);
+    color: var(--klpt-ink);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.12;
   }
 }
 
 .checklist-container {
-  background: white;
-  border-radius: 24px;
-  box-shadow: 0 12px 28px 0 rgba(0,0,0,0.2), 0 2px 4px 0 rgba(0,0,0,0.1);
+  background: var(--klpt-surface);
+  border-radius: 8px;
+  box-shadow: var(--klpt-shadow);
   padding: 32px;
 }
 
 .checklist-item {
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--klpt-border);
   padding: 20px 0;
 
   &:last-child {
@@ -105,10 +105,10 @@ header {
       height: 24px;
       margin-right: 16px;
       cursor: pointer;
-      accent-color: #4D96FF;
+      accent-color: var(--klpt-purple);
 
       &:checked {
-        background: #4D96FF;
+        background: var(--klpt-purple);
       }
     }
 
@@ -118,10 +118,10 @@ header {
       gap: 16px;
 
       .checklist-label {
-        font-family: 'Montserrat', sans-serif;
-        color: #1C2B33;
-        font-size: 16px;
-        font-weight: 500;
+        font-family: var(--font-display);
+        color: var(--klpt-ink);
+        font-size: 1rem;
+        font-weight: 700;
         flex: 1;
       }
 
@@ -131,15 +131,15 @@ header {
         width: 24px;
         height: 24px;
         border-radius: 6px;
-        border: 2px solid #94A3B8;
+        border: 2px solid var(--klpt-border);
         margin-right: 16px;
         flex-shrink: 0;
       }
     }
 
     input[type="checkbox"]:checked + label::before {
-      background: #4D96FF;
-      border-color: #4D96FF;
+      background: var(--klpt-purple);
+      border-color: var(--klpt-purple);
     }
   }
 
@@ -147,20 +147,20 @@ header {
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 160ms ease;
     margin-top: 12px;
 
     p {
-      font-family: 'Montserrat', sans-serif;
-      color: #64748B;
-      font-size: 14px;
-      line-height: 1.6;
+      font-family: var(--font-body);
+      color: var(--klpt-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
       margin: 0;
     }
   }
 
   .check-icon {
-    color: #4D96FF;
+    color: var(--klpt-purple);
     font-weight: bold;
   }
 }
@@ -178,31 +178,31 @@ header {
   .btn {
     padding: 12px 32px;
     border-radius: 8px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 160ms ease;
     border: none;
 
     &.btn-primary {
-      background: #4D96FF;
+      background: var(--klpt-purple);
       color: white;
 
       &:hover {
-        background: #3B7DD8;
+        background: var(--klpt-purple-dark);
         transform: translateY(-2px);
       }
     }
 
     &.btn-secondary {
-      background: white;
-      color: #1C2B33;
-      border: 2px solid #E2E8F0;
+      background: var(--klpt-surface);
+      color: var(--klpt-ink);
+      border: 1px solid var(--klpt-border) !important;
 
       &:hover {
-        background: #F1F5F9;
-        border-color: #CBD5E1;
+        background: var(--klpt-cream);
+        border-color: var(--klpt-border) !important;
       }
     }
   }
@@ -217,20 +217,20 @@ header {
   justify-content: center;
   gap: 24px;
   padding: 20px;
-  background: white;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  background: var(--klpt-surface);
+  border-top: 1px solid var(--klpt-border);
   z-index: 20;
 }
 
 .nav-btn {
   padding: 10px 24px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 160ms ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
   }
 }
 
@@ -246,19 +246,19 @@ header {
 
   .checklist-item {
     background-color: var(--dark-surface);
-    border-bottom-color: #3d414a;
+    border-bottom-color: var(--klpt-border);
 
     .checkbox-wrapper input[type="checkbox"] {
-      accent-color: #fbbd41;
+      accent-color: var(--klpt-gold);
     }
 
     .checkbox-wrapper label::before {
-      border-color: #6b707c;
+      border-color: var(--klpt-border);
     }
 
     .checkbox-wrapper input[type="checkbox"]:checked + label::before {
-      background-color: #fbbd41;
-      border-color: #fbbd41;
+      background-color: var(--klpt-gold);
+      border-color: var(--klpt-gold);
     }
 
     .description p {
@@ -277,5 +277,6 @@ header {
 
   .bottom-nav {
     background-color: var(--dark-surface);
+    border-top-color: var(--klpt-border);
   }
 }
