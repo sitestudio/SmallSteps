@@ -1,0 +1,1 @@
+import{a}from"./chunk-GTJQO37R.js";import"./chunk-6QK5WKMH.js";import"./chunk-YXMS6DLL.js";import"./chunk-H2TNQU3H.js";import"./chunk-FK6H3RFT.js";import"./chunk-SGKBXPU3.js";import"./chunk-IDIOEEI7.js";import"./chunk-DC6BHLOR.js";import"./chunk-KAT7YFEL.js";export{a as WordsAndSentences};
