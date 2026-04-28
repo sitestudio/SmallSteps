@@ -1,5 +1,5 @@
 .report-container {
-  max-width: 800px;
+  max-width: var(--content-max);
   margin: 80px auto;
   padding: 40px 32px;
   min-height: calc(100vh - 200px);
@@ -10,10 +10,10 @@
   margin-bottom: 48px;
 
   h1 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 48px;
-    color: #1c2b33;
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-size: clamp(2.3rem, 5vw, 4.8rem);
+    line-height: 1.1;
+    color: var(--klpt-ink);
     margin-bottom: 32px;
   }
 }
@@ -23,20 +23,20 @@
 
   .handwritten-label {
     display: block;
-    font-family: "Montserrat", sans-serif;
-    color: #5d6c7b;
-    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--klpt-muted);
+    font-size: 0.95rem;
     margin-bottom: 8px;
   }
 }
 
 .dashed-line {
   width: 100%;
-  height: 2px;
+  height: 1px;
   background: linear-gradient(
     90deg,
     transparent 5%,
-    #cbd5e1 50%,
+    var(--klpt-border) 50%,
     transparent 95%
   );
 }
@@ -46,16 +46,17 @@
   margin-bottom: 48px;
 
   h2 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 36px;
-    color: #1c2b33;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.12;
+    color: var(--klpt-ink);
     margin-bottom: 8px;
-    font-weight: 500;
   }
 
   .date-display {
-    color: #5d6c7b;
-    font-size: 16px;
+    color: var(--klpt-muted);
+    font-size: 1rem;
+    line-height: 1.7;
   }
 }
 
@@ -67,31 +68,32 @@
   }
 
   .checklist-item {
-    background-color: white;
-    border-radius: 20px;
+    background-color: var(--klpt-surface);
+    border-radius: 8px;
     padding: 32px;
-    box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1);
-    border: 1px solid #dee3e9;
+    box-shadow: var(--klpt-shadow);
+    border: 1px solid var(--klpt-border);
 
     .item-title {
-      font-family: "Montserrat", sans-serif;
-      font-size: 20px;
-      color: #1c2b33;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      line-height: 1.35;
+      color: var(--klpt-ink);
       margin-bottom: 16px;
-      font-weight: 500;
     }
 
     .item-description {
-      color: #5d6c7b;
-      font-size: 16px;
-      line-height: 1.8;
+      color: var(--klpt-muted);
+      font-size: 1rem;
+      line-height: 1.7;
     }
   }
 
   .no-items-message {
     text-align: center;
-    color: #5d6c7b;
-    font-size: 18px;
+    color: var(--klpt-muted);
+    font-size: 1rem;
+    line-height: 1.7;
     padding: 48px;
   }
 }
@@ -101,20 +103,24 @@
   margin-top: 48px;
 
   .btn-download {
-    background-color: #0064e0;
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--klpt-purple);
     color: white;
-    padding: 16px 48px;
-    border-radius: 100px;
-    font-family: "Montserrat", sans-serif;
-    font-size: 18px;
-    font-weight: 500;
+    padding: 0.75rem 1.2rem;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 160ms ease;
 
     &:hover {
-      background-color: #0143b5;
-      transform: scale(1.05);
+      background-color: var(--klpt-purple-dark);
+      transform: scale(1.03);
     }
   }
 }
@@ -128,26 +134,25 @@
   justify-content: center;
   gap: 24px;
   padding: 20px;
-  background: white;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--klpt-surface);
+  border-top: 1px solid var(--klpt-border);
   z-index: 20;
 }
 
 .nav-btn {
   padding: 12px 32px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 160ms ease;
 
   &-home {
-    background-color: #0064e0;
+    background-color: var(--klpt-purple);
     color: white;
-    border-radius: 100px;
   }
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
   }
 }
 
@@ -158,7 +163,7 @@
   }
 
   .report-header h1 {
-    font-size: 36px;
+    font-size: clamp(2rem, 4vw, 3.25rem);
     margin-bottom: 24px;
   }
 
@@ -186,10 +191,10 @@
 
   .checklist-item {
     background-color: var(--dark-surface);
-    border-top-color: #3d414a;
+    border-top-color: var(--klpt-border);
   }
 
   .action-buttons .btn-download {
-    background-color: #0064e0;
+    background-color: var(--klpt-purple);
   }
 }
